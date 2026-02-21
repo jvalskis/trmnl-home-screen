@@ -1,4 +1,4 @@
-package weather
+package is.valsk.trmnlhomescreen
 
 import liqp.Template
 import liqp.TemplateParser
