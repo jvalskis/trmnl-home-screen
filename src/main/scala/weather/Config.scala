@@ -4,7 +4,12 @@ import zio.*
 import zio.config.magnolia.deriveConfig
 import zio.config.typesafe.TypesafeConfigProvider
 
-final case class WeatherConfig(apiKey: String, city: String, fetchIntervalMinutes: Int)
+final case class WeatherConfig(
+    apiKey: String,
+    city: String,
+    fetchIntervalMinutes: Int,
+    templateFile: String,
+)
 
 object WeatherConfig:
 

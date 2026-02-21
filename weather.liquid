@@ -1,0 +1,6 @@
+--- Current Weather (Template) ---
+Conditions:    {{ weather_text }}
+Temperature:   {{ temp_metric_value }}°{{ temp_metric_unit }} / {{ temp_imperial_value }}°{{ temp_imperial_unit }}
+Precipitation: {% if has_precipitation %}Yes{% else %}No{% endif %}
+Day time:      {% if is_day_time %}Yes{% else %}No{% endif %}
+Observed at:   {{ observation_time }}
