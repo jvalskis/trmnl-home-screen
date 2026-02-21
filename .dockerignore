@@ -1,0 +1,10 @@
+.env
+.git/
+target/
+project/target/
+project/project/
+.idea/
+.vscode/
+.bsp/
+.metals/
+*.class

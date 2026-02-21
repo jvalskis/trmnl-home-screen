@@ -24,4 +24,12 @@ lazy val root = (project in file("."))
     ),
     testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),
     fork := true,
+    assembly / mainClass := Some("is.valsk.trmnlhomescreen.Main"),
+    assembly / assemblyJarName := "trmnl-home-screen-app.jar",
+    assembly / assemblyMergeStrategy := {
+      case PathList("META-INF", "services", _*) => MergeStrategy.concat
+      case PathList("META-INF", _*)             => MergeStrategy.discard
+      case "reference.conf"                     => MergeStrategy.concat
+      case x                                    => MergeStrategy.first
+    },
   )
