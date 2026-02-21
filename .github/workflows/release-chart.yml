@@ -1,0 +1,37 @@
+name: Release Charts
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "charts/trmnl-home-screen-app/**"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Add dependency chart repos
+        run: helm repo add bjw-s https://bjw-s-labs.github.io/helm-charts
+
+      - name: Configure Git
+        run: |
+          git config user.name "{{ $github.actor }}"
+          git config user.email "{{ $github.actor }}@users.noreply.github.com"
+
+      - name: Run chart-releaser
+        uses: bitdeps/helm-oci-charts-releaser@v0.1.5
+        with:
+          charts_dir: charts
+          oci_registry: ghcr.io/${{ github.repository }}
+          oci_username: ${{ github.actor }}
+          oci_password: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}

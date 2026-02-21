@@ -1,0 +1,53 @@
+defaultPodOptions:
+  automountServiceAccountToken: false
+  securityContext:
+    runAsUser: 1001
+    runAsNonRoot: true
+
+controllers:
+  main:
+    strategy: Recreate
+    containers:
+      main:
+        image:
+          repository: ghcr.io/jvalskis/trmnl-home-screen-app
+          # Defaults to .Chart.AppVersion
+          tag:
+          pullPolicy: IfNotPresent
+        env:
+          TZ: UTC
+          WEATHER_CITY: "London"
+          WEATHER_FETCH_INTERVAL_MINUTES: "60"
+          WEATHER_TEMPLATE_FILE: "/app/templates/weather.liquid"
+          ACCUWEATHER_API_KEY: YOUR_API_KEY
+#            valueFrom:
+#              secretKeyRef:
+#                name: ""
+#                key: ACCUWEATHER_API_KEY
+        securityContext:
+          readOnlyRootFilesystem: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - ALL
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+
+service:
+  main:
+    controller: main
+    type: ClusterIP
+    ports:
+      http:
+        port: 8080
+
+persistence:
+  tmp:
+    type: emptyDir
+    globalMounts:
+      - path: /tmp
