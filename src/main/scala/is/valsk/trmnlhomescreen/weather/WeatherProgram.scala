@@ -1,6 +1,6 @@
 package is.valsk.trmnlhomescreen.weather
 
-import is.valsk.trmnlhomescreen.{Program, TemplateRenderer, WeatherConfig}
+import is.valsk.trmnlhomescreen.Program
 import zio.{Console, Duration, RLayer, Schedule, Task, URLayer, ZIO, ZLayer}
 
 trait WeatherProgram extends Program
@@ -9,22 +9,22 @@ object WeatherProgram {
 
   private class WeatherProgramLive(config: WeatherConfig, client: AccuWeatherClient, renderer: TemplateRenderer)
       extends WeatherProgram {
+
     def run: Task[Unit] =
-      for
-        _ <- runIfEnabled(config.enabled, "Weather feature is disabled") {
-          for
-            _ <- ZIO.logInfo(s"Starting weather app for ${config.city}")
-            location <- client.searchCity(config.city)
-            _ <- ZIO.logInfo(
-              s"Found: ${location.localizedName}, ${location.country.localizedName} (key: ${location.key})",
-            )
-            interval = Duration.fromSeconds(config.fetchIntervalMinutes.toLong * 60)
-            _ <- fetchAndPrintWeather(client, renderer, location.key)
-              .catchAll(e => ZIO.logError(s"Failed to fetch weather: ${e.getMessage}"))
-              .repeat(Schedule.fixed(interval))
-          yield ()
-        }
-      yield ()
+      runIfEnabled(config.enabled, "Weather feature is disabled") {
+        for
+          _ <- ZIO.logInfo(s"Starting weather app for ${config.city}")
+          location <- client.searchCity(config.city)
+          _ <- ZIO.logInfo(
+            s"Found: ${location.localizedName}, ${location.country.localizedName} (key: ${location.key})",
+          )
+          interval = Duration.fromSeconds(config.fetchIntervalMinutes.toLong * 60)
+          _ <- fetchAndPrintWeather(client, renderer, location.key)
+            .catchAll(e => ZIO.logError(s"Failed to fetch weather: ${e.getMessage}"))
+            .repeat(Schedule.fixed(interval))
+        yield ()
+      }
+
 
     private def fetchAndPrintWeather(
         client: AccuWeatherClient,

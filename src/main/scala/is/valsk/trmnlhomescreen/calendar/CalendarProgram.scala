@@ -1,6 +1,6 @@
 package is.valsk.trmnlhomescreen.calendar
 
-import is.valsk.trmnlhomescreen.{Program, TemplateRenderer}
+import is.valsk.trmnlhomescreen.Program
 import zio.{Console, Duration, RLayer, Schedule, Task, URLayer, ZIO, ZLayer}
 
 trait CalendarProgram extends Program
@@ -11,17 +11,15 @@ object CalendarProgram {
       extends CalendarProgram {
 
     def run: Task[Unit] =
-      for
-        _ <- runIfEnabled(config.enabled, "Calendar feature is disabled") {
-          for
-            _ <- ZIO.logInfo(s"Starting calendar sync from ${config.calendarUrl}")
-            interval = Duration.fromSeconds(config.fetchIntervalMinutes.toLong * 60)
-            _ <- fetchAndPrintCalendar(client, renderer)
-              .catchAll(e => ZIO.logError(s"Failed to fetch calendar: ${e.getMessage}"))
-              .repeat(Schedule.fixed(interval))
-          yield ()
-        }
-      yield ()
+      runIfEnabled(config.enabled, "Calendar feature is disabled") {
+        for
+          _ <- ZIO.logInfo(s"Starting calendar sync from ${config.calendarUrl}")
+          interval = Duration.fromSeconds(config.fetchIntervalMinutes.toLong * 60)
+          _ <- fetchAndPrintCalendar(client, renderer)
+            .catchAll(e => ZIO.logError(s"Failed to fetch calendar: ${e.getMessage}"))
+            .repeat(Schedule.fixed(interval))
+        yield ()
+      }
 
     private def fetchAndPrintCalendar(
         client: CalDavClient,
