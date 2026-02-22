@@ -33,8 +33,9 @@ WORKDIR /app
 # Copy fat JAR from build stage
 COPY --from=build /build/target/scala-3.3.7/trmnl-home-screen-app.jar /app/app.jar
 
-# Copy template
+# Copy templates
 COPY weather.liquid /app/templates/weather.liquid
+COPY calendar.liquid /app/templates/calendar.liquid
 
 # Set ownership
 RUN chown -R appuser:appgroup /app
@@ -42,6 +43,7 @@ RUN chown -R appuser:appgroup /app
 USER appuser
 
 ENV WEATHER_TEMPLATE_FILE=/app/templates/weather.liquid
+ENV CALENDAR_TEMPLATE_FILE=/app/templates/calendar.liquid
 
 EXPOSE 8080
 

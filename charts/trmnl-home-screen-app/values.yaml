@@ -24,6 +24,13 @@ controllers:
 #              secretKeyRef:
 #                name: ""
 #                key: ACCUWEATHER_API_KEY
+          CALDAV_CALENDAR_URL: "https://nextcloud.example.com/remote.php/dav/calendars/user/personal/"
+          CALDAV_AUTH_TYPE: "basic"
+          CALDAV_USERNAME: "user"
+          CALDAV_PASSWORD: "app-password"
+          CALDAV_FETCH_INTERVAL_MINUTES: "30"
+          CALDAV_DAYS_AHEAD: "7"
+          CALENDAR_TEMPLATE_FILE: "/app/templates/calendar.liquid"
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false

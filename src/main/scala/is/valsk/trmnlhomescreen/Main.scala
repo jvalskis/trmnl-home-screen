@@ -1,12 +1,14 @@
 package is.valsk.trmnlhomescreen
 
+import is.valsk.trmnlhomescreen.calendar.{CalDavClient, CalendarConfig, CalendarRenderer}
+import is.valsk.trmnlhomescreen.weather.AccuWeatherClient
 import zio.*
 import zio.http.Client
 
 object Main extends ZIOAppDefault:
 
   override def run: ZIO[Any, Any, Any] =
-    val program = for
+    val weatherProgram = for
       config <- ZIO.service[WeatherConfig]
       client <- ZIO.service[AccuWeatherClient]
       renderer <- ZIO.service[TemplateRenderer]
@@ -16,19 +18,33 @@ object Main extends ZIOAppDefault:
         s"Found: ${location.localizedName}, ${location.country.localizedName} (key: ${location.key})",
       )
       interval = Duration.fromSeconds(config.fetchIntervalMinutes.toLong * 60)
-      _ <- fetchAndPrint(client, renderer, location.key)
+      _ <- fetchAndPrintWeather(client, renderer, location.key)
         .catchAll(e => ZIO.logError(s"Failed to fetch weather: ${e.getMessage}"))
         .repeat(Schedule.fixed(interval))
     yield ()
 
-    program.provide(
+    val calendarProgram = for
+      config <- ZIO.service[CalendarConfig]
+      client <- ZIO.service[CalDavClient]
+      renderer <- ZIO.service[CalendarRenderer]
+      _ <- ZIO.logInfo(s"Starting calendar sync from ${config.calendarUrl}")
+      interval = Duration.fromSeconds(config.fetchIntervalMinutes.toLong * 60)
+      _ <- fetchAndPrintCalendar(client, renderer)
+        .catchAll(e => ZIO.logError(s"Failed to fetch calendar: ${e.getMessage}"))
+        .repeat(Schedule.fixed(interval))
+    yield ()
+
+    (weatherProgram <&> calendarProgram).provide(
       Client.default,
       WeatherConfig.layer,
       AccuWeatherClient.layer,
       TemplateRenderer.layer,
+      CalendarConfig.layer,
+      CalDavClient.layer,
+      CalendarRenderer.layer,
     )
 
-  private def fetchAndPrint(
+  private def fetchAndPrintWeather(
       client: AccuWeatherClient,
       renderer: TemplateRenderer,
       locationKey: String,
@@ -36,5 +52,15 @@ object Main extends ZIOAppDefault:
     for
       conditions <- client.currentConditions(locationKey)
       rendered <- renderer.render(conditions)
+      _ <- Console.printLine(rendered)
+    yield ()
+
+  private def fetchAndPrintCalendar(
+      client: CalDavClient,
+      renderer: CalendarRenderer,
+  ): Task[Unit] =
+    for
+      events <- client.fetchEvents()
+      rendered <- renderer.render(events)
       _ <- Console.printLine(rendered)
     yield ()
