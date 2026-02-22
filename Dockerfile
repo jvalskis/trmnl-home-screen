@@ -1,14 +1,5 @@
 # === Build stage ===
-FROM eclipse-temurin:21-jdk-jammy AS build
-
-# Install sbt
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends apt-transport-https curl gnupg && \
-    echo "deb https://repo.scala-sbt.org/scalasbt/debian all main" > /etc/apt/sources.list.d/sbt.list && \
-    curl -sL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x2EE0EA64E40A89B84B2DF73499E82A75642AC823" | gpg --dearmor -o /etc/apt/trusted.gpg.d/sbt.gpg && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends sbt && \
-    rm -rf /var/lib/apt/lists/*
+FROM sbtscala/scala-sbt:eclipse-temurin-21.0.8_9_1.11.7_3.3.7 AS build
 
 WORKDIR /build
 
@@ -33,8 +24,9 @@ WORKDIR /app
 # Copy fat JAR from build stage
 COPY --from=build /build/target/scala-3.3.7/trmnl-home-screen-app.jar /app/app.jar
 
-# Copy template
+# Copy templates
 COPY weather.liquid /app/templates/weather.liquid
+COPY calendar.liquid /app/templates/calendar.liquid
 
 # Set ownership
 RUN chown -R appuser:appgroup /app
@@ -42,6 +34,7 @@ RUN chown -R appuser:appgroup /app
 USER appuser
 
 ENV WEATHER_TEMPLATE_FILE=/app/templates/weather.liquid
+ENV CALENDAR_TEMPLATE_FILE=/app/templates/calendar.liquid
 
 EXPOSE 8080
 

@@ -4,6 +4,8 @@ val zioJsonVersion = "0.7.44"
 val zioConfigVersion = "4.0.6"
 
 val liqpVersion = "0.9.2.3"
+val biweeklyVersion = "0.6.8"
+val scalaXmlVersion = "2.2.0"
 
 lazy val root = (project in file("."))
   .settings(
@@ -19,6 +21,8 @@ lazy val root = (project in file("."))
       "dev.zio" %% "zio-config-typesafe" % zioConfigVersion,
       "dev.zio" %% "zio-config-magnolia" % zioConfigVersion,
       "nl.big-o" % "liqp" % liqpVersion,
+      "net.sf.biweekly" % "biweekly" % biweeklyVersion,
+      "org.scala-lang.modules" %% "scala-xml" % scalaXmlVersion,
       "dev.zio" %% "zio-test" % zioVersion % Test,
       "dev.zio" %% "zio-test-sbt" % zioVersion % Test,
     ),

@@ -5,6 +5,7 @@ import zio.config.magnolia.deriveConfig
 import zio.config.typesafe.TypesafeConfigProvider
 
 final case class WeatherConfig(
+    enabled: Boolean,
     apiKey: String,
     city: String,
     fetchIntervalMinutes: Int,
