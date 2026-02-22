@@ -41,9 +41,6 @@ object CalDavClient:
           for
             resp <- client.request(createRequest(xmlBody, url))
             body <- resp.body.asString
-            _ <- ZIO.logInfo(s"CalDAV response status: ${resp.status.code}, headers: ${resp.headers.toList.map(h =>
-                s"${h.headerName}: ${h.renderedValue}",
-              ).mkString(", ")}")
             _ <- ZIO.when(resp.status.code != MultiStatus.code) {
               ZIO.fail(RuntimeException(s"CalDAV REPORT failed with status ${resp.status.code}: $body"))
             }
@@ -80,7 +77,7 @@ object CalDavClient:
       case _ => Header.Authorization.Basic(config.username, config.password)
   }
 
-  def createCalendarEvent(event: VEvent) = {
+  private def createCalendarEvent(event: VEvent) = {
     for start <- Option(event.getDateStart).map(_.getValue)
     yield CalendarEvent(
       summary = Option(event.getSummary).map(_.getValue).getOrElse(CalendarEvent.DefaultSummary),
