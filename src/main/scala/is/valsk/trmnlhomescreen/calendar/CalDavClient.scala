@@ -17,6 +17,8 @@ trait CalDavClient:
 
 object CalDavClient:
 
+  val configuredLayer: ZLayer[Client, Config.Error, CalDavClient] = CalendarConfig.layer >>> layer
+
   val layer: ZLayer[Client & CalendarConfig, Nothing, CalDavClient] =
     ZLayer.fromFunction(LiveCalDavClient.apply)
 

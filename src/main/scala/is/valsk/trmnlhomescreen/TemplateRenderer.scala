@@ -12,6 +12,8 @@ trait TemplateRenderer:
 
 object TemplateRenderer:
 
+  val configuredLayer: ZLayer[Any, Throwable, TemplateRenderer] = WeatherConfig.layer >>> layer
+
   val layer: ZLayer[WeatherConfig, Throwable, TemplateRenderer] =
     ZLayer.fromZIO {
       for

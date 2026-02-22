@@ -17,6 +17,8 @@ object AccuWeatherClient:
   def currentConditions(locationKey: String): ZIO[AccuWeatherClient, Throwable, CurrentConditions] =
     ZIO.serviceWithZIO[AccuWeatherClient](_.currentConditions(locationKey))
 
+  val configuredLayer: ZLayer[Client, Config.Error, AccuWeatherClient] = WeatherConfig.layer >>> layer
+
   val layer: ZLayer[Client & WeatherConfig, Nothing, AccuWeatherClient] =
     ZLayer.fromFunction(LiveAccuWeatherClient.apply)
 

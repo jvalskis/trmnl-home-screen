@@ -12,6 +12,8 @@ trait CalendarRenderer:
 
 object CalendarRenderer:
 
+  val configuredLayer: ZLayer[Any, Throwable, CalendarRenderer] = CalendarConfig.layer >>> layer
+
   val layer: ZLayer[CalendarConfig, Throwable, CalendarRenderer] =
     ZLayer.fromZIO {
       for
