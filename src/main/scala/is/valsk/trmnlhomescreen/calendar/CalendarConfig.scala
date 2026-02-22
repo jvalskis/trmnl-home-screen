@@ -5,6 +5,7 @@ import zio.config.magnolia.deriveConfig
 import zio.config.typesafe.TypesafeConfigProvider
 
 final case class CalendarConfig(
+    enabled: Boolean,
     calendarUrl: String,
     authType: String,
     username: String,

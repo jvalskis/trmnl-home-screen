@@ -16,6 +16,7 @@ controllers:
           pullPolicy: IfNotPresent
         env:
           TZ: UTC
+          WEATHER_ENABLED: "true"
           WEATHER_CITY: "London"
           WEATHER_FETCH_INTERVAL_MINUTES: "60"
           WEATHER_TEMPLATE_FILE: "/app/templates/weather.liquid"
@@ -24,6 +25,7 @@ controllers:
 #              secretKeyRef:
 #                name: ""
 #                key: ACCUWEATHER_API_KEY
+          CALENDAR_ENABLED: "true"
           CALDAV_CALENDAR_URL: "https://nextcloud.example.com/remote.php/dav/calendars/user/personal/"
           CALDAV_AUTH_TYPE: "basic"
           CALDAV_USERNAME: "user"

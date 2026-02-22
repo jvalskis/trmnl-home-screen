@@ -10,28 +10,36 @@ object Main extends ZIOAppDefault:
   override def run: ZIO[Any, Any, Any] =
     val weatherProgram = for
       config <- ZIO.service[WeatherConfig]
-      client <- ZIO.service[AccuWeatherClient]
-      renderer <- ZIO.service[TemplateRenderer]
-      _ <- ZIO.logInfo(s"Starting weather app for ${config.city}")
-      location <- client.searchCity(config.city)
-      _ <- ZIO.logInfo(
-        s"Found: ${location.localizedName}, ${location.country.localizedName} (key: ${location.key})",
-      )
-      interval = Duration.fromSeconds(config.fetchIntervalMinutes.toLong * 60)
-      _ <- fetchAndPrintWeather(client, renderer, location.key)
-        .catchAll(e => ZIO.logError(s"Failed to fetch weather: ${e.getMessage}"))
-        .repeat(Schedule.fixed(interval))
+      _ <- runIfEnabled(config.enabled, "Weather feature is disabled") {
+        for
+          client <- ZIO.service[AccuWeatherClient]
+          renderer <- ZIO.service[TemplateRenderer]
+          _ <- ZIO.logInfo(s"Starting weather app for ${config.city}")
+          location <- client.searchCity(config.city)
+          _ <- ZIO.logInfo(
+            s"Found: ${location.localizedName}, ${location.country.localizedName} (key: ${location.key})",
+          )
+          interval = Duration.fromSeconds(config.fetchIntervalMinutes.toLong * 60)
+          _ <- fetchAndPrintWeather(client, renderer, location.key)
+            .catchAll(e => ZIO.logError(s"Failed to fetch weather: ${e.getMessage}"))
+            .repeat(Schedule.fixed(interval))
+        yield ()
+      }
     yield ()
 
     val calendarProgram = for
       config <- ZIO.service[CalendarConfig]
-      client <- ZIO.service[CalDavClient]
-      renderer <- ZIO.service[CalendarRenderer]
-      _ <- ZIO.logInfo(s"Starting calendar sync from ${config.calendarUrl}")
-      interval = Duration.fromSeconds(config.fetchIntervalMinutes.toLong * 60)
-      _ <- fetchAndPrintCalendar(client, renderer)
-        .catchAll(e => ZIO.logError(s"Failed to fetch calendar: ${e.getMessage}"))
-        .repeat(Schedule.fixed(interval))
+      _ <- runIfEnabled(config.enabled, "Calendar feature is disabled") {
+        for
+          client <- ZIO.service[CalDavClient]
+          renderer <- ZIO.service[CalendarRenderer]
+          _ <- ZIO.logInfo(s"Starting calendar sync from ${config.calendarUrl}")
+          interval = Duration.fromSeconds(config.fetchIntervalMinutes.toLong * 60)
+          _ <- fetchAndPrintCalendar(client, renderer)
+            .catchAll(e => ZIO.logError(s"Failed to fetch calendar: ${e.getMessage}"))
+            .repeat(Schedule.fixed(interval))
+        yield ()
+      }
     yield ()
 
     (weatherProgram <&> calendarProgram).provide(
@@ -64,3 +72,10 @@ object Main extends ZIOAppDefault:
       rendered <- renderer.render(events)
       _ <- Console.printLine(rendered)
     yield ()
+
+  private def runIfEnabled[T](
+      enabled: Boolean,
+      disabledMessage: String,
+  )(
+      program: ZIO[T, Throwable, Unit],
+  ): ZIO[T, Throwable, Unit] = if enabled then program else ZIO.logInfo(disabledMessage) *> ZIO.never
