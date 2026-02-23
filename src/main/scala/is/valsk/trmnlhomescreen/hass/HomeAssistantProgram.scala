@@ -1,12 +1,12 @@
 package is.valsk.trmnlhomescreen.hass
 
 import is.valsk.trmnlhomescreen.Program
-import is.valsk.trmnlhomescreen.hass.messages.{HassResponseMessage, HassResponseMessageParser, MessageParser, SequentialMessageIdGenerator}
+import is.valsk.trmnlhomescreen.hass.messages.{HassResponseMessageParser, SequentialMessageIdGenerator}
 import is.valsk.trmnlhomescreen.hass.protocol.ChannelHandler.PartialChannelHandler
 import is.valsk.trmnlhomescreen.hass.protocol.api.{AuthenticationHandler, ConnectHandler, HassResponseMessageHandler, MessageSender, ResultHandler}
 import is.valsk.trmnlhomescreen.hass.protocol.{ChannelHandler, ProtocolHandler, TextHandler, UnhandledMessageHandler}
 import zio.http.{Client, Handler}
-import zio.{Console, Duration, RLayer, Schedule, Scope, Task, ULayer, URLayer, ZIO, ZLayer}
+import zio.{RLayer, Scope, Task, URLayer, ZIO, ZLayer}
 
 trait HomeAssistantProgram extends Program
 
@@ -106,18 +106,21 @@ object HomeAssistantProgram {
     } yield List(authenticationHandler, connectHandler, resultHandler)
   }
 
-  val configuredLayer: RLayer[HomeAssistantRenderer, HomeAssistantProgram] = {
-    val messageIdGenLayer = SequentialMessageIdGenerator.layer
-    val configLayer = HomeAssistantConfig.layer
-    val parserLayer = HassResponseMessageParser.layer
-    val messageSenderLayer = messageIdGenLayer >>> MessageSender.layer
-    val resultHandlerLayer = messageIdGenLayer >>> ResultHandler.layer
-    val authHandlerLayer = configLayer >>> AuthenticationHandler.layer
-    val connectHandlerLayer = messageSenderLayer >>> ConnectHandler.layer
-    val hassHandlersLayer = (authHandlerLayer ++ connectHandlerLayer ++ resultHandlerLayer) >>> hassResponseMessageHandlerLayer
-    val textHandlerLayer = (hassHandlersLayer ++ parserLayer) >>> TextHandler.layer
-    val channelHandlersLayer = (ProtocolHandler.layer ++ textHandlerLayer ++ UnhandledMessageHandler.layer) >>> channelHandlerLayer
-    (ZLayer.service[HomeAssistantRenderer] ++ configLayer ++ channelHandlersLayer) >>> layer
-  }
+  val configuredLayer: RLayer[HomeAssistantRenderer, HomeAssistantProgram] =
+    ZLayer.makeSome[HomeAssistantRenderer, HomeAssistantProgram](
+      layer,
+      channelHandlerLayer,
+      hassResponseMessageHandlerLayer,
+      TextHandler.layer,
+      ProtocolHandler.layer,
+      UnhandledMessageHandler.layer,
+      AuthenticationHandler.layer,
+      ConnectHandler.layer,
+      MessageSender.layer,
+      ResultHandler.layer,
+      HassResponseMessageParser.layer,
+      SequentialMessageIdGenerator.layer,
+      HomeAssistantConfig.layer,
+    )
 
 }
