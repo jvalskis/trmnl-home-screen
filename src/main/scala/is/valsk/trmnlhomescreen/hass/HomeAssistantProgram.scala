@@ -22,7 +22,7 @@ object HomeAssistantProgram {
     def run: Task[Unit] =
       runIfEnabled(config.enabled, "Home Assistant feature is disabled") {
         val wsConfig = WebSocketConfig.default.decoderConfig(
-          SocketDecoder.default.maxFramePayloadLength(10 * 1024 * 1024),
+          SocketDecoder.default.maxFramePayloadLength(config.maxFrameSizeKb * 1024),
         )
         val client = Handler
           .webSocket { channel =>

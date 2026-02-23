@@ -9,6 +9,7 @@ final case class HomeAssistantConfig(
     webSocketUrl: String,
     accessToken: String,
     subscribedEntityIds: String,
+    maxFrameSizeKb: Int,
     templateFile: String,
 ) {
   def subscribedEntityIdList: List[String] =
