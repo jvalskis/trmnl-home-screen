@@ -6,7 +6,7 @@ import is.valsk.trmnlhomescreen.hass.protocol.*
 import is.valsk.trmnlhomescreen.hass.protocol.ChannelHandler.PartialChannelHandler
 import is.valsk.trmnlhomescreen.hass.protocol.api.RequestRepository
 import is.valsk.trmnlhomescreen.hass.protocol.handlers.*
-import zio.http.{Client, Handler}
+import zio.http.{Client, Handler, SocketDecoder, WebSocketConfig}
 import zio.{Duration, RLayer, Schedule, Scope, Task, URLayer, ZIO, ZLayer}
 
 trait HomeAssistantProgram extends Program
@@ -21,10 +21,14 @@ object HomeAssistantProgram {
 
     def run: Task[Unit] =
       runIfEnabled(config.enabled, "Home Assistant feature is disabled") {
+        val wsConfig = WebSocketConfig.default.decoderConfig(
+          SocketDecoder.default.maxFramePayloadLength(10 * 1024 * 1024),
+        )
         val client = Handler
           .webSocket { channel =>
             channel.receiveAll(event => channelHandler(channel, event))
           }
+          .withConfig(wsConfig)
           .connect(config.webSocketUrl)
         val retrySchedule = Schedule.exponential(Duration.fromSeconds(1), 2.0) &&
           Schedule.recurs(10) &&
