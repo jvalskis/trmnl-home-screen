@@ -17,7 +17,7 @@ object CommandPhaseHandlerLive {
       def apply(using channel: WebSocketChannel): Task[Unit] =
         for {
           _ <- ZIO.logInfo("Beginning command phase")
-          _ <- messageSender.send(SubscribeEventsCommand(config.subscribedEntityIds)) *> ZIO.logInfo("Subscribing to entity events")
+          _ <- messageSender.send(SubscribeEventsCommand(config.subscribedEntityIdList)) *> ZIO.logInfo("Subscribing to entity events")
           _ <- messageSender.send(GetStatesCommand()) *> ZIO.logInfo("Getting entity states")
         } yield ()
     }

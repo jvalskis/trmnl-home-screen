@@ -8,9 +8,12 @@ final case class HomeAssistantConfig(
     enabled: Boolean,
     webSocketUrl: String,
     accessToken: String,
-    subscribedEntityIds: List[String],
+    subscribedEntityIds: String,
     templateFile: String,
-)
+) {
+  def subscribedEntityIdList: List[String] =
+    subscribedEntityIds.split(",").map(_.trim).filter(_.nonEmpty).toList
+}
 
 object HomeAssistantConfig:
 
