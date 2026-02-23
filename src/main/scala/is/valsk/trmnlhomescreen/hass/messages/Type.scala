@@ -11,6 +11,7 @@ enum Type(val typeName: String) {
   case AuthOK extends Type("auth_ok")
   case AuthInvalid extends Type("auth_invalid")
   case Result extends Type("result")
+  case Event extends Type("event")
 }
 
 object Type {
