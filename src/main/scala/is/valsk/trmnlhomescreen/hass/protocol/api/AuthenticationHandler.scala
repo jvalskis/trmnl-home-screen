@@ -1,6 +1,6 @@
 package is.valsk.trmnlhomescreen.hass.protocol.api
 
-import is.valsk.trmnlhomescreen.hass.HassConfig
+import is.valsk.trmnlhomescreen.hass.HomeAssistantConfig
 import is.valsk.trmnlhomescreen.hass.messages.commands.Auth
 import is.valsk.trmnlhomescreen.hass.messages.responses.{AuthInvalid, AuthRequired}
 import is.valsk.trmnlhomescreen.hass.protocol.api.HassResponseMessageHandler.{HassResponseMessageContext, PartialHassResponseMessageHandler}
@@ -9,7 +9,7 @@ import zio.http.*
 import zio.http.ChannelEvent.Read
 import zio.json.*
 
-class AuthenticationHandler(config: HassConfig) extends HassResponseMessageHandler {
+class AuthenticationHandler(config: HomeAssistantConfig) extends HassResponseMessageHandler {
 
   override def get: PartialHassResponseMessageHandler = {
     case HassResponseMessageContext(channel, message: AuthInvalid) => handleAuthInvalid(channel, message)
@@ -31,11 +31,11 @@ class AuthenticationHandler(config: HassConfig) extends HassResponseMessageHandl
 }
 
 object AuthenticationHandler {
-  val layer: URLayer[HassConfig, AuthenticationHandler] = ZLayer {
+  val layer: URLayer[HomeAssistantConfig, AuthenticationHandler] = ZLayer {
     for {
-      config <- ZIO.service[HassConfig]
+      config <- ZIO.service[HomeAssistantConfig]
     } yield AuthenticationHandler(config)
   }
 
-  val configuredLayer: TaskLayer[AuthenticationHandler] = HassConfig.layer >>> layer
+  val configuredLayer: TaskLayer[AuthenticationHandler] = HomeAssistantConfig.layer >>> layer
 }

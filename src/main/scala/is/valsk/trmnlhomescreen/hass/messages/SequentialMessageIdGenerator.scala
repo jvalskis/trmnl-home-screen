@@ -4,7 +4,8 @@ import zio.*
 
 class SequentialMessageIdGenerator(messageId: Ref[Int]) extends MessageIdGenerator {
 
-  def generate(): UIO[Int] = messageId.getAndUpdate(_ + 1)}
+  def generate(): UIO[Int] = messageId.getAndUpdate(_ + 1)
+}
 
 object SequentialMessageIdGenerator {
 

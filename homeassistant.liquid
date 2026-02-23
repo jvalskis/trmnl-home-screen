@@ -1,0 +1,7 @@
+--- Home Assistant ({{ total_entities }} entities in {{ area_count }} areas) ---
+{% for area in areas %}
+=== {{ area.area_name }} ({{ area.entity_count }}) ===
+{% for entity in area.entities %}
+  {{ entity.friendly_name }}: {{ entity.state }}{% if entity.unit != "" %} {{ entity.unit }}{% endif %}
+{% endfor %}
+{% endfor %}
