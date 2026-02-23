@@ -4,7 +4,7 @@ import is.valsk.trmnlhomescreen.Program
 import is.valsk.trmnlhomescreen.hass.messages.{HassResponseMessageParser, SequentialMessageIdGenerator, Type}
 import is.valsk.trmnlhomescreen.hass.protocol.*
 import is.valsk.trmnlhomescreen.hass.protocol.ChannelHandler.PartialChannelHandler
-import is.valsk.trmnlhomescreen.hass.protocol.api.RequestRepository
+import is.valsk.trmnlhomescreen.hass.protocol.api.{EntityStateRepository, RequestRepository}
 import is.valsk.trmnlhomescreen.hass.protocol.handlers.*
 import zio.http.{Client, Handler, SocketDecoder, WebSocketConfig}
 import zio.{Duration, RLayer, Schedule, Scope, Task, URLayer, ZIO, ZLayer}
@@ -17,6 +17,7 @@ object HomeAssistantProgram {
       channelHandler: PartialChannelHandler,
       config: HomeAssistantConfig,
       renderer: HomeAssistantRenderer,
+      entityStateRepository: EntityStateRepository,
   ) extends HomeAssistantProgram {
 
     def run: Task[Unit] =
@@ -42,45 +43,26 @@ object HomeAssistantProgram {
             )
           _ <- ZIO.fail(new RuntimeException("Connection closed"))
         } yield ()
+        val renderLoop = (renderEntities *> ZIO.sleep(Duration.fromSeconds(30))).forever
+
         connect
           .tapError(e => ZIO.logError(s"Connection to HASS lost: ${e.getMessage}"))
           .retry(retrySchedule.tapOutput((duration, _, _) =>
             ZIO.logInfo(s"Reconnecting in ${duration.toSeconds}s...")
-          ))
+          )) <&> renderLoop
       }
 
-//    private def fetchAndPrint: Task[Unit] =
-//      for
-//        areaMapping <- client.fetchAreaRegistry()
-//        states <- client.fetchEntityStates()
-//        areaGroups = groupByArea(states, areaMapping)
-//        rendered <- renderer.render(areaGroups)
-//        _ <- Console.printLine(rendered)
-//      yield ()
-//
-//    private def groupByArea(
-//        states: List[EntityState],
-//        areaMapping: Map[String, String],
-//    ): List[AreaGroup] =
-//      val entitiesWithArea = states.map { state =>
-//        EntityWithArea(
-//          entityId = state.entityId,
-//          friendlyName = state.attributes.friendlyName.getOrElse(state.entityId),
-//          state = state.state,
-//          unitOfMeasurement = state.attributes.unitOfMeasurement.getOrElse(""),
-//          areaName = areaMapping.getOrElse(state.entityId, "Unknown"),
-//        )
-//      }
-//      entitiesWithArea
-//        .groupBy(_.areaName)
-//        .toList
-//        .sortBy(_._1)
-//        .map { case (areaName, entities) => AreaGroup(areaName, entities) }
+    private def renderEntities: Task[Unit] =
+      for {
+        entities <- entityStateRepository.getAll
+        rendered <- renderer.render(entities)
+        _ <- ZIO.logInfo(s"\n$rendered")
+      } yield ()
 
   }
 
   val layer: URLayer[
-    HomeAssistantRenderer & HomeAssistantConfig & List[ChannelHandler],
+    HomeAssistantRenderer & HomeAssistantConfig & List[ChannelHandler] & EntityStateRepository,
     HomeAssistantProgram,
   ] =
     ZLayer {
@@ -88,8 +70,9 @@ object HomeAssistantProgram {
         config <- ZIO.service[HomeAssistantConfig]
         renderer <- ZIO.service[HomeAssistantRenderer]
         channelHandlers <- ZIO.service[List[ChannelHandler]]
+        entityStateRepository <- ZIO.service[EntityStateRepository]
         combinedHandler = channelHandlers.foldLeft(ChannelHandler.empty) { (a, b) => a orElse b.get }
-      } yield HomeAssistantProgramLive(combinedHandler, config, renderer)
+      } yield HomeAssistantProgramLive(combinedHandler, config, renderer, entityStateRepository)
     }
 
   private val channelHandlerLayer
@@ -123,6 +106,7 @@ object HomeAssistantProgram {
       MessageSender.layer,
       ResultHandler.layer,
       RequestRepository.layer,
+      EntityStateRepository.layer,
       ZLayer.succeed(Map.empty[Type, HomeAssistantResultHandler]),
       CommandPhaseHandlerLive.layer,
       HassResponseMessageParser.layer,

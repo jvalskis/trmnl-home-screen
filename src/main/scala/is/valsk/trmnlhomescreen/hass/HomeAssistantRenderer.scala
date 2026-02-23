@@ -7,7 +7,7 @@ import java.nio.file.{Files, Path}
 import scala.jdk.CollectionConverters.*
 
 trait HomeAssistantRenderer:
-  def render(areaGroups: List[AreaGroup]): Task[String]
+  def render(entities: Map[String, EntityState]): Task[String]
 
 object HomeAssistantRenderer:
 
@@ -31,28 +31,19 @@ object HomeAssistantRenderer:
 
   private final case class LiveHomeAssistantRenderer(template: Template) extends HomeAssistantRenderer:
 
-    def render(areaGroups: List[AreaGroup]): Task[String] =
+    def render(entities: Map[String, EntityState]): Task[String] =
       ZIO.attempt {
-        val totalEntities = areaGroups.map(_.entities.size).sum
-        val areaMaps = areaGroups.map { group =>
-          val entityMaps = group.entities.map { entity =>
-            Map[String, Any](
-              "entity_id" -> entity.entityId,
-              "friendly_name" -> entity.friendlyName,
-              "state" -> entity.state,
-              "unit" -> entity.unitOfMeasurement,
-            ).asJava
-          }.asJava
+        val entityMaps = entities.values.toList.sortBy(_.entityId).map { entity =>
           Map[String, Any](
-            "area_name" -> group.areaName,
-            "entities" -> entityMaps,
-            "entity_count" -> group.entities.size,
+            "entity_id" -> entity.entityId,
+            "friendly_name" -> entity.attributes.friendlyName.getOrElse(entity.entityId),
+            "state" -> entity.state,
+            "unit" -> entity.attributes.unitOfMeasurement.getOrElse(""),
           ).asJava
         }.asJava
         val variables = Map[String, Any](
-          "areas" -> areaMaps,
-          "area_count" -> areaGroups.size,
-          "total_entities" -> totalEntities,
+          "entities" -> entityMaps,
+          "entity_count" -> entities.size,
         )
         template.render(variables.asJava)
       }
