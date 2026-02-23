@@ -1,10 +1,11 @@
 package is.valsk.trmnlhomescreen.hass
 
 import is.valsk.trmnlhomescreen.Program
-import is.valsk.trmnlhomescreen.hass.messages.{HassResponseMessageParser, SequentialMessageIdGenerator}
+import is.valsk.trmnlhomescreen.hass.messages.{HassResponseMessageParser, SequentialMessageIdGenerator, Type}
+import is.valsk.trmnlhomescreen.hass.protocol.*
 import is.valsk.trmnlhomescreen.hass.protocol.ChannelHandler.PartialChannelHandler
-import is.valsk.trmnlhomescreen.hass.protocol.api.{AuthenticationHandler, ConnectHandler, HassResponseMessageHandler, MessageSender, ResultHandler}
-import is.valsk.trmnlhomescreen.hass.protocol.{ChannelHandler, ProtocolHandler, TextHandler, UnhandledMessageHandler}
+import is.valsk.trmnlhomescreen.hass.protocol.api.RequestRepository
+import is.valsk.trmnlhomescreen.hass.protocol.handlers.*
 import zio.http.{Client, Handler}
 import zio.{RLayer, Scope, Task, URLayer, ZIO, ZLayer}
 
@@ -15,7 +16,6 @@ object HomeAssistantProgram {
   private class HomeAssistantProgramLive(
       channelHandler: PartialChannelHandler,
       config: HomeAssistantConfig,
-//      client: HomeAssistantClient,
       renderer: HomeAssistantRenderer,
   ) extends HomeAssistantProgram {
 
@@ -35,13 +35,6 @@ object HomeAssistantProgram {
             )
             .logError("Error connecting to HASS")
         } yield ()
-//        for
-//          _ <- ZIO.logInfo(s"Starting Home Assistant integration for ${config.host}:${config.port}")
-//          interval = Duration.fromSeconds(config.fetchIntervalMinutes.toLong * 60)
-//          _ <- fetchAndPrint
-//            .catchAll(e => ZIO.logError(s"Failed to fetch Home Assistant data: ${e.getMessage}"))
-//            .repeat(Schedule.fixed(interval))
-//        yield ()
       }
 
 //    private def fetchAndPrint: Task[Unit] =
@@ -81,7 +74,6 @@ object HomeAssistantProgram {
     ZLayer {
       for {
         config <- ZIO.service[HomeAssistantConfig]
-//        client <- ZIO.service[HomeAssistantClient]
         renderer <- ZIO.service[HomeAssistantRenderer]
         channelHandlers <- ZIO.service[List[ChannelHandler]]
         combinedHandler = channelHandlers.foldLeft(ChannelHandler.empty) { (a, b) => a orElse b.get }
@@ -97,13 +89,14 @@ object HomeAssistantProgram {
     } yield List(protocolHandler, textHandler, unhandledMessageHandler)
   }
 
-  private val hassResponseMessageHandlerLayer
-      : URLayer[AuthenticationHandler & ConnectHandler & ResultHandler, List[HassResponseMessageHandler]] = ZLayer {
+  private val hassResponseMessageHandlerLayer: URLayer[
+    AuthenticationHandler & ResultHandler,
+    List[HassResponseMessageHandler],
+  ] = ZLayer {
     for {
       authenticationHandler <- ZIO.service[AuthenticationHandler]
-      connectHandler <- ZIO.service[ConnectHandler]
       resultHandler <- ZIO.service[ResultHandler]
-    } yield List(authenticationHandler, connectHandler, resultHandler)
+    } yield List(authenticationHandler, resultHandler)
   }
 
   val configuredLayer: RLayer[HomeAssistantRenderer, HomeAssistantProgram] =
@@ -115,9 +108,11 @@ object HomeAssistantProgram {
       ProtocolHandler.layer,
       UnhandledMessageHandler.layer,
       AuthenticationHandler.layer,
-      ConnectHandler.layer,
       MessageSender.layer,
       ResultHandler.layer,
+      RequestRepository.layer,
+      ZLayer.succeed(Map.empty[Type, HomeAssistantResultHandler]),
+      CommandPhaseHandlerLive.layer,
       HassResponseMessageParser.layer,
       SequentialMessageIdGenerator.layer,
       HomeAssistantConfig.layer,

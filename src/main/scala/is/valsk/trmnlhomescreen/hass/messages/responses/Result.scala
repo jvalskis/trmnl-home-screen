@@ -9,12 +9,14 @@ case class Result(
     id: Int,
     success: Boolean,
     result: Option[Json],
-    error: Option[HassError]
-) extends HassResponseMessage with HassIdentifiableMessage
+    error: Option[HassError],
+    event: Option[Json],
+) extends HassResponseMessage
+    with HassIdentifiableMessage
 
 case class HassError(
     code: String,
-    message: String
+    message: String,
 )
 
 object Result {

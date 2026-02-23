@@ -18,7 +18,7 @@ class HassResponseMessageParser extends MessageParser[HassResponseMessage] {
           case Type.AuthOK => json.fromJson[AuthOK]
           case Type.AuthInvalid => json.fromJson[AuthInvalid]
           case Type.Result => json.fromJson[Result]
-          case Type.Event => json.fromJson[SubscribeEntitiesEvent]
+          case Type.Event => json.fromJson[Event]
           case other => Left(s"Unsupported type: $other")
         }
         parseResult match
@@ -27,6 +27,7 @@ class HassResponseMessageParser extends MessageParser[HassResponseMessage] {
       case _ => ZIO.fail(ParseError("Failed to extract HASS message type"))
     }
   }
+
 }
 
 object HassResponseMessageParser {

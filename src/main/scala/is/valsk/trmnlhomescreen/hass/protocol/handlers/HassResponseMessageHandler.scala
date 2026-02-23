@@ -1,7 +1,7 @@
-package is.valsk.trmnlhomescreen.hass.protocol.api
+package is.valsk.trmnlhomescreen.hass.protocol.handlers
 
-import is.valsk.trmnlhomescreen.hass.messages.HassResponseMessage
-import is.valsk.trmnlhomescreen.hass.protocol.api.HassResponseMessageHandler.PartialHassResponseMessageHandler
+import is.valsk.trmnlhomescreen.hass.messages.{HassResponseMessage, Type}
+import HassResponseMessageHandler.PartialHassResponseMessageHandler
 import zio.*
 import zio.http.WebSocketChannel
 
@@ -18,6 +18,7 @@ object HassResponseMessageHandler {
 
   case class HassResponseMessageContext(
       channel: WebSocketChannel,
-      message: HassResponseMessage
+      message: HassResponseMessage,
   )
+
 }
