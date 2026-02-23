@@ -7,7 +7,7 @@ import is.valsk.trmnlhomescreen.hass.protocol.ChannelHandler.PartialChannelHandl
 import is.valsk.trmnlhomescreen.hass.protocol.api.RequestRepository
 import is.valsk.trmnlhomescreen.hass.protocol.handlers.*
 import zio.http.{Client, Handler}
-import zio.{RLayer, Scope, Task, URLayer, ZIO, ZLayer}
+import zio.{Duration, RLayer, Schedule, Scope, Task, URLayer, ZIO, ZLayer}
 
 trait HomeAssistantProgram extends Program
 
@@ -26,15 +26,22 @@ object HomeAssistantProgram {
             channel.receiveAll(event => channelHandler(channel, event))
           }
           .connect(config.webSocketUrl)
-        for {
+        val retrySchedule = Schedule.exponential(Duration.fromSeconds(1), 2.0) &&
+          Schedule.recurs(10) &&
+          Schedule.recurWhile[Throwable](_ => true)
+        val connect = for {
           _ <- ZIO.logInfo(s"Connecting to HASS @ ${config.webSocketUrl}")
           _ <- (client *> ZIO.never)
             .provide(
               Client.default,
               Scope.default,
             )
-            .logError("Error connecting to HASS")
         } yield ()
+        connect
+          .tapError(e => ZIO.logError(s"Connection to HASS lost: ${e.getMessage}"))
+          .retry(retrySchedule.tapOutput((duration, _, _) =>
+            ZIO.logInfo(s"Reconnecting in ${duration.toSeconds}s...")
+          ))
       }
 
 //    private def fetchAndPrint: Task[Unit] =
