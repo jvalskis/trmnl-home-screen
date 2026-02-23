@@ -7,12 +7,8 @@ import zio.config.typesafe.TypesafeConfigProvider
 final case class HomeAssistantConfig(
     enabled: Boolean,
     webSocketUrl: String,
-    host: String,
-    port: Int,
-    useSsl: Boolean,
     accessToken: String,
-    entityPattern: String,
-    fetchIntervalMinutes: Int,
+    subscribedEntityIds: List[String],
     templateFile: String,
 )
 

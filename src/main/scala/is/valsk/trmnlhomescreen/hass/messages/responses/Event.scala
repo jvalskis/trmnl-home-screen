@@ -7,16 +7,21 @@ import zio.json.{DeriveJsonDecoder, JsonDecoder, jsonField}
 case class Event(
     id: Int,
     `type`: String,
-    data: EventData,
+    event: EventPayload,
 ) extends HassResponseMessage
     with HassIdentifiableMessage
 
-case class EventData(
+case class EventPayload(
+    data: StateChangedData,
+)
+
+case class StateChangedData(
     @jsonField("new_state")
     newState: EntityState,
 )
 
 object Event {
+  given JsonDecoder[StateChangedData] = DeriveJsonDecoder.gen[StateChangedData]
+  given JsonDecoder[EventPayload] = DeriveJsonDecoder.gen[EventPayload]
   given JsonDecoder[Event] = DeriveJsonDecoder.gen[Event]
-  given JsonDecoder[EventData] = DeriveJsonDecoder.gen[EventData]
 }

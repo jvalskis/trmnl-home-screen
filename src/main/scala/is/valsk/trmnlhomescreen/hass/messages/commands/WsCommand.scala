@@ -10,8 +10,8 @@ case class WsCommand(
     id: Int,
     @jsonField("entity_ids")
     entityIds: Seq[String] = Seq.empty,
-    @jsonField("entity_ids")
-    eventType: Option[String] = None
+    @jsonField("event_type")
+    eventType: Option[String] = None,
 ) extends HassRequestMessage
     with HassIdentifiableMessage
 
@@ -35,7 +35,7 @@ object DeviceRegistryListCommand {
   def apply(id: Int): WsCommand = WsCommand("config/device_registry/list", id)
 }
 
-object SubscribeEntitiesCommand {
+object SubscribeEventsCommand {
 
   def apply(entityIds: Seq[String]): WsCommand = WsCommand(SubscribeEvents.typeName, 0, entityIds, Some("state_changed"))
 }
