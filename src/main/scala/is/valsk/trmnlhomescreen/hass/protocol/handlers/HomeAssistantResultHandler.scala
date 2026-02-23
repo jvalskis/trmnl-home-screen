@@ -8,10 +8,12 @@ import zio.{Task, ZIO}
 trait HomeAssistantResultHandler {
 
   def handle(channel: WebSocketChannel, result: HassResponseMessage & HassIdentifiableMessage): Task[Unit] = {
+    ZIO.logInfo(s"Received message: $result") *>
     requestRepository.get(result.id).flatMap {
       case Some(t) if t == supportedType =>
         handleInternal(channel, result)
-      case _ => ZIO.unit
+      case _ =>
+        ZIO.logWarning(s"No handler found for message: $result")
     }
 
   }

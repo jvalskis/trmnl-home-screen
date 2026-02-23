@@ -20,11 +20,11 @@ class SubscribeEntitiesHandler(
       case result: Event =>
         val entityState = result.data.newState
         entityStateRepository.add(entityState.entityId, entityState) *>
-          ZIO.logDebug(s"Updated entity state for ${entityState.entityId}")
+          ZIO.logDebug(s"Updated entity state for ${entityState.entityId} -> $result")
       case _ => ZIO.unit
     }
 
-  override val supportedType: Type = Type.SubscribeEntities
+  override val supportedType: Type = Type.SubscribeEvents
 
 }
 

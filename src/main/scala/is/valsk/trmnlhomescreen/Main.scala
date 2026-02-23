@@ -21,7 +21,6 @@ object Main extends ZIOAppDefault:
       CalendarRenderer.configuredLayer,
       WeatherProgram.configuredLayer,
       CalendarProgram.configuredLayer,
-//      HomeAssistantClient.configuredLayer,
       HomeAssistantRenderer.configuredLayer,
       HomeAssistantProgram.configuredLayer,
     )

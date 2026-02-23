@@ -14,8 +14,9 @@ object CommandPhaseHandlerLive {
     } yield new CommandPhaseHandler {
       def apply(using channel: WebSocketChannel): Task[Unit] =
         for {
-          _ <- messageSender.send(SubscribeEntitiesCommand(Seq.empty))
-          _ <- messageSender.send(GetStatesCommand())
+          _ <- ZIO.logInfo("Beginning command phase")
+          _ <- messageSender.send(SubscribeEntitiesCommand(Seq("sensor.augustas_humidity", "svetaine_dregmes_ir_temperaturos_sensorius_temperature"))) *> ZIO.logInfo("Subscribing to entity events")
+          _ <- messageSender.send(GetStatesCommand()) *> ZIO.logInfo("Getting entity states")
         } yield ()
     }
   }

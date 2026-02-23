@@ -23,9 +23,10 @@ object MessageSender {
       for {
         id <- messageIdGenerator.generate()
         json = message.copy(id = id).toJson
-        _ <- requestTypeRepository.add(id, Type.valueOf(message.`type`))
-        _ <- ZIO.logInfo(s"Sending message $json") *>
-          channel.send(Read(WebSocketFrame.text(json)))
+        messageType <- ZIO.fromEither(Type.parse(message.`type`))
+        _ <- requestTypeRepository.add(id, messageType)
+        _ <- ZIO.logInfo(s"Sending message $json")
+        _ <- channel.send(Read(WebSocketFrame.text(json)))
       } yield ()
 
   }

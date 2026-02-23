@@ -1,6 +1,6 @@
 package is.valsk.trmnlhomescreen.hass.messages.commands
 
-import is.valsk.trmnlhomescreen.hass.messages.Type.{GetStates, SubscribeEntities}
+import is.valsk.trmnlhomescreen.hass.messages.Type.{GetStates, SubscribeEvents}
 import zio.json.*
 import is.valsk.trmnlhomescreen.hass.messages.{HassIdentifiableMessage, HassRequestMessage, Type}
 import zio.json.{DeriveJsonEncoder, JsonEncoder}
@@ -10,6 +10,8 @@ case class WsCommand(
     id: Int,
     @jsonField("entity_ids")
     entityIds: Seq[String] = Seq.empty,
+    @jsonField("entity_ids")
+    eventType: Option[String] = None
 ) extends HassRequestMessage
     with HassIdentifiableMessage
 
@@ -35,7 +37,7 @@ object DeviceRegistryListCommand {
 
 object SubscribeEntitiesCommand {
 
-  def apply(entityIds: Seq[String]): WsCommand = WsCommand(SubscribeEntities.typeName, 0, entityIds)
+  def apply(entityIds: Seq[String]): WsCommand = WsCommand(SubscribeEvents.typeName, 0, entityIds, Some("state_changed"))
 }
 
 object GetStatesCommand {

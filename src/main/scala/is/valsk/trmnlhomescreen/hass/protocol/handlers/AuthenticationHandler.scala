@@ -36,7 +36,6 @@ class AuthenticationHandler(config: HomeAssistantConfig, commandPhaseHandler: Co
   private def handleAuthOK(channel: WebSocketChannel) = {
     for {
       _ <- ZIO.logInfo(s"AuthOK. Beginning command phase")
-      authMessage = Auth(config.accessToken)
       _ <- commandPhaseHandler(using channel)
     } yield ()
   }

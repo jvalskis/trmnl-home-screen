@@ -12,7 +12,7 @@ enum Type(val typeName: String) {
   case AuthInvalid extends Type("auth_invalid")
   case Result extends Type("result")
   case Event extends Type("event")
-  case SubscribeEntities extends Type("subscribe_entities")
+  case SubscribeEvents extends Type("subscribe_events")
   case GetStates extends Type("get_states")
 }
 
