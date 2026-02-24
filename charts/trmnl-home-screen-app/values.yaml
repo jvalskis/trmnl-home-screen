@@ -33,6 +33,18 @@ controllers:
           CALDAV_FETCH_INTERVAL_MINUTES: "30"
           CALDAV_DAYS_AHEAD: "7"
           CALENDAR_TEMPLATE_FILE: "/app/templates/calendar.liquid"
+          HOME_ASSISTANT_ENABLED: "false"
+          HOME_ASSISTANT_HOST: "homeassistant.local"
+          HOME_ASSISTANT_PORT: "8123"
+          HOME_ASSISTANT_USE_SSL: "false"
+          HOME_ASSISTANT_ACCESS_TOKEN: YOUR_HA_TOKEN
+#            valueFrom:
+#              secretKeyRef:
+#                name: ""
+#                key: HOME_ASSISTANT_ACCESS_TOKEN
+          HOME_ASSISTANT_ENTITY_PATTERN: "sensor.*"
+          HOME_ASSISTANT_FETCH_INTERVAL_MINUTES: "15"
+          HOME_ASSISTANT_TEMPLATE_FILE: "/app/templates/homeassistant.liquid"
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false

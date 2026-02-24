@@ -1,5 +1,6 @@
 package is.valsk.trmnlhomescreen.calendar
 
+import is.valsk.trmnlhomescreen.Configs.makeLayer
 import zio.*
 import zio.config.magnolia.deriveConfig
 import zio.config.typesafe.TypesafeConfigProvider
@@ -17,10 +18,4 @@ final case class CalendarConfig(
 
 object CalendarConfig:
 
-  private val descriptor: Config[CalendarConfig] =
-    deriveConfig[CalendarConfig].nested("calendar")
-
-  val layer: ZLayer[Any, Config.Error, CalendarConfig] =
-    ZLayer.fromZIO(
-      TypesafeConfigProvider.fromResourcePath().load(descriptor),
-    )
+  val layer: ZLayer[Any, Config.Error, CalendarConfig] = makeLayer("calendar")

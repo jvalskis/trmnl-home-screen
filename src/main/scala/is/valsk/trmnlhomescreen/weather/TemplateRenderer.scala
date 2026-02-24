@@ -1,7 +1,7 @@
-package is.valsk.trmnlhomescreen
+package is.valsk.trmnlhomescreen.weather
 
-import liqp.Template
-import liqp.TemplateParser
+import is.valsk.trmnlhomescreen.CurrentConditions
+import liqp.{Template, TemplateParser}
 import zio.*
 
 import java.nio.file.{Files, Path}
@@ -27,6 +27,8 @@ object TemplateRenderer:
           .tapError(e => ZIO.logError(s"Failed to load template from ${config.templateFile}: ${e.getMessage}"))
       yield renderer
     }
+
+  val configuredLayer: ZLayer[Any, Throwable, TemplateRenderer] = WeatherConfig.layer >>> layer
 
   private final case class LiveTemplateRenderer(template: Template) extends TemplateRenderer:
 

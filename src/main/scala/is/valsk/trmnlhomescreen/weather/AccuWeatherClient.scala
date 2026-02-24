@@ -1,6 +1,6 @@
 package is.valsk.trmnlhomescreen.weather
 
-import is.valsk.trmnlhomescreen.{CurrentConditions, Location, WeatherConfig}
+import is.valsk.trmnlhomescreen.{CurrentConditions, Location}
 import zio.*
 import zio.http.*
 import zio.json.*
@@ -19,6 +19,8 @@ object AccuWeatherClient:
 
   val layer: ZLayer[Client & WeatherConfig, Nothing, AccuWeatherClient] =
     ZLayer.fromFunction(LiveAccuWeatherClient.apply)
+
+  val configuredLayer: ZLayer[Client, Config.Error, AccuWeatherClient] = WeatherConfig.layer >>> layer
 
   private final case class LiveAccuWeatherClient(
       client: Client,
