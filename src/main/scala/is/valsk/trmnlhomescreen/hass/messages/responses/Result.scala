@@ -10,7 +10,6 @@ case class Result(
     success: Boolean,
     result: Option[Json],
     error: Option[HassError],
-    event: Option[Json],
 ) extends HassResponseMessage
     with HassIdentifiableMessage
 

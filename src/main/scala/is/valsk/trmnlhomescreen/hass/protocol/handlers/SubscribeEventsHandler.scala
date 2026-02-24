@@ -6,7 +6,7 @@ import is.valsk.trmnlhomescreen.hass.protocol.api.{EntityStateRepository, Reques
 import zio.*
 import zio.http.WebSocketChannel
 
-class SubscribeEntitiesHandler(
+class SubscribeEventsHandler(
     entityStateRepository: EntityStateRepository,
     val requestRepository: RequestRepository,
 ) extends HomeAssistantResultHandler {
@@ -27,13 +27,13 @@ class SubscribeEntitiesHandler(
 
 }
 
-object SubscribeEntitiesHandler {
+object SubscribeEventsHandler {
 
-  val layer: URLayer[RequestRepository & EntityStateRepository, SubscribeEntitiesHandler] = ZLayer {
+  val layer: URLayer[RequestRepository & EntityStateRepository, SubscribeEventsHandler] = ZLayer {
     for {
       requestRepository <- ZIO.service[RequestRepository]
       entityStateRepository <- ZIO.service[EntityStateRepository]
-    } yield SubscribeEntitiesHandler(entityStateRepository, requestRepository)
+    } yield SubscribeEventsHandler(entityStateRepository, requestRepository)
   }
 
 }

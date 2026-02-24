@@ -3,8 +3,8 @@ package is.valsk.trmnlhomescreen.hass.protocol.handlers
 import is.valsk.trmnlhomescreen.hass.HomeAssistantConfig
 import is.valsk.trmnlhomescreen.hass.messages.commands.Auth
 import is.valsk.trmnlhomescreen.hass.messages.responses.{AuthInvalid, AuthOK, AuthRequired}
-import HassResponseMessageHandler.{HassResponseMessageContext, PartialHassResponseMessageHandler}
 import is.valsk.trmnlhomescreen.hass.protocol.handlers.AuthenticationHandler.CommandPhaseHandler
+import is.valsk.trmnlhomescreen.hass.protocol.handlers.HassResponseMessageHandler.{HassResponseMessageContext, PartialHassResponseMessageHandler}
 import zio.*
 import zio.http.*
 import zio.http.ChannelEvent.Read

@@ -47,9 +47,9 @@ object HomeAssistantProgram {
 
         connect
           .tapError(e => ZIO.logError(s"Connection to HASS lost: ${e.getMessage}"))
-          .retry(retrySchedule.tapOutput((duration, _, _) =>
-            ZIO.logInfo(s"Reconnecting in ${duration.toSeconds}s...")
-          )) <&> renderLoop
+          .retry(
+            retrySchedule.tapOutput((duration, _, _) => ZIO.logInfo(s"Reconnecting in ${duration.toSeconds}s...")),
+          ) <&> renderLoop
       }
 
     private def renderEntities: Task[Unit] =
@@ -102,7 +102,7 @@ object HomeAssistantProgram {
       TextHandler.layer,
       ProtocolHandler.layer,
       UnhandledMessageHandler.layer,
-      AuthenticationHandler.layer,
+      AuthenticationHandler.configuredLayer,
       MessageSender.layer,
       ResultHandler.layer,
       RequestRepository.layer,
@@ -110,14 +110,14 @@ object HomeAssistantProgram {
       ZLayer {
         for {
           getStatesHandler <- ZIO.service[GetStatesHandler]
-          subscribeEntitiesHandler <- ZIO.service[SubscribeEntitiesHandler]
+          subscribeEventsHandler <- ZIO.service[SubscribeEventsHandler]
         } yield Map[Type, HomeAssistantResultHandler](
           Type.GetStates -> getStatesHandler,
-          Type.SubscribeEvents -> subscribeEntitiesHandler,
+          Type.SubscribeEvents -> subscribeEventsHandler,
         )
       },
       GetStatesHandler.layer,
-      SubscribeEntitiesHandler.layer,
+      SubscribeEventsHandler.layer,
       CommandPhaseHandlerLive.layer,
       HassResponseMessageParser.layer,
       SequentialMessageIdGenerator.layer,

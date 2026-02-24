@@ -4,7 +4,6 @@ import is.valsk.trmnlhomescreen.hass.{EntityState, HomeAssistantConfig}
 import is.valsk.trmnlhomescreen.hass.messages.responses.*
 import is.valsk.trmnlhomescreen.hass.messages.{HassIdentifiableMessage, HassResponseMessage, Type}
 import is.valsk.trmnlhomescreen.hass.protocol.api.{EntityStateRepository, RequestRepository}
-import is.valsk.trmnlhomescreen.hass.protocol.handlers.HassResponseMessageHandler.{HassResponseMessageContext, PartialHassResponseMessageHandler}
 import zio.*
 import zio.http.WebSocketChannel
 import zio.json.*
