@@ -1,10 +1,9 @@
 package is.valsk.trmnlhomescreen.hass.protocol
 
-import is.valsk.trmnlhomescreen.hass.messages.{HassResponseMessage, MessageParser, Type}
+import is.valsk.trmnlhomescreen.hass.messages.{HassResponseMessage, MessageParser}
 import is.valsk.trmnlhomescreen.hass.protocol.ChannelHandler.PartialChannelHandler
-import is.valsk.trmnlhomescreen.hass.protocol.api.{EntityStateRepository, RequestRepository}
 import is.valsk.trmnlhomescreen.hass.protocol.handlers.HassResponseMessageHandler.{HassResponseMessageContext, PartialHassResponseMessageHandler}
-import is.valsk.trmnlhomescreen.hass.protocol.handlers.{HassResponseMessageHandler, HomeAssistantResultHandler}
+import is.valsk.trmnlhomescreen.hass.protocol.handlers.HassResponseMessageHandler
 import zio.*
 import zio.http.ChannelEvent.*
 import zio.http.*
