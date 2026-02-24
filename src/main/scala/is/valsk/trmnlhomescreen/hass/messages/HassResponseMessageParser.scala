@@ -1,8 +1,8 @@
 package is.valsk.trmnlhomescreen.hass.messages
 
+import is.valsk.trmnlhomescreen.hass.messages.HassResponseMessageParser.TypedMessage
 import is.valsk.trmnlhomescreen.hass.messages.MessageParser.ParseError
 import is.valsk.trmnlhomescreen.hass.messages.responses.*
-import is.valsk.trmnlhomescreen.hass.messages.responses.TypedMessage.decoder
 import zio.*
 import zio.json.*
 
@@ -12,7 +12,7 @@ class HassResponseMessageParser extends MessageParser[HassResponseMessage] {
     json.fromJson[TypedMessage] match {
       case Left(value) =>
         ZIO.fail(ParseError(value))
-      case Right(Type(messageType)) =>
+      case Right(TypedMessage(messageType)) =>
         val parseResult = messageType match {
           case Type.AuthRequired => json.fromJson[AuthRequired]
           case Type.AuthOK => json.fromJson[AuthOK]
@@ -33,4 +33,15 @@ class HassResponseMessageParser extends MessageParser[HassResponseMessage] {
 object HassResponseMessageParser {
 
   val layer: ULayer[MessageParser[HassResponseMessage]] = ZLayer.succeed(HassResponseMessageParser())
+
+  case class TypedMessage(
+      `type`: String,
+  )
+
+  object TypedMessage {
+    given decoder: JsonDecoder[TypedMessage] = DeriveJsonDecoder.gen[TypedMessage]
+
+    def unapply(typedMessage: TypedMessage): Option[Type] = Type.parse(typedMessage.`type`).toOption
+  }
+
 }

@@ -1,5 +1,6 @@
 package is.valsk.trmnlhomescreen.hass.messages.responses
 
+import is.valsk.trmnlhomescreen.hass.messages.responses.Result.HassError
 import is.valsk.trmnlhomescreen.hass.messages.{HassIdentifiableMessage, HassResponseMessage}
 import zio.json.{DeriveJsonDecoder, JsonDecoder}
 import zio.json.ast.Json
@@ -13,12 +14,13 @@ case class Result(
 ) extends HassResponseMessage
     with HassIdentifiableMessage
 
-case class HassError(
-    code: String,
-    message: String,
-)
-
 object Result {
   given hassErrorDecoder: JsonDecoder[HassError] = DeriveJsonDecoder.gen[HassError]
   given decoder: JsonDecoder[Result] = DeriveJsonDecoder.gen[Result]
+
+  case class HassError(
+      code: String,
+      message: String,
+  )
+
 }
