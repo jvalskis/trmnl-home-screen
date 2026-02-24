@@ -36,13 +36,13 @@ class ProtocolHandler extends ChannelHandler {
     ZIO.logInfo("Connection opened!")
 
   protected def channelUnregisteredHandler(ch: WebSocketChannel): Task[Unit] =
-    ZIO.logInfo("Connection closed!")
+    ZIO.fail(new RuntimeException("Connection closed!"))
 
   protected def handshakeCompleteHandler(ch: WebSocketChannel): Task[Unit] =
     ZIO.logInfo("Connection started!")
 
   protected def handshakeTimeoutHandler(ch: WebSocketChannel): Task[Unit] =
-    ZIO.logInfo("Connection failed!")
+    ZIO.fail(new RuntimeException("Connection failed!"))
 }
 
 object ProtocolHandler {
