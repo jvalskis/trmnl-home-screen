@@ -107,17 +107,12 @@ object HomeAssistantProgram {
       ResultHandler.layer,
       RequestRepository.layer,
       EntityStateRepository.layer,
-      ZLayer {
+      ZLayer.scoped {
         for {
-          getStatesHandler <- ZIO.service[GetStatesHandler]
-          subscribeEventsHandler <- ZIO.service[SubscribeEventsHandler]
-        } yield Map[Type, HomeAssistantResultHandler](
-          Type.GetStates -> getStatesHandler,
-          Type.SubscribeEvents -> subscribeEventsHandler,
-        )
+          getStates <- GetStatesHandler.layer.build.map(_.get)
+          subscribeEvents <- SubscribeEventsHandler.layer.build.map(_.get)
+        } yield Seq(getStates, subscribeEvents)
       },
-      GetStatesHandler.layer,
-      SubscribeEventsHandler.layer,
       CommandPhaseHandlerLive.layer,
       HassResponseMessageParser.layer,
       SequentialMessageIdGenerator.layer,

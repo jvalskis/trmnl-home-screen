@@ -24,11 +24,11 @@ class ResultHandler(
 
 object ResultHandler {
 
-  val layer: URLayer[RequestRepository & Map[Type, HomeAssistantResultHandler], ResultHandler] = ZLayer {
+  val layer: URLayer[RequestRepository & Seq[HomeAssistantResultHandler], ResultHandler] = ZLayer {
     for {
       requestRepository <- ZIO.service[RequestRepository]
-      handlers <- ZIO.service[Map[Type, HomeAssistantResultHandler]]
-    } yield ResultHandler(requestRepository, handlers)
+      handlers <- ZIO.service[Seq[HomeAssistantResultHandler]]
+    } yield ResultHandler(requestRepository, handlers.map(h => h.getSupportedType -> h).toMap)
   }
 
 }

@@ -5,26 +5,22 @@ import is.valsk.trmnlhomescreen.hass.protocol.api.RequestRepository
 import zio.http.WebSocketChannel
 import zio.{Task, ZIO}
 
-trait HomeAssistantResultHandler {
+class HomeAssistantResultHandler(
+    requestRepository: RequestRepository,
+    handler: PartialFunction[(WebSocketChannel, HassResponseMessage & HassIdentifiableMessage, Type), Task[Unit]],
+    supportedType: Type,
+) {
 
   def handle(channel: WebSocketChannel, result: HassResponseMessage & HassIdentifiableMessage): Task[Unit] = {
     ZIO.logInfo(s"Received message: $result") *>
-    requestRepository.get(result.id).flatMap {
-      case Some(t) if t == supportedType =>
-        handleInternal(channel, result)
-      case _ =>
-        ZIO.logWarning(s"No handler found for message: $result")
-    }
+      requestRepository.get(result.id).flatMap {
+        case Some(t) if t == supportedType && handler.isDefinedAt(channel, result, t) =>
+          handler(channel, result, t)
+        case _ =>
+          ZIO.logWarning(s"No handler found for message: $result")
+      }
 
   }
 
-  protected def handleInternal(
-      channel: WebSocketChannel,
-      result: HassResponseMessage & HassIdentifiableMessage,
-  ): Task[Unit]
-
-  protected def requestRepository: RequestRepository
-
-  protected val supportedType: Type
-
+  def getSupportedType: Type = supportedType
 }
