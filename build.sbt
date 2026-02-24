@@ -10,7 +10,6 @@ val scalaXmlVersion = "2.2.0"
 lazy val root = (project in file("."))
   .settings(
     name := "trmnl-home-screen-app",
-    version := "0.1.0",
     scalaVersion := "3.3.7",
     libraryDependencies ++= Seq(
       "dev.zio" %% "zio" % zioVersion,

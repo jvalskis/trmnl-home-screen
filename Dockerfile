@@ -24,7 +24,7 @@ WORKDIR /app
 # Copy fat JAR from build stage
 COPY --from=build /build/target/scala-3.3.7/trmnl-home-screen-app.jar /app/app.jar
 
-# Copy templates
+# Copy template
 COPY screen.liquid /app/templates/screen.liquid
 
 # Set ownership
