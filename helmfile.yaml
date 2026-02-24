@@ -1,0 +1,72 @@
+repositories:
+  - name: trmnl
+    url: oci://ghcr.io/jvalskis/helm-charts
+
+environments:
+  production:
+    values:
+      - controllers:
+          main:
+            containers:
+              main:
+                image:
+                  tag: latest
+                env:
+                  WEATHER_ENABLED: "true"
+                  WEATHER_CITY: "London"
+                  WEATHER_FETCH_INTERVAL_MINUTES: "60"
+                  ACCUWEATHER_API_KEY:
+                    valueFrom:
+                      secretKeyRef:
+                        name: trmnl-accuweather
+                        key: ACCUWEATHER_API_KEY
+                  CALENDAR_ENABLED: "true"
+                  CALDAV_CALENDAR_URL: "https://nextcloud.example.com/remote.php/dav/calendars/user/personal/"
+                  CALDAV_AUTH_TYPE: "basic"
+                  CALDAV_USERNAME: "user"
+                  CALDAV_FETCH_INTERVAL_MINUTES: "30"
+                  CALDAV_DAYS_AHEAD: "7"
+                  CALDAV_PASSWORD:
+                    valueFrom:
+                      secretKeyRef:
+                        name: trmnl-caldav
+                        key: CALDAV_PASSWORD
+                  HOME_ASSISTANT_ENABLED: "false"
+                  HOME_ASSISTANT_HOST: "homeassistant.local"
+                  HOME_ASSISTANT_PORT: "8123"
+                  HOME_ASSISTANT_USE_SSL: "false"
+                  HOME_ASSISTANT_ENTITY_PATTERN: "sensor.*"
+                  HOME_ASSISTANT_FETCH_INTERVAL_MINUTES: "15"
+                  HOME_ASSISTANT_ACCESS_TOKEN:
+                    valueFrom:
+                      secretKeyRef:
+                        name: trmnl-home-assistant
+                        key: HOME_ASSISTANT_ACCESS_TOKEN
+
+releases:
+  - name: trmnl-home-screen-app
+    chart: oci://ghcr.io/jvalskis/helm-charts/trmnl-home-screen-app
+    version: 0.1.0
+    values:
+      - controllers:
+          main:
+            containers:
+              main:
+                image:
+                  tag: {{ .Values | get "controllers.main.containers.main.image.tag" "" | quote }}
+                env:
+                  WEATHER_ENABLED: {{ .Values | get "controllers.main.containers.main.env.WEATHER_ENABLED" "true" | quote }}
+                  WEATHER_CITY: {{ .Values | get "controllers.main.containers.main.env.WEATHER_CITY" "London" | quote }}
+                  WEATHER_FETCH_INTERVAL_MINUTES: {{ .Values | get "controllers.main.containers.main.env.WEATHER_FETCH_INTERVAL_MINUTES" "60" | quote }}
+                  CALENDAR_ENABLED: {{ .Values | get "controllers.main.containers.main.env.CALENDAR_ENABLED" "true" | quote }}
+                  CALDAV_CALENDAR_URL: {{ .Values | get "controllers.main.containers.main.env.CALDAV_CALENDAR_URL" "" | quote }}
+                  CALDAV_AUTH_TYPE: {{ .Values | get "controllers.main.containers.main.env.CALDAV_AUTH_TYPE" "basic" | quote }}
+                  CALDAV_USERNAME: {{ .Values | get "controllers.main.containers.main.env.CALDAV_USERNAME" "user" | quote }}
+                  CALDAV_FETCH_INTERVAL_MINUTES: {{ .Values | get "controllers.main.containers.main.env.CALDAV_FETCH_INTERVAL_MINUTES" "30" | quote }}
+                  CALDAV_DAYS_AHEAD: {{ .Values | get "controllers.main.containers.main.env.CALDAV_DAYS_AHEAD" "7" | quote }}
+                  HOME_ASSISTANT_ENABLED: {{ .Values | get "controllers.main.containers.main.env.HOME_ASSISTANT_ENABLED" "false" | quote }}
+                  HOME_ASSISTANT_HOST: {{ .Values | get "controllers.main.containers.main.env.HOME_ASSISTANT_HOST" "homeassistant.local" | quote }}
+                  HOME_ASSISTANT_PORT: {{ .Values | get "controllers.main.containers.main.env.HOME_ASSISTANT_PORT" "8123" | quote }}
+                  HOME_ASSISTANT_USE_SSL: {{ .Values | get "controllers.main.containers.main.env.HOME_ASSISTANT_USE_SSL" "false" | quote }}
+                  HOME_ASSISTANT_ENTITY_PATTERN: {{ .Values | get "controllers.main.containers.main.env.HOME_ASSISTANT_ENTITY_PATTERN" "sensor.*" | quote }}
+                  HOME_ASSISTANT_FETCH_INTERVAL_MINUTES: {{ .Values | get "controllers.main.containers.main.env.HOME_ASSISTANT_FETCH_INTERVAL_MINUTES" "15" | quote }}
