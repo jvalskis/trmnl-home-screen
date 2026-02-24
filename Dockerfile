@@ -33,6 +33,9 @@ RUN chown -R appuser:appgroup /app
 USER appuser
 
 ENV SCREEN_TEMPLATE_FILE=/app/templates/screen.liquid
+ENV TRMNL_BASE_URL=http://localhost
+ENV TRMNL_API_KEY=""
+ENV TRMNL_MAC_ADDRESS=""
 
 EXPOSE 8080
 

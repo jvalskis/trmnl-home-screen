@@ -1,5 +1,6 @@
 package is.valsk.trmnlhomescreen
 
+import is.valsk.trmnlhomescreen.trmnl.TrmnlClient
 import zio.*
 
 trait RenderProgram extends Program
@@ -10,6 +11,7 @@ object RenderProgram:
       config: ScreenConfig,
       screenStateRepository: ScreenStateRepository,
       screenRenderer: ScreenRenderer,
+      trmnlClient: TrmnlClient,
   ) extends RenderProgram:
 
     def run: Task[Unit] =
@@ -18,18 +20,20 @@ object RenderProgram:
         state <- screenStateRepository.get
         rendered <- screenRenderer.render(state)
         _ <- Console.printLine(rendered)
+        _ <- trmnlClient.pushScreen(rendered)
       yield ()
       loop
         .catchAll(e => ZIO.logError(s"Failed to render screen: ${e.getMessage}"))
         .repeat(Schedule.fixed(interval))
         .unit
 
-  val layer: URLayer[ScreenConfig & ScreenStateRepository & ScreenRenderer, RenderProgram] = ZLayer {
+  val layer: URLayer[ScreenConfig & ScreenStateRepository & ScreenRenderer & TrmnlClient, RenderProgram] = ZLayer {
     for
       config <- ZIO.service[ScreenConfig]
       repo <- ZIO.service[ScreenStateRepository]
       renderer <- ZIO.service[ScreenRenderer]
-    yield RenderProgramLive(config, repo, renderer)
+      trmnl <- ZIO.service[TrmnlClient]
+    yield RenderProgramLive(config, repo, renderer, trmnl)
   }
 
-  val configuredLayer: RLayer[ScreenStateRepository & ScreenRenderer, RenderProgram] = ScreenConfig.layer >>> layer
+  val configuredLayer: RLayer[ScreenStateRepository & ScreenRenderer & TrmnlClient, RenderProgram] = ScreenConfig.layer >>> layer

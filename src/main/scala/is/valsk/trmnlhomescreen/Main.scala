@@ -3,6 +3,7 @@ package is.valsk.trmnlhomescreen
 import is.valsk.trmnlhomescreen.calendar.{CalDavClient, CalendarProgram}
 import is.valsk.trmnlhomescreen.weather.{AccuWeatherClient, WeatherProgram}
 import is.valsk.trmnlhomescreen.homeassistant.HomeAssistantProgram
+import is.valsk.trmnlhomescreen.trmnl.TrmnlClient
 import zio.*
 import zio.http.Client
 
@@ -20,6 +21,7 @@ object Main extends ZIOAppDefault:
       CalDavClient.configuredLayer,
       ScreenStateRepository.layer,
       ScreenRenderer.configuredLayer,
+      TrmnlClient.configuredLayer,
       RenderProgram.configuredLayer,
       WeatherProgram.configuredLayer,
       CalendarProgram.configuredLayer,
