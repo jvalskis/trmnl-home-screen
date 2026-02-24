@@ -2,8 +2,6 @@ package is.valsk.trmnlhomescreen.calendar
 
 import is.valsk.trmnlhomescreen.Configs.makeLayer
 import zio.*
-import zio.config.magnolia.deriveConfig
-import zio.config.typesafe.TypesafeConfigProvider
 
 final case class CalendarConfig(
     enabled: Boolean,
@@ -13,7 +11,6 @@ final case class CalendarConfig(
     password: String,
     fetchIntervalMinutes: Int,
     daysAhead: Int,
-    templateFile: String,
 )
 
 object CalendarConfig:

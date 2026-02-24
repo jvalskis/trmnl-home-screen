@@ -1,6 +1,6 @@
 package is.valsk.trmnlhomescreen.homeassistant
 
-import is.valsk.trmnlhomescreen.Program
+import is.valsk.trmnlhomescreen.{Program, ScreenStateRepository}
 import is.valsk.trmnlhomescreen.homeassistant.message.MessageIdGenerator.SequentialMessageIdGenerator
 import is.valsk.trmnlhomescreen.homeassistant.message.{HassResponseMessageParser, MessageSender, RequestRepository}
 import is.valsk.trmnlhomescreen.homeassistant.protocol.*
@@ -16,8 +16,6 @@ object HomeAssistantProgram {
   private class HomeAssistantProgramLive(
       channelHandler: PartialChannelHandler,
       config: HomeAssistantConfig,
-      renderer: HomeAssistantRenderer,
-      entityStateRepository: EntityStateRepository,
   ) extends HomeAssistantProgram {
 
     def run: Task[Unit] =
@@ -43,36 +41,26 @@ object HomeAssistantProgram {
             )
           _ <- ZIO.fail(new RuntimeException("Connection closed"))
         } yield ()
-        val renderLoop = (renderEntities *> ZIO.sleep(Duration.fromSeconds(30))).forever
 
         connect
           .tapError(e => ZIO.logError(s"Connection to HASS lost: ${e.getMessage}"))
           .retry(
             retrySchedule.tapOutput((duration, _, _) => ZIO.logInfo(s"Reconnecting in ${duration.toSeconds}s...")),
-          ) <&> renderLoop
+          )
       }
-
-    private def renderEntities: Task[Unit] =
-      for {
-        entities <- entityStateRepository.getAll
-        rendered <- renderer.render(entities)
-        _ <- ZIO.logInfo(s"\n$rendered")
-      } yield ()
 
   }
 
   val layer: URLayer[
-    HomeAssistantRenderer & HomeAssistantConfig & List[ChannelHandler] & EntityStateRepository,
+    HomeAssistantConfig & List[ChannelHandler],
     HomeAssistantProgram,
   ] =
     ZLayer {
       for {
         config <- ZIO.service[HomeAssistantConfig]
-        renderer <- ZIO.service[HomeAssistantRenderer]
         channelHandlers <- ZIO.service[List[ChannelHandler]]
-        entityStateRepository <- ZIO.service[EntityStateRepository]
         combinedHandler = channelHandlers.foldLeft(ChannelHandler.empty) { (a, b) => a orElse b.get }
-      } yield HomeAssistantProgramLive(combinedHandler, config, renderer, entityStateRepository)
+      } yield HomeAssistantProgramLive(combinedHandler, config)
     }
 
   private val channelHandlerLayer
@@ -94,8 +82,8 @@ object HomeAssistantProgram {
     } yield List(authenticationHandler, resultHandler)
   }
 
-  val configuredLayer: RLayer[HomeAssistantRenderer, HomeAssistantProgram] =
-    ZLayer.makeSome[HomeAssistantRenderer, HomeAssistantProgram](
+  val configuredLayer: RLayer[ScreenStateRepository, HomeAssistantProgram] =
+    ZLayer.makeSome[ScreenStateRepository, HomeAssistantProgram](
       layer,
       channelHandlerLayer,
       hassResponseMessageHandlerLayer,
@@ -106,7 +94,6 @@ object HomeAssistantProgram {
       MessageSender.layer,
       ResultHandler.layer,
       RequestRepository.layer,
-      EntityStateRepository.layer,
       ZLayer.scoped {
         for {
           getStates <- GetStatesHandler.layer.build.map(_.get)

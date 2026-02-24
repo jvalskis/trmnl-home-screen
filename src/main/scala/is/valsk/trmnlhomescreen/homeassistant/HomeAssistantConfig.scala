@@ -10,7 +10,6 @@ final case class HomeAssistantConfig(
     accessToken: String,
     subscribedEntityIds: String,
     maxFrameSizeKb: Int,
-    templateFile: String,
 ) {
   def subscribedEntityIdList: List[String] =
     subscribedEntityIds.split(",").map(_.trim).filter(_.nonEmpty).toList
