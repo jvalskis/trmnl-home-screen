@@ -25,18 +25,14 @@ WORKDIR /app
 COPY --from=build /build/target/scala-3.3.7/trmnl-home-screen-app.jar /app/app.jar
 
 # Copy templates
-COPY weather.liquid /app/templates/weather.liquid
-COPY calendar.liquid /app/templates/calendar.liquid
-COPY homeassistant.liquid /app/templates/homeassistant.liquid
+COPY screen.liquid /app/templates/screen.liquid
 
 # Set ownership
 RUN chown -R appuser:appgroup /app
 
 USER appuser
 
-ENV WEATHER_TEMPLATE_FILE=/app/templates/weather.liquid
-ENV CALENDAR_TEMPLATE_FILE=/app/templates/calendar.liquid
-ENV HOME_ASSISTANT_TEMPLATE_FILE=/app/templates/homeassistant.liquid
+ENV SCREEN_TEMPLATE_FILE=/app/templates/screen.liquid
 
 EXPOSE 8080
 

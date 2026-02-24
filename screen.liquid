@@ -1,0 +1,23 @@
+{% if has_weather %}
+--- Current Weather ---
+Conditions:    {{ weather_text }}
+Temperature:   {{ temp_metric_value }}°{{ temp_metric_unit }} / {{ temp_imperial_value }}°{{ temp_imperial_unit }}
+Precipitation: {% if has_precipitation %}Yes{% else %}No{% endif %}
+Day time:      {% if is_day_time %}Yes{% else %}No{% endif %}
+Observed at:   {{ observation_time }}
+{% endif %}
+{% if has_calendar %}
+--- Upcoming Events ({{ event_count }}) ---
+{% for event in events %}
+{{ event.summary }}
+  When:  {{ event.start }}{% if event.end != "" %} - {{ event.end }}{% endif %}
+  {% if event.location != "" %}Where: {{ event.location }}{% endif %}
+  {% if event.description != "" %}Notes: {{ event.description }}{% endif %}
+{% endfor %}
+{% endif %}
+{% if has_entities %}
+--- Home Assistant ({{ entity_count }} entities) ---
+{% for entity in entities %}
+  {{ entity.friendly_name }}: {{ entity.state }}{% if entity.unit != "" %} {{ entity.unit }}{% endif %}
+{% endfor %}
+{% endif %}

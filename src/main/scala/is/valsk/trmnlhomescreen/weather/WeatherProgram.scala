@@ -1,13 +1,13 @@
 package is.valsk.trmnlhomescreen.weather
 
-import is.valsk.trmnlhomescreen.Program
-import zio.{Console, Duration, RLayer, Schedule, Task, URLayer, ZIO, ZLayer}
+import is.valsk.trmnlhomescreen.{Program, ScreenStateRepository}
+import zio.{Duration, RLayer, Schedule, Task, URLayer, ZIO, ZLayer}
 
 trait WeatherProgram extends Program
 
 object WeatherProgram {
 
-  private class WeatherProgramLive(config: WeatherConfig, client: AccuWeatherClient, renderer: TemplateRenderer)
+  private class WeatherProgramLive(config: WeatherConfig, client: AccuWeatherClient, screenStateRepository: ScreenStateRepository)
       extends WeatherProgram {
 
     def run: Task[Unit] =
@@ -19,33 +19,27 @@ object WeatherProgram {
             s"Found: ${location.localizedName}, ${location.country.localizedName} (key: ${location.key})",
           )
           interval = Duration.fromSeconds(config.fetchIntervalMinutes.toLong * 60)
-          _ <- fetchAndPrintWeather(client, renderer, location.key)
+          _ <- fetchAndStore(client, location.key)
             .catchAll(e => ZIO.logError(s"Failed to fetch weather: ${e.getMessage}"))
             .repeat(Schedule.fixed(interval))
         yield ()
       }
 
-
-    private def fetchAndPrintWeather(
-        client: AccuWeatherClient,
-        renderer: TemplateRenderer,
-        locationKey: String,
-    ): Task[Unit] =
+    private def fetchAndStore(client: AccuWeatherClient, locationKey: String): Task[Unit] =
       for
         conditions <- client.currentConditions(locationKey)
-        rendered <- renderer.render(conditions)
-        _ <- Console.printLine(rendered)
+        _ <- screenStateRepository.updateWeatherConditions(conditions)
       yield ()
 
   }
 
-  val layer: URLayer[TemplateRenderer & AccuWeatherClient & WeatherConfig, WeatherProgram] = ZLayer {
+  val layer: URLayer[ScreenStateRepository & AccuWeatherClient & WeatherConfig, WeatherProgram] = ZLayer {
     for {
       config <- ZIO.service[WeatherConfig]
       client <- ZIO.service[AccuWeatherClient]
-      renderer <- ZIO.service[TemplateRenderer]
-    } yield WeatherProgramLive(config, client, renderer)
+      repo <- ZIO.service[ScreenStateRepository]
+    } yield WeatherProgramLive(config, client, repo)
   }
 
-  val configuredLayer: RLayer[TemplateRenderer & AccuWeatherClient, WeatherProgram] = WeatherConfig.layer >>> layer
+  val configuredLayer: RLayer[ScreenStateRepository & AccuWeatherClient, WeatherProgram] = WeatherConfig.layer >>> layer
 }

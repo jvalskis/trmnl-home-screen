@@ -1,8 +1,8 @@
 package is.valsk.trmnlhomescreen
 
-import is.valsk.trmnlhomescreen.calendar.{CalDavClient, CalendarProgram, CalendarRenderer}
-import is.valsk.trmnlhomescreen.weather.{AccuWeatherClient, TemplateRenderer, WeatherProgram}
-import is.valsk.trmnlhomescreen.homeassistant.{HomeAssistantProgram, HomeAssistantRenderer}
+import is.valsk.trmnlhomescreen.calendar.{CalDavClient, CalendarProgram}
+import is.valsk.trmnlhomescreen.weather.{AccuWeatherClient, WeatherProgram}
+import is.valsk.trmnlhomescreen.homeassistant.HomeAssistantProgram
 import zio.*
 import zio.http.Client
 
@@ -12,15 +12,16 @@ object Main extends ZIOAppDefault:
     val weatherProgram = ZIO.serviceWithZIO[WeatherProgram](_.run)
     val calendarProgram = ZIO.serviceWithZIO[CalendarProgram](_.run)
     val homeAssistantProgram = ZIO.serviceWithZIO[HomeAssistantProgram](_.run)
+    val renderProgram = ZIO.serviceWithZIO[RenderProgram](_.run)
 
-    (weatherProgram <&> calendarProgram <&> homeAssistantProgram).provide(
+    (weatherProgram <&> calendarProgram <&> homeAssistantProgram <&> renderProgram).provide(
       Client.default,
       AccuWeatherClient.configuredLayer,
-      TemplateRenderer.configuredLayer,
       CalDavClient.configuredLayer,
-      CalendarRenderer.configuredLayer,
+      ScreenStateRepository.layer,
+      ScreenRenderer.configuredLayer,
+      RenderProgram.configuredLayer,
       WeatherProgram.configuredLayer,
       CalendarProgram.configuredLayer,
-      HomeAssistantRenderer.configuredLayer,
       HomeAssistantProgram.configuredLayer,
     )
