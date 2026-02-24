@@ -36,12 +36,11 @@ object HomeAssistantProgram {
           Schedule.recurWhile[Throwable](_ => true)
         val connect = for {
           _ <- ZIO.logInfo(s"Connecting to HASS @ ${config.webSocketUrl}")
-          _ <- client
+          _ <- (client *> ZIO.never)
             .provide(
               Client.default,
               Scope.default,
             )
-          _ <- ZIO.fail(new RuntimeException("Connection closed"))
         } yield ()
         val renderLoop = (renderEntities *> ZIO.sleep(Duration.fromSeconds(30))).forever
 
