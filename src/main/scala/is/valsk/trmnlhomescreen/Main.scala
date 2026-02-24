@@ -2,7 +2,7 @@ package is.valsk.trmnlhomescreen
 
 import is.valsk.trmnlhomescreen.calendar.{CalDavClient, CalendarProgram, CalendarRenderer}
 import is.valsk.trmnlhomescreen.weather.{AccuWeatherClient, TemplateRenderer, WeatherProgram}
-import is.valsk.trmnlhomescreen.hass.{HomeAssistantProgram, HomeAssistantRenderer}
+import is.valsk.trmnlhomescreen.homeassistant.{HomeAssistantProgram, HomeAssistantRenderer}
 import zio.*
 import zio.http.Client
 
