@@ -5,8 +5,8 @@ import zio.*
 
 final case class TrmnlConfig(
     baseUrl: String,
-    apiKey: String,
-    macAddress: String,
+    token: String,
+    deviceId: String,
 )
 
 object TrmnlConfig:

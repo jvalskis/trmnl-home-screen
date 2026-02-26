@@ -17,11 +17,7 @@ object TrmnlClient:
 
   val configuredLayer: ZLayer[Client, Config.Error, TrmnlClient] = TrmnlConfig.layer >>> layer
 
-  private case class ImageContent(content: String)
-  private object ImageContent:
-    given JsonEncoder[ImageContent] = DeriveJsonEncoder.gen[ImageContent]
-
-  private case class ScreenRequest(image: ImageContent)
+  private case class ScreenRequest(markup: String)
   private object ScreenRequest:
     given JsonEncoder[ScreenRequest] = DeriveJsonEncoder.gen[ScreenRequest]
 
@@ -31,16 +27,21 @@ object TrmnlClient:
   ) extends TrmnlClient:
 
     def pushScreen(markup: String): Task[Unit] =
-      val urlStr = s"${config.baseUrl}/api/screens"
-      val payload = ScreenRequest(ImageContent(markup))
+      val urlStr = s"${config.baseUrl}/api/display/update?device_id=${config.deviceId}"
       for
         url <- ZIO.fromEither(URL.decode(urlStr))
           .mapError(e => RuntimeException(s"Invalid URL: $urlStr"))
-        request = Request
-          .post(url, Body.fromString(payload.toJson))
-          .addHeader(Header.Custom("access-token", config.apiKey))
-          .addHeader(Header.Custom("id", config.macAddress))
-          .addHeader(Header.ContentType(MediaType.application.json))
+        request = Request(
+          method = Method.POST,
+          url = url,
+          headers = Headers(
+            Header.Authorization.Bearer(config.token),
+            Header.ContentType(MediaType.application.json)
+          ),
+          body = Body.fromString(ScreenRequest(markup).toJson)
+        )
+
+
         response <- ZIO.scoped(client.request(request))
         status = response.status
         _ <- if status.isSuccess then ZIO.logInfo("Successfully pushed screen to TRMNL")
