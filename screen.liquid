@@ -1,23 +1,320 @@
-{% if has_weather %}
---- Current Weather ---
-Conditions:    {{ weather_text }}
-Temperature:   {{ temp_metric_value }}°{{ temp_metric_unit }} / {{ temp_imperial_value }}°{{ temp_imperial_unit }}
-Precipitation: {% if has_precipitation %}Yes{% else %}No{% endif %}
-Day time:      {% if is_day_time %}Yes{% else %}No{% endif %}
-Observed at:   {{ observation_time }}
-{% endif %}
-{% if has_calendar %}
---- Upcoming Events ({{ event_count }}) ---
-{% for event in events %}
-{{ event.summary }}
-  When:  {{ event.start }}{% if event.end != "" %} - {{ event.end }}{% endif %}
-  {% if event.location != "" %}Where: {{ event.location }}{% endif %}
-  {% if event.description != "" %}Notes: {{ event.description }}{% endif %}
-{% endfor %}
-{% endif %}
-{% if has_entities %}
---- Home Assistant ({{ entity_count }} entities) ---
-{% for entity in entities %}
-  {{ entity.friendly_name }}: {{ entity.state }}{% if entity.unit != "" %} {{ entity.unit }}{% endif %}
-{% endfor %}
-{% endif %}
+<x-trmnl::screen>
+	<x-trmnl::mashup mashupLayout="1Lx2R">
+	    {% if has_calendar %}
+		<x-trmnl::view size="half_vertical">
+            <div class="title_bar">
+              <img class="image" alt="" src="https://trmnl.com/images/plugins/lunar_calendar--render.svg">
+              <span class="title">Šiandien</span>
+              <span class="instance">2026-01-20</span>
+            </div>
+			<div class="layout layout--col layout--top layout--left" data-content-limiter="true">
+			    {% for event in events %}
+				<div class="item">
+				  <div class="meta"></div>
+				  <div class="content">
+					<span class="title title--small">{{ event.summary }}</span>
+					<span class="description" data-clamp="2">{{ event.description }}</span>
+					<div class="flex gap--small">
+					  <span class="label label--small label--underline">{{ event.start }}{% if event.end != "" %} - {{ event.end }}{% endif %}</span>
+					  {% if event.location != "" %}
+					  <span class="label label--small label--underline">Where: {{ event.location }}</span>
+					  {% endif %}
+					</div>
+				  </div>
+				</div>
+                {% endfor %}
+
+				<!--div class="flex">
+					<span class="title title--small">Rytoj</span>
+					<span class="title title--small">2026-01-21</span>
+				</div-->
+				<!--div class="flex">
+					<span class="title title--small">Trečiadienis</span>
+					<span class="title title--small">2026-01-22</span>
+				</div-->
+			</div>
+		</x-trmnl::view>
+        {% endif %}
+		<x-trmnl::view size="quadrant">
+			<div class="layout layout--col layout--stretch-y layout--left" data-content-limiter="true">
+				<div class="item">
+				  <div class="meta"></div>
+				  <div class="content">
+					<div class="flex flex--center-y gap--small w--full flex--nowrap">
+						<span class="title title--large w--40">Svetainė</span>
+						<div class="flex flex--col">
+							<div class="flex flex--center-y gap--small flex--nowrap">
+								<flux:icon icon="droplet" style="max-height: 16px;"/>
+								<span class="label label--large">47.52&nbsp;%<span>
+							</div>
+							<div class="flex flex--center-y gap--small w--full flex--nowrap">
+								<flux:icon icon="thermometer" style="max-height: 16px;"/>
+								<span class="label label--large">25.3°</span>
+							</div>
+						</div>
+					</div>
+					</div>
+				</div>
+
+				<div class="border--h-6 w--full"></div>
+
+				<div class="item">
+				  <div class="meta"></div>
+				  <div class="content">
+					<div class="flex flex--center-y gap--small w--full flex--nowrap">
+						<span class="title title--large w--40">Miegamasis</span>
+						<div class="flex flex--col">
+							<div class="flex flex--center-y gap--small flex--nowrap">
+								<flux:icon icon="droplet" style="max-height: 16px;"/>
+								<span class="label label--large">47.52&nbsp;%<span>
+							</div>
+							<div class="flex flex--center-y gap--small w--full flex--nowrap">
+								<flux:icon icon="thermometer" style="max-height: 16px;"/>
+								<span class="label label--large">25.3°</span>
+							</div>
+						</div>
+					</div>
+					</div>
+				</div>
+
+				<div class="divider"></div>
+
+				<div class="item">
+				  <div class="meta"></div>
+				  <div class="content">
+					<div class="flex flex--center-y gap--small w--full flex--nowrap">
+						<span class="title title--large w--40">Darbo kambarys</span>
+						<div class="flex flex--col">
+							<div class="flex flex--center-y gap--small flex--nowrap">
+								<flux:icon icon="droplet" style="max-height: 16px;"/>
+								<span class="label label--large">47.52&nbsp;%<span>
+							</div>
+							<div class="flex flex--center-y gap--small w--full flex--nowrap">
+								<flux:icon icon="thermometer" style="max-height: 16px;"/>
+								<span class="label label--large">25.3°</span>
+							</div>
+						</div>
+					</div>
+					</div>
+				</div>
+			</div>
+		</x-trmnl::view>
+		<x-trmnl::view size="quadrant">
+			<div class="layout layout--col gap--space-between">
+			  <div class="flex flex--center-y gap--small w--full flex--nowrap">
+				  <div class="flex flex--row flex--center">
+				    {% case IsDayTime %}
+				        {% when true %}
+				            {% assign weather_icon_day_indicator = "day" %}
+                        {% else %}
+                            {% assign weather_icon_day_indicator = "night" %}
+				    {% endcase %}
+                    {% case weather_icon %}
+                      {% when 1 %}
+                        <!-- Sunny -->
+                        {% assign weather_icon_name = "sunny" %}
+                      {% when 2 %}
+                        <!-- Mostly sunny -->
+                        {% assign weather_icon_name = "sunny-overcast" %}
+                      {% when 3 %}
+                        <!-- Partly sunny -->
+                        {% assign weather_icon_name = "Overcast" %}
+                      {% when 4 %}
+                        <!-- Intermittent clouds -->
+                        {% assign weather_icon_name = "Foggy" %}
+                      {% when 5 %}
+                        <!-- Hazy sunshine -->
+                        {% assign weather_icon_name = "Light drizzle" %}
+                      {% when 6 %}
+                        <!-- Mostly cloudy -->
+                        {% assign weather_icon_name = "Moderate drizzle" %}
+                      {% when 7 %}
+                        <!-- Cloudy -->
+                        {% assign weather_icon_name = "Dense drizzle" %}
+                      {% when 8 %}
+                        <!-- Dreary (overcast) -->
+                        {% assign weather_icon_name = "Freezing drizzle" %}
+                      {% when 11 %}
+                        <!-- Fog -->
+                        {% assign weather_icon_name = "Slight rain" %}
+                      {% when 12 %}
+                        <!-- Showers -->
+                        {% assign weather_icon_name = "Moderate rain" %}
+                      {% when 13 %}
+                        <!-- Mostly cloudy w/ showers -->
+                        {% assign weather_icon_name = "Heavy rain" %}
+                      {% when 14 %}
+                        <!-- Partly sunny w/ showers -->
+                        {% assign weather_icon_name = "Freezing rain" %}
+                      {% when 15 %}
+                        <!-- T-storms -->
+                        {% assign weather_icon_name = "Slight snow" %}
+                      {% when 16 %}
+                        <!-- Mostly cloudy w/ T-storms -->
+                        {% assign weather_icon_name = "Moderate snow" %}
+                      {% when 17 %}
+                        <!-- Partly sunny w/ T-storms -->
+                        {% assign weather_icon_name = "Heavy snow" %}
+                      {% when 18 %}
+                        <!-- Rain -->
+                        {% assign weather_icon_name = "Snow grains" %}
+                      {% when 19 %}
+                        <!-- Flurries -->
+                        {% assign weather_icon_name = "Slight rain showers" %}
+                      {% when 20 %}
+                        <!-- Mostly cloudy w/ flurries -->
+                        {% assign weather_icon_name = "Moderate rain showers" %}
+                      {% when 21 %}
+                        <!-- Partly sunny w/ flurries -->
+                        {% assign weather_icon_name = "Violent rain showers" %}
+                      {% when 22 %}
+                        <!-- Snow -->
+                        {% assign weather_icon_name = "Slight snow showers" %}
+                      {% when 23 %}
+                        <!-- Mostly cloudy w/ snow -->
+                        {% assign weather_icon_name = "Heavy snow showers" %}
+                      {% when 24 %}
+                        <!-- Ice -->
+                        {% assign weather_icon_name = "Thunderstorm" %}
+                      {% when 25 %}
+                        <!-- Sleet -->
+                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                      {% when 26 %}
+                        <!-- Freezing rain -->
+                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                      {% when 29 %}
+                        <!-- Rain and snow -->
+                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                      {% when 30 %}
+                        <!-- Hot -->
+                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                      {% when 31 %}
+                        <!-- Cold -->
+                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                      {% when 32 %}
+                        <!-- Windy -->
+                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                      {% when 33 %}
+                        <!-- Clear -->
+                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                      {% when 34 %}
+                        <!-- Mostly clear -->
+                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                      {% when 35 %}
+                        <!-- Partly cloudy -->
+                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                      {% when 36 %}
+                        <!-- Intermittent clouds -->
+                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                      {% when 37 %}
+                        <!-- Hazy moonlight -->
+                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                      {% when 38 %}
+                        <!-- Mostly cloudy -->
+                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                      {% when 39 %}
+                        <!-- Partly cloudy w/ showers -->
+                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                      {% when 40 %}
+                        <!-- Mostly cloudy w/ showers -->
+                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                      {% when 41 %}
+                        <!-- Partly cloudy w/ T-storms -->
+                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                      {% when 42 %}
+                        <!-- Mostly cloudy w/ T-storms -->
+                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                      {% when 43 %}
+                        <!-- Mostly cloudy w/ flurries -->
+                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                      {% when 44 %}
+                        <!-- Mostly cloudy w/ snow -->
+                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                      {% else %}
+                        {% assign weather_icon_name = "Unknown" %}
+                    {% endcase %}
+					<img class="w--[70px] h--[70px]" src="https://trmnl.com/images/plugins/weather/wi-cloudy-windy.svg">
+				  </div>
+					<div class="divider--v"></div>
+
+					<span class="value value--xlarge">{{ temp_metric_value }}°</span>
+
+					<div class="divider--v"></div>
+					  <div class="flex flex--row flex--left w--full gap">
+						<div class="flex flex--row gap--xsmall py--1 px--3 rounded--full">
+						  <flux:icon icon="arrow-up" style="max-height: 16px;"/>
+						  <div class="">-14° </div>
+						</div>
+						<div class="flex flex--row gap--xsmall py--1 px--3 rounded--full">
+						  <flux:icon icon="arrow-down" style="max-height: 16px;"/>
+						  <div class="">-20°</div>
+						</div>
+					  </div>
+					<div class="flex flex--col">
+						<div class="flex flex--center-y gap--small flex--nowrap">
+							Juntamoji
+							<span class="label label--large">-14°<span>
+						</div>
+						<div class="flex flex--center-y gap--small flex--nowrap">
+							Aukščiausia
+							<span class="label label--large">-5°<span>
+						</div>
+						<div class="flex flex--center-y gap--small flex--nowrap">
+							Žemiausia
+							<span class="label label--large">-7°<span>
+						</div>
+					</div>
+			  </div>
+			  <div class="divider"></div>
+
+			  <div class="grid grid--col-3 px--2 h--12 border--h-1 w--full value--xxsmall">
+				<div class="flex flex--row gap--xsmall text-stroke">
+				  <span class="material-symbols-outlined">cloud</span>
+				  <div class="">80%</div>
+				</div>
+				<div class="flex flex--row gap--xsmall text-stroke">
+				  <span class="material-symbols-outlined">humidity_percentage</span>
+				  <div class="">60%</div>
+				</div>
+				<div class="flex flex--row gap--xsmall text-stroke">
+				  <span class="material-symbols-outlined">accessibility_new</span>
+				  <div class="">-20°</div>
+				</div>
+			  </div>
+			  <div class="grid grid--col-3 px--2 h--12 border--h-1 w--full value--xxsmall">
+				<div class="flex flex--row gap--xsmall text-stroke">
+				  <span class="material-symbols-outlined">ac_unit</span>
+				  <div class="">{-{ snowfall_today }} {-{ snow_label}}</div>
+				</div>
+				<div class="flex flex--row gap--xsmall text-stroke">
+				  <span class="material-symbols-outlined">water_drop</span>
+				  <div class="">20%</div>
+				</div>
+				<div class="flex flex--row gap--xsmall text-stroke">
+				  <span class="material-symbols-outlined">visibility</span>
+				  <div class="">10 m</div>
+				</div>
+				<div class="flex flex--row gap--xsmall text-stroke">
+				  <span class="material-symbols-outlined">air</span>
+				  <div class="">15 m/s</div>
+				</div>
+			  </div>
+			  <div class="grid grid--col-3 px--2 h--12 value--xxsmall">
+				<div class="flex flex--row gap--xsmall text-stroke">
+				  <span class="material-symbols-outlined">nest_sunblock</span>
+				  <div class="">5</div>
+				</div>
+				<div class="flex flex--row gap--xsmall text-stroke">
+				  <span class="material-symbols-outlined">wb_sunny</span>
+				  <div class="">5:42</div>
+				</div>
+				<div class="flex flex--row gap--xsmall text-stroke">
+				  <span class="material-symbols-outlined">moon_stars</span>
+				  <div class="">16:30</div>
+				</div>
+			  </div>
+			</div>
+			</div>
+		</x-trmnl::view>
+	</x-trmnl::mashup>
+</x-trmnl::screen>
