@@ -22,37 +22,71 @@ final case class Location(
 object Location:
   given JsonDecoder[Location] = DeriveJsonDecoder.gen[Location]
 
-final case class TemperatureValue(
+final case class Value(
     @jsonField("Value")
     value: Double,
     @jsonField("Unit")
     unit: String,
 )
 
-object TemperatureValue:
-  given JsonDecoder[TemperatureValue] = DeriveJsonDecoder.gen[TemperatureValue]
+object Value:
+  given JsonDecoder[Value] = DeriveJsonDecoder.gen[Value]
 
-final case class Temperature(
+final case class ValueContainer(
     @jsonField("Metric")
-    metric: TemperatureValue,
+    metric: Value,
     @jsonField("Imperial")
-    imperial: TemperatureValue,
+    imperial: Value,
 )
 
-object Temperature:
-  given JsonDecoder[Temperature] = DeriveJsonDecoder.gen[Temperature]
+object ValueContainer:
+  given JsonDecoder[ValueContainer] = DeriveJsonDecoder.gen[ValueContainer]
+
+case class Direction(
+    @jsonField("Degrees")
+    degrees: Int,
+    @jsonField("Localized")
+    localized: String,
+    @jsonField("English")
+    english: String,
+)
+
+object Direction:
+  given JsonDecoder[Direction] = DeriveJsonDecoder.gen[Direction]
+
+final case class Wind(
+    @jsonField("Direction")
+    direction: Direction,
+    @jsonField("Speed")
+    speed: ValueContainer,
+)
+
+object Wind:
+  given JsonDecoder[Wind] = DeriveJsonDecoder.gen[Wind]
 
 final case class CurrentConditions(
     @jsonField("WeatherText")
     weatherText: String,
+    @jsonField("WeatherIcon")
+    weatherIcon: Int,
     @jsonField("Temperature")
-    temperature: Temperature,
+    temperature: ValueContainer,
     @jsonField("HasPrecipitation")
     hasPrecipitation: Boolean,
+    @jsonField("PrecipitationType")
+    precipitationType: Option[String],
     @jsonField("IsDayTime")
     isDayTime: Boolean,
     @jsonField("LocalObservationDateTime")
     localObservationDateTime: String,
+    @jsonField("RealFeelTemperature")
+    realFeelTemperature: ValueContainer,
+    @jsonField("RelativeHumidity")
+    relativeHumidity: Int,
+    @jsonField("Wind")
+    wind: Wind,
+    @jsonField("UVIndex")
+    uvIndex: Int,
 )
 
 object CurrentConditions:

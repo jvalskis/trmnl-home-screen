@@ -43,11 +43,12 @@ object AccuWeatherClient:
       yield location
 
     def currentConditions(locationKey: String): Task[CurrentConditions] =
-      val urlStr = s"$baseUrl/currentconditions/v1/$locationKey?apikey=${config.apiKey}"
+      val urlStr = s"$baseUrl/currentconditions/v1/$locationKey?apikey=${config.apiKey}&details=true"
       for
         url <- ZIO.fromEither(URL.decode(urlStr))
           .mapError(e => RuntimeException(s"Invalid URL: $urlStr"))
         body <- ZIO.scoped(client.request(Request.get(url)).flatMap(_.body.asString))
+        _ <- ZIO.logInfo(body)
         conditions <- ZIO.fromEither(body.fromJson[List[CurrentConditions]])
           .mapError(msg => RuntimeException(s"JSON parse error: $msg"))
         condition <- ZIO.fromOption(conditions.headOption)
