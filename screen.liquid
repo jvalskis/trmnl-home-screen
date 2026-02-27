@@ -103,137 +103,91 @@
 			<div class="layout layout--col gap--space-between">
 			  <div class="flex flex--center-y gap--small w--full flex--nowrap">
 				  <div class="flex flex--row flex--center">
-				    {% case IsDayTime %}
-				        {% when true %}
-				            {% assign weather_icon_day_indicator = "day" %}
-                        {% else %}
-                            {% assign weather_icon_day_indicator = "night" %}
-				    {% endcase %}
                     {% case weather_icon %}
                       {% when 1 %}
-                        <!-- Sunny -->
-                        {% assign weather_icon_name = "sunny" %}
+                        {% assign weather_icon_name = "wi-day-sunny" %}
                       {% when 2 %}
-                        <!-- Mostly sunny -->
-                        {% assign weather_icon_name = "sunny-overcast" %}
+                        {% assign weather_icon_name = "wi-day-sunny-overcast" %}
                       {% when 3 %}
-                        <!-- Partly sunny -->
-                        {% assign weather_icon_name = "Overcast" %}
+                        {% assign weather_icon_name = "wi-day-cloudy" %}
                       {% when 4 %}
-                        <!-- Intermittent clouds -->
-                        {% assign weather_icon_name = "Foggy" %}
+                        {% assign weather_icon_name = "wi-day-cloudy" %}
                       {% when 5 %}
-                        <!-- Hazy sunshine -->
-                        {% assign weather_icon_name = "Light drizzle" %}
+                        {% assign weather_icon_name = "wi-day-haze" %}
                       {% when 6 %}
-                        <!-- Mostly cloudy -->
-                        {% assign weather_icon_name = "Moderate drizzle" %}
+                        {% assign weather_icon_name = "wi-cloudy" %}
                       {% when 7 %}
-                        <!-- Cloudy -->
-                        {% assign weather_icon_name = "Dense drizzle" %}
+                        {% assign weather_icon_name = "wi-cloudy" %}
                       {% when 8 %}
-                        <!-- Dreary (overcast) -->
-                        {% assign weather_icon_name = "Freezing drizzle" %}
+                        {% assign weather_icon_name = "wi-cloudy" %}
                       {% when 11 %}
-                        <!-- Fog -->
-                        {% assign weather_icon_name = "Slight rain" %}
+                        {% assign weather_icon_name = "wi-fog" %}
                       {% when 12 %}
-                        <!-- Showers -->
-                        {% assign weather_icon_name = "Moderate rain" %}
+                        {% assign weather_icon_name = "wi-showers" %}
                       {% when 13 %}
-                        <!-- Mostly cloudy w/ showers -->
-                        {% assign weather_icon_name = "Heavy rain" %}
+                        {% assign weather_icon_name = "wi-day-showers" %}
                       {% when 14 %}
-                        <!-- Partly sunny w/ showers -->
-                        {% assign weather_icon_name = "Freezing rain" %}
+                        {% assign weather_icon_name = "wi-day-rain" %}
                       {% when 15 %}
-                        <!-- T-storms -->
-                        {% assign weather_icon_name = "Slight snow" %}
+                        {% assign weather_icon_name = "wi-thunderstorm" %}
                       {% when 16 %}
-                        <!-- Mostly cloudy w/ T-storms -->
-                        {% assign weather_icon_name = "Moderate snow" %}
+                        {% assign weather_icon_name = "wi-day-thunderstorm" %}
                       {% when 17 %}
-                        <!-- Partly sunny w/ T-storms -->
-                        {% assign weather_icon_name = "Heavy snow" %}
+                        {% assign weather_icon_name = "wi-day-storm-showers" %}
                       {% when 18 %}
-                        <!-- Rain -->
-                        {% assign weather_icon_name = "Snow grains" %}
+                        {% assign weather_icon_name = "wi-rain" %}
                       {% when 19 %}
-                        <!-- Flurries -->
-                        {% assign weather_icon_name = "Slight rain showers" %}
+                        {% assign weather_icon_name = "wi-snow" %}
                       {% when 20 %}
-                        <!-- Mostly cloudy w/ flurries -->
-                        {% assign weather_icon_name = "Moderate rain showers" %}
+                        {% assign weather_icon_name = "wi-day-snow" %}
                       {% when 21 %}
-                        <!-- Partly sunny w/ flurries -->
-                        {% assign weather_icon_name = "Violent rain showers" %}
+                        {% assign weather_icon_name = "wi-day-snow" %}
                       {% when 22 %}
-                        <!-- Snow -->
-                        {% assign weather_icon_name = "Slight snow showers" %}
+                        {% assign weather_icon_name = "wi-snow" %}
                       {% when 23 %}
-                        <!-- Mostly cloudy w/ snow -->
-                        {% assign weather_icon_name = "Heavy snow showers" %}
+                        {% assign weather_icon_name = "wi-day-snow" %}
                       {% when 24 %}
-                        <!-- Ice -->
-                        {% assign weather_icon_name = "Thunderstorm" %}
+                        {% assign weather_icon_name = "wi-snowflake-cold" %}
                       {% when 25 %}
-                        <!-- Sleet -->
-                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                        {% assign weather_icon_name = "wi-sleet" %}
                       {% when 26 %}
-                        <!-- Freezing rain -->
-                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                        {% assign weather_icon_name = "wi-rain-mix" %}
                       {% when 29 %}
-                        <!-- Rain and snow -->
-                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                        {% assign weather_icon_name = "wi-rain-mix" %}
                       {% when 30 %}
-                        <!-- Hot -->
-                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                        {% assign weather_icon_name = "wi-hot" %}
                       {% when 31 %}
-                        <!-- Cold -->
-                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                        {% assign weather_icon_name = "wi-snowflake-cold" %}
                       {% when 32 %}
-                        <!-- Windy -->
-                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                        {% assign weather_icon_name = "wi-strong-wind" %}
                       {% when 33 %}
-                        <!-- Clear -->
-                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                        {% assign weather_icon_name = "wi-night-clear" %}
                       {% when 34 %}
-                        <!-- Mostly clear -->
-                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                        {% assign weather_icon_name = "wi-night-clear" %}
                       {% when 35 %}
-                        <!-- Partly cloudy -->
-                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                        {% assign weather_icon_name = "wi-night-alt-partly-cloudy" %}
                       {% when 36 %}
-                        <!-- Intermittent clouds -->
-                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                        {% assign weather_icon_name = "wi-night-alt-cloudy" %}
                       {% when 37 %}
-                        <!-- Hazy moonlight -->
-                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                        {% assign weather_icon_name = "wi-night-fog" %}
                       {% when 38 %}
-                        <!-- Mostly cloudy -->
-                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                        {% assign weather_icon_name = "wi-night-cloudy" %}
                       {% when 39 %}
-                        <!-- Partly cloudy w/ showers -->
-                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                        {% assign weather_icon_name = "wi-night-alt-showers" %}
                       {% when 40 %}
-                        <!-- Mostly cloudy w/ showers -->
-                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                        {% assign weather_icon_name = "wi-night-alt-rain" %}
                       {% when 41 %}
-                        <!-- Partly cloudy w/ T-storms -->
-                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                        {% assign weather_icon_name = "wi-night-alt-thunderstorm" %}
                       {% when 42 %}
-                        <!-- Mostly cloudy w/ T-storms -->
-                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                        {% assign weather_icon_name = "wi-night-alt-storm-showers" %}
                       {% when 43 %}
-                        <!-- Mostly cloudy w/ flurries -->
-                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                        {% assign weather_icon_name = "wi-night-alt-snow" %}
                       {% when 44 %}
-                        <!-- Mostly cloudy w/ snow -->
-                        {% assign weather_icon_name = "Thunderstorm with hail" %}
+                        {% assign weather_icon_name = "wi-night-alt-snow" %}
                       {% else %}
-                        {% assign weather_icon_name = "Unknown" %}
+                        {% assign weather_icon_name = "wi-na" %}
                     {% endcase %}
-					<img class="w--[70px] h--[70px]" src="https://trmnl.com/images/plugins/weather/wi-cloudy-windy.svg">
+					<img class="w--[70px] h--[70px]" src="https://trmnl.com/images/plugins/weather/{{ weather_icon_name }}.svg">
 				  </div>
 					<div class="divider--v"></div>
 

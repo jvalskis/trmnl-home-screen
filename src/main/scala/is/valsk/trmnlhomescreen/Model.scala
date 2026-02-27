@@ -71,12 +71,26 @@ final case class CurrentConditions(
     weatherIcon: Int,
     @jsonField("Temperature")
     temperature: ValueContainer,
+    @jsonField("RealFeelTemperature")
+    realFeelTemperature: Option[Temperature],
     @jsonField("HasPrecipitation")
     hasPrecipitation: Boolean,
     @jsonField("PrecipitationType")
     precipitationType: Option[String],
     @jsonField("IsDayTime")
     isDayTime: Boolean,
+    @jsonField("RelativeHumidity")
+    relativeHumidity: Option[Int],
+    @jsonField("Wind")
+    wind: Option[Wind],
+    @jsonField("UVIndex")
+    uvIndex: Option[Int],
+    @jsonField("UVIndexText")
+    uvIndexText: Option[String],
+    @jsonField("Visibility")
+    visibility: Option[Temperature],
+    @jsonField("CloudCover")
+    cloudCover: Option[Int],
     @jsonField("LocalObservationDateTime")
     localObservationDateTime: String,
     @jsonField("RealFeelTemperature")
