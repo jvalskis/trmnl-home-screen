@@ -59,6 +59,7 @@ object ScreenRenderer:
         variables("has_weather") = state.weatherConditions.isDefined
         state.weatherConditions.foreach { conditions =>
           variables("weather_text") = conditions.weatherText
+          variables("weather_icon") = conditions.weatherIcon
           variables("temp_metric_value") = conditions.temperature.metric.value
           variables("temp_metric_unit") = conditions.temperature.metric.unit
           variables("temp_imperial_value") = conditions.temperature.imperial.value
@@ -66,6 +67,34 @@ object ScreenRenderer:
           variables("has_precipitation") = conditions.hasPrecipitation
           variables("is_day_time") = conditions.isDayTime
           variables("observation_time") = conditions.localObservationDateTime
+
+          conditions.relativeHumidity.foreach(v => variables("relative_humidity") = v)
+          conditions.cloudCover.foreach(v => variables("cloud_cover") = v)
+          conditions.uvIndex.foreach(v => variables("uv_index") = v)
+          conditions.uvIndexText.foreach(v => variables("uv_index_text") = v)
+
+          conditions.wind.foreach { wind =>
+            variables("wind_speed_metric_value") = wind.speed.metric.value
+            variables("wind_speed_metric_unit") = wind.speed.metric.unit
+            variables("wind_speed_imperial_value") = wind.speed.imperial.value
+            variables("wind_speed_imperial_unit") = wind.speed.imperial.unit
+            variables("wind_direction") = wind.direction.localized
+            variables("wind_direction_degrees") = wind.direction.degrees
+          }
+
+          conditions.visibility.foreach { vis =>
+            variables("visibility_metric_value") = vis.metric.value
+            variables("visibility_metric_unit") = vis.metric.unit
+            variables("visibility_imperial_value") = vis.imperial.value
+            variables("visibility_imperial_unit") = vis.imperial.unit
+          }
+
+          conditions.realFeelTemperature.foreach { realFeel =>
+            variables("real_feel_metric_value") = realFeel.metric.value
+            variables("real_feel_metric_unit") = realFeel.metric.unit
+            variables("real_feel_imperial_value") = realFeel.imperial.value
+            variables("real_feel_imperial_unit") = realFeel.imperial.unit
+          }
         }
 
         // Home Assistant entity variables

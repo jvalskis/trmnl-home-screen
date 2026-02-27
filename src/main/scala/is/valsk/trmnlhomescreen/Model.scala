@@ -42,15 +42,51 @@ final case class Temperature(
 object Temperature:
   given JsonDecoder[Temperature] = DeriveJsonDecoder.gen[Temperature]
 
+final case class WindDirection(
+    @jsonField("Degrees")
+    degrees: Double,
+    @jsonField("Localized")
+    localized: String,
+)
+
+object WindDirection:
+  given JsonDecoder[WindDirection] = DeriveJsonDecoder.gen[WindDirection]
+
+final case class Wind(
+    @jsonField("Direction")
+    direction: WindDirection,
+    @jsonField("Speed")
+    speed: Temperature,
+)
+
+object Wind:
+  given JsonDecoder[Wind] = DeriveJsonDecoder.gen[Wind]
+
 final case class CurrentConditions(
     @jsonField("WeatherText")
     weatherText: String,
+    @jsonField("WeatherIcon")
+    weatherIcon: Int,
     @jsonField("Temperature")
     temperature: Temperature,
+    @jsonField("RealFeelTemperature")
+    realFeelTemperature: Option[Temperature],
     @jsonField("HasPrecipitation")
     hasPrecipitation: Boolean,
     @jsonField("IsDayTime")
     isDayTime: Boolean,
+    @jsonField("RelativeHumidity")
+    relativeHumidity: Option[Int],
+    @jsonField("Wind")
+    wind: Option[Wind],
+    @jsonField("UVIndex")
+    uvIndex: Option[Int],
+    @jsonField("UVIndexText")
+    uvIndexText: Option[String],
+    @jsonField("Visibility")
+    visibility: Option[Temperature],
+    @jsonField("CloudCover")
+    cloudCover: Option[Int],
     @jsonField("LocalObservationDateTime")
     localObservationDateTime: String,
 )
