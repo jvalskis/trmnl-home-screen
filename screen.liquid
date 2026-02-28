@@ -1,23 +1,197 @@
-{% if has_weather %}
---- Current Weather ---
-Conditions:    {{ weather_text }}
-Temperature:   {{ temp_metric_value }}°{{ temp_metric_unit }} / {{ temp_imperial_value }}°{{ temp_imperial_unit }}
-Precipitation: {% if has_precipitation %}Yes{% else %}No{% endif %}
-Day time:      {% if is_day_time %}Yes{% else %}No{% endif %}
-Observed at:   {{ observation_time }}
-{% endif %}
-{% if has_calendar %}
---- Upcoming Events ({{ event_count }}) ---
-{% for event in events %}
-{{ event.summary }}
-  When:  {{ event.start }}{% if event.end != "" %} - {{ event.end }}{% endif %}
-  {% if event.location != "" %}Where: {{ event.location }}{% endif %}
-  {% if event.description != "" %}Notes: {{ event.description }}{% endif %}
-{% endfor %}
-{% endif %}
-{% if has_entities %}
---- Home Assistant ({{ entity_count }} entities) ---
-{% for entity in entities %}
-  {{ entity.friendly_name }}: {{ entity.state }}{% if entity.unit != "" %} {{ entity.unit }}{% endif %}
-{% endfor %}
-{% endif %}
+<x-trmnl::screen>
+	<div class="mashup mashup--1Lx2R">
+	    {% if has_calendar %}
+        <div class="view view--half_vertical">
+            <div class="title_bar">
+              <img class="image" alt="" src="https://trmnl.com/images/plugins/lunar_calendar--render.svg">
+              <span class="title">Šiandien</span>
+              <span class="instance">2026-01-20</span>
+            </div>
+			<div class="layout layout--col layout--top layout--left" data-content-limiter="true">
+			    {% for event in events %}
+				<div class="item">
+				  <div class="meta"></div>
+				  <div class="content">
+					<span class="title title--small">{{ event.summary }}</span>
+					<span class="description" data-clamp="2">{{ event.description }}</span>
+					<div class="flex gap--small">
+					  <span class="label label--small label--underline">{{ event.start }}{% if event.end != "" %} - {{ event.end }}{% endif %}</span>
+					  {% if event.location != "" %}
+					  <span class="label label--small label--underline">Where: {{ event.location }}</span>
+					  {% endif %}
+					</div>
+				  </div>
+				</div>
+                {% endfor %}
+
+				<!--div class="flex">
+					<span class="title title--small">Rytoj</span>
+					<span class="title title--small">2026-01-21</span>
+				</div-->
+				<!--div class="flex">
+					<span class="title title--small">Trečiadienis</span>
+					<span class="title title--small">2026-01-22</span>
+				</div-->
+			</div>
+		</div>
+        {% endif %}
+
+        <div class="view view--quadrant">
+            <div class="layout">
+                <div class="grid grid--cols-10">
+                    <span class="title title--medium col--span-6">Svetainė</span>
+                    <div class="divider--v  col--span-1"></div>
+                    <div class="col--span-3 flex flex--col">
+                        <div class="flex flex--center-y flex--right gap--small w--full flex--nowrap">
+                            <flux:icon icon="droplet" style="max-height: 16px;"/>
+                            <span class="label label--medium w--full">{{ entities["sensor.svetaine_dregmes_ir_temperaturos_sensorius_temperature"].state }}%</span>
+                        </div>
+                        <div class="flex flex--center-y flex--right gap--small w--full flex--nowrap">
+                            <flux:icon icon="thermometer" style="max-height: 16px;"/>
+                            <span class="label label--medium">{{ entities["sensor.svetaine_dregmes_ir_temperaturos_sensorius_humidity"].state }}°</span>
+                        </div>
+                    </div>
+                    <span class="title title--medium col--span-6">Miegamasis</span>
+                    <div class="divider--v  col--span-1"></div>
+                    <div class="col--span-3 flex flex--col">
+                        <div class="flex flex--center-y flex--right gap--small w--full flex--nowrap">
+                            <flux:icon icon="droplet" style="max-height: 16px;"/>
+                            <span class="label label--medium w--full">{{ entities["sensor.mk_temperaturos_ir_dregmes_sensorius_temperature"].state }}%</span>
+                        </div>
+                        <div class="flex flex--center-y flex--right gap--small w--full flex--nowrap">
+                            <flux:icon icon="thermometer" style="max-height: 16px;"/>
+                            <span class="label label--medium">{{ entities["sensor.mk_temperaturos_ir_dregmes_sensorius_humidity"].state }}°</span>
+                        </div>
+                    </div>
+                    <span class="title title--medium col--span-6">Darbo kambarys</span>
+                    <div class="divider--v  col--span-1"></div>
+                    <div class="col--span-3 flex flex--col">
+                        <div class="flex flex--center-y flex--right gap--small w--full flex--nowrap">
+                            <flux:icon icon="droplet" style="max-height: 16px;"/>
+                            <span class="label label--medium w--full">{{ entities["sensor.dk_temperaturos_ir_dregmes_sensorius_temperature"].state }}%</span>
+                        </div>
+                        <div class="flex flex--center-y flex--right gap--small w--full flex--nowrap">
+                            <flux:icon icon="thermometer" style="max-height: 16px;"/>
+                            <span class="label label--medium">{{ entities["sensor.dk_temperaturos_ir_dregmes_sensorius_humidity"].state }}°</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="view view--quadrant">
+			<div class="layout layout--col gap--space-between">
+                <div class="flex flex--center-y gap--small w--full flex--nowrap">
+                    <div class="flex flex--row flex--center">
+                        {% case weather_icon %}
+                        {% when 1 %}
+                        {% assign weather_icon_name = "wi-day-sunny" %}
+                        {% when 2 %}
+                        {% assign weather_icon_name = "wi-day-sunny-overcast" %}
+                        {% when 3 %}
+                        {% assign weather_icon_name = "wi-day-cloudy" %}
+                        {% when 4 %}
+                        {% assign weather_icon_name = "wi-day-cloudy" %}
+                        {% when 5 %}
+                        {% assign weather_icon_name = "wi-day-haze" %}
+                        {% when 6 %}
+                        {% assign weather_icon_name = "wi-cloudy" %}
+                        {% when 7 %}
+                        {% assign weather_icon_name = "wi-cloudy" %}
+                        {% when 8 %}
+                        {% assign weather_icon_name = "wi-cloudy" %}
+                        {% when 11 %}
+                        {% assign weather_icon_name = "wi-fog" %}
+                        {% when 12 %}
+                        {% assign weather_icon_name = "wi-showers" %}
+                        {% when 13 %}
+                        {% assign weather_icon_name = "wi-day-showers" %}
+                        {% when 14 %}
+                        {% assign weather_icon_name = "wi-day-rain" %}
+                        {% when 15 %}
+                        {% assign weather_icon_name = "wi-thunderstorm" %}
+                        {% when 16 %}
+                        {% assign weather_icon_name = "wi-day-thunderstorm" %}
+                        {% when 17 %}
+                        {% assign weather_icon_name = "wi-day-storm-showers" %}
+                        {% when 18 %}
+                        {% assign weather_icon_name = "wi-rain" %}
+                        {% when 19 %}
+                        {% assign weather_icon_name = "wi-snow" %}
+                        {% when 20 %}
+                        {% assign weather_icon_name = "wi-day-snow" %}
+                        {% when 21 %}
+                        {% assign weather_icon_name = "wi-day-snow" %}
+                        {% when 22 %}
+                        {% assign weather_icon_name = "wi-snow" %}
+                        {% when 23 %}
+                        {% assign weather_icon_name = "wi-day-snow" %}
+                        {% when 24 %}
+                        {% assign weather_icon_name = "wi-snowflake-cold" %}
+                        {% when 25 %}
+                        {% assign weather_icon_name = "wi-sleet" %}
+                        {% when 26 %}
+                        {% assign weather_icon_name = "wi-rain-mix" %}
+                        {% when 29 %}
+                        {% assign weather_icon_name = "wi-rain-mix" %}
+                        {% when 30 %}
+                        {% assign weather_icon_name = "wi-hot" %}
+                        {% when 31 %}
+                        {% assign weather_icon_name = "wi-snowflake-cold" %}
+                        {% when 32 %}
+                        {% assign weather_icon_name = "wi-strong-wind" %}
+                        {% when 33 %}
+                        {% assign weather_icon_name = "wi-night-clear" %}
+                        {% when 34 %}
+                        {% assign weather_icon_name = "wi-night-clear" %}
+                        {% when 35 %}
+                        {% assign weather_icon_name = "wi-night-alt-partly-cloudy" %}
+                        {% when 36 %}
+                        {% assign weather_icon_name = "wi-night-alt-cloudy" %}
+                        {% when 37 %}
+                        {% assign weather_icon_name = "wi-night-fog" %}
+                        {% when 38 %}
+                        {% assign weather_icon_name = "wi-night-cloudy" %}
+                        {% when 39 %}
+                        {% assign weather_icon_name = "wi-night-alt-showers" %}
+                        {% when 40 %}
+                        {% assign weather_icon_name = "wi-night-alt-rain" %}
+                        {% when 41 %}
+                        {% assign weather_icon_name = "wi-night-alt-thunderstorm" %}
+                        {% when 42 %}
+                        {% assign weather_icon_name = "wi-night-alt-storm-showers" %}
+                        {% when 43 %}
+                        {% assign weather_icon_name = "wi-night-alt-snow" %}
+                        {% when 44 %}
+                        {% assign weather_icon_name = "wi-night-alt-snow" %}
+                        {% else %}
+                        {% assign weather_icon_name = "wi-na" %}
+                        {% endcase %}
+                        <img class="w--[70px] h--[70px]" src="https://trmnl.com/images/plugins/weather/{{ weather_icon_name }}.svg">
+                        <span class="label labe--small">{{WeatherText}}</span>
+                    </div>
+                    <div class="divider--v"></div>
+
+					<span class="value value--xlarge">{{ temp_metric_value }}°</span>
+
+					<div class="divider--v"></div>
+
+                    <div class="flex flex--row flex--left w--full gap">
+						<div class="flex flex--center-y gap--small flex--nowrap">
+							Juntamoji
+							<span class="label label--large">{{ real_feel_metric_value }}°<span>
+						</div>
+                        <div class="flex flex--row gap--xsmall py--1 px--3 rounded--full">
+                            <flux:icon icon="arrow-up" style="max-height: 16px;"/>
+                            <span class="label label-small">-14° </div>
+                        </div>
+                        <div class="flex flex--row gap--xsmall py--1 px--3 rounded--full">
+                            <flux:icon icon="arrow-down" style="max-height: 16px;"/>
+                            <span class="label label-small">-20°</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+		</div>
+	</div>
+</x-trmnl::screen>

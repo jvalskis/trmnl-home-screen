@@ -1,0 +1,4 @@
+--- Home Assistant ({{ entity_count }} entities) ---
+{% for entity in entities %}
+  {{ entity.friendly_name }}: {{ entity.state }}{% if entity.unit != "" %} {{ entity.unit }}{% endif %}
+{% endfor %}
