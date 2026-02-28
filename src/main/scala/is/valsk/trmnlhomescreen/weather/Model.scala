@@ -1,5 +1,6 @@
-package is.valsk.trmnlhomescreen
+package is.valsk.trmnlhomescreen.weather
 
+import is.valsk.trmnlhomescreen.*
 import zio.json.*
 
 final case class Country(
@@ -72,7 +73,7 @@ final case class CurrentConditions(
     @jsonField("Temperature")
     temperature: ValueContainer,
     @jsonField("RealFeelTemperature")
-    realFeelTemperature: Option[Temperature],
+    realFeelTemperature: Option[ValueContainer],
     @jsonField("HasPrecipitation")
     hasPrecipitation: Boolean,
     @jsonField("PrecipitationType")
@@ -88,19 +89,11 @@ final case class CurrentConditions(
     @jsonField("UVIndexText")
     uvIndexText: Option[String],
     @jsonField("Visibility")
-    visibility: Option[Temperature],
+    visibility: Option[ValueContainer],
     @jsonField("CloudCover")
     cloudCover: Option[Int],
     @jsonField("LocalObservationDateTime")
     localObservationDateTime: String,
-    @jsonField("RealFeelTemperature")
-    realFeelTemperature: ValueContainer,
-    @jsonField("RelativeHumidity")
-    relativeHumidity: Int,
-    @jsonField("Wind")
-    wind: Wind,
-    @jsonField("UVIndex")
-    uvIndex: Int,
 )
 
 object CurrentConditions:

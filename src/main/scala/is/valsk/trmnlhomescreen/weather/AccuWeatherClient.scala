@@ -1,6 +1,5 @@
 package is.valsk.trmnlhomescreen.weather
 
-import is.valsk.trmnlhomescreen.{CurrentConditions, Location}
 import zio.*
 import zio.http.*
 import zio.json.*

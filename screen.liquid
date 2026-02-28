@@ -1,7 +1,7 @@
 <x-trmnl::screen>
-	<x-trmnl::mashup mashupLayout="1Lx2R">
+	<div class="mashup mashup--1Lx2R">
 	    {% if has_calendar %}
-		<x-trmnl::view size="half_vertical">
+        <div class="view view--half_vertical">
             <div class="title_bar">
               <img class="image" alt="" src="https://trmnl.com/images/plugins/lunar_calendar--render.svg">
               <span class="title">Šiandien</span>
@@ -33,242 +33,165 @@
 					<span class="title title--small">2026-01-22</span>
 				</div-->
 			</div>
-		</x-trmnl::view>
+		</div>
         {% endif %}
-		<x-trmnl::view size="quadrant">
-			<div class="layout layout--col layout--stretch-y layout--left" data-content-limiter="true">
-				<div class="item">
-				  <div class="meta"></div>
-				  <div class="content">
-					<div class="flex flex--center-y gap--small w--full flex--nowrap">
-						<span class="title title--large w--40">Svetainė</span>
-						<div class="flex flex--col">
-							<div class="flex flex--center-y gap--small flex--nowrap">
-								<flux:icon icon="droplet" style="max-height: 16px;"/>
-								<span class="label label--large">47.52&nbsp;%<span>
-							</div>
-							<div class="flex flex--center-y gap--small w--full flex--nowrap">
-								<flux:icon icon="thermometer" style="max-height: 16px;"/>
-								<span class="label label--large">25.3°</span>
-							</div>
-						</div>
-					</div>
-					</div>
-				</div>
 
-				<div class="border--h-6 w--full"></div>
+        <div class="view view--quadrant">
+            <div class="layout">
+                <div class="grid grid--cols-10">
+                    <span class="title title--medium col--span-6">Svetainė</span>
+                    <div class="divider--v  col--span-1"></div>
+                    <div class="col--span-3 flex flex--col">
+                        <div class="flex flex--center-y flex--right gap--small w--full flex--nowrap">
+                            <flux:icon icon="droplet" style="max-height: 16px;"/>
+                            <span class="label label--medium w--full">{{ entities["sensor.svetaine_dregmes_ir_temperaturos_sensorius_temperature"].state }}%</span>
+                        </div>
+                        <div class="flex flex--center-y flex--right gap--small w--full flex--nowrap">
+                            <flux:icon icon="thermometer" style="max-height: 16px;"/>
+                            <span class="label label--medium">{{ entities["sensor.svetaine_dregmes_ir_temperaturos_sensorius_humidity"].state }}°</span>
+                        </div>
+                    </div>
+                    <span class="title title--medium col--span-6">Miegamasis</span>
+                    <div class="divider--v  col--span-1"></div>
+                    <div class="col--span-3 flex flex--col">
+                        <div class="flex flex--center-y flex--right gap--small w--full flex--nowrap">
+                            <flux:icon icon="droplet" style="max-height: 16px;"/>
+                            <span class="label label--medium w--full">{{ entities["sensor.mk_temperaturos_ir_dregmes_sensorius_temperature"].state }}%</span>
+                        </div>
+                        <div class="flex flex--center-y flex--right gap--small w--full flex--nowrap">
+                            <flux:icon icon="thermometer" style="max-height: 16px;"/>
+                            <span class="label label--medium">{{ entities["sensor.mk_temperaturos_ir_dregmes_sensorius_humidity"].state }}°</span>
+                        </div>
+                    </div>
+                    <span class="title title--medium col--span-6">Darbo kambarys</span>
+                    <div class="divider--v  col--span-1"></div>
+                    <div class="col--span-3 flex flex--col">
+                        <div class="flex flex--center-y flex--right gap--small w--full flex--nowrap">
+                            <flux:icon icon="droplet" style="max-height: 16px;"/>
+                            <span class="label label--medium w--full">{{ entities["sensor.dk_temperaturos_ir_dregmes_sensorius_temperature"].state }}%</span>
+                        </div>
+                        <div class="flex flex--center-y flex--right gap--small w--full flex--nowrap">
+                            <flux:icon icon="thermometer" style="max-height: 16px;"/>
+                            <span class="label label--medium">{{ entities["sensor.dk_temperaturos_ir_dregmes_sensorius_humidity"].state }}°</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-				<div class="item">
-				  <div class="meta"></div>
-				  <div class="content">
-					<div class="flex flex--center-y gap--small w--full flex--nowrap">
-						<span class="title title--large w--40">Miegamasis</span>
-						<div class="flex flex--col">
-							<div class="flex flex--center-y gap--small flex--nowrap">
-								<flux:icon icon="droplet" style="max-height: 16px;"/>
-								<span class="label label--large">47.52&nbsp;%<span>
-							</div>
-							<div class="flex flex--center-y gap--small w--full flex--nowrap">
-								<flux:icon icon="thermometer" style="max-height: 16px;"/>
-								<span class="label label--large">25.3°</span>
-							</div>
-						</div>
-					</div>
-					</div>
-				</div>
-
-				<div class="divider"></div>
-
-				<div class="item">
-				  <div class="meta"></div>
-				  <div class="content">
-					<div class="flex flex--center-y gap--small w--full flex--nowrap">
-						<span class="title title--large w--40">Darbo kambarys</span>
-						<div class="flex flex--col">
-							<div class="flex flex--center-y gap--small flex--nowrap">
-								<flux:icon icon="droplet" style="max-height: 16px;"/>
-								<span class="label label--large">47.52&nbsp;%<span>
-							</div>
-							<div class="flex flex--center-y gap--small w--full flex--nowrap">
-								<flux:icon icon="thermometer" style="max-height: 16px;"/>
-								<span class="label label--large">25.3°</span>
-							</div>
-						</div>
-					</div>
-					</div>
-				</div>
-			</div>
-		</x-trmnl::view>
-		<x-trmnl::view size="quadrant">
+        <div class="view view--quadrant">
 			<div class="layout layout--col gap--space-between">
-			  <div class="flex flex--center-y gap--small w--full flex--nowrap">
-				  <div class="flex flex--row flex--center">
-                    {% case weather_icon %}
-                      {% when 1 %}
+                <div class="flex flex--center-y gap--small w--full flex--nowrap">
+                    <div class="flex flex--row flex--center">
+                        {% case weather_icon %}
+                        {% when 1 %}
                         {% assign weather_icon_name = "wi-day-sunny" %}
-                      {% when 2 %}
+                        {% when 2 %}
                         {% assign weather_icon_name = "wi-day-sunny-overcast" %}
-                      {% when 3 %}
+                        {% when 3 %}
                         {% assign weather_icon_name = "wi-day-cloudy" %}
-                      {% when 4 %}
+                        {% when 4 %}
                         {% assign weather_icon_name = "wi-day-cloudy" %}
-                      {% when 5 %}
+                        {% when 5 %}
                         {% assign weather_icon_name = "wi-day-haze" %}
-                      {% when 6 %}
+                        {% when 6 %}
                         {% assign weather_icon_name = "wi-cloudy" %}
-                      {% when 7 %}
+                        {% when 7 %}
                         {% assign weather_icon_name = "wi-cloudy" %}
-                      {% when 8 %}
+                        {% when 8 %}
                         {% assign weather_icon_name = "wi-cloudy" %}
-                      {% when 11 %}
+                        {% when 11 %}
                         {% assign weather_icon_name = "wi-fog" %}
-                      {% when 12 %}
+                        {% when 12 %}
                         {% assign weather_icon_name = "wi-showers" %}
-                      {% when 13 %}
+                        {% when 13 %}
                         {% assign weather_icon_name = "wi-day-showers" %}
-                      {% when 14 %}
+                        {% when 14 %}
                         {% assign weather_icon_name = "wi-day-rain" %}
-                      {% when 15 %}
+                        {% when 15 %}
                         {% assign weather_icon_name = "wi-thunderstorm" %}
-                      {% when 16 %}
+                        {% when 16 %}
                         {% assign weather_icon_name = "wi-day-thunderstorm" %}
-                      {% when 17 %}
+                        {% when 17 %}
                         {% assign weather_icon_name = "wi-day-storm-showers" %}
-                      {% when 18 %}
+                        {% when 18 %}
                         {% assign weather_icon_name = "wi-rain" %}
-                      {% when 19 %}
+                        {% when 19 %}
                         {% assign weather_icon_name = "wi-snow" %}
-                      {% when 20 %}
+                        {% when 20 %}
                         {% assign weather_icon_name = "wi-day-snow" %}
-                      {% when 21 %}
+                        {% when 21 %}
                         {% assign weather_icon_name = "wi-day-snow" %}
-                      {% when 22 %}
+                        {% when 22 %}
                         {% assign weather_icon_name = "wi-snow" %}
-                      {% when 23 %}
+                        {% when 23 %}
                         {% assign weather_icon_name = "wi-day-snow" %}
-                      {% when 24 %}
+                        {% when 24 %}
                         {% assign weather_icon_name = "wi-snowflake-cold" %}
-                      {% when 25 %}
+                        {% when 25 %}
                         {% assign weather_icon_name = "wi-sleet" %}
-                      {% when 26 %}
+                        {% when 26 %}
                         {% assign weather_icon_name = "wi-rain-mix" %}
-                      {% when 29 %}
+                        {% when 29 %}
                         {% assign weather_icon_name = "wi-rain-mix" %}
-                      {% when 30 %}
+                        {% when 30 %}
                         {% assign weather_icon_name = "wi-hot" %}
-                      {% when 31 %}
+                        {% when 31 %}
                         {% assign weather_icon_name = "wi-snowflake-cold" %}
-                      {% when 32 %}
+                        {% when 32 %}
                         {% assign weather_icon_name = "wi-strong-wind" %}
-                      {% when 33 %}
+                        {% when 33 %}
                         {% assign weather_icon_name = "wi-night-clear" %}
-                      {% when 34 %}
+                        {% when 34 %}
                         {% assign weather_icon_name = "wi-night-clear" %}
-                      {% when 35 %}
+                        {% when 35 %}
                         {% assign weather_icon_name = "wi-night-alt-partly-cloudy" %}
-                      {% when 36 %}
+                        {% when 36 %}
                         {% assign weather_icon_name = "wi-night-alt-cloudy" %}
-                      {% when 37 %}
+                        {% when 37 %}
                         {% assign weather_icon_name = "wi-night-fog" %}
-                      {% when 38 %}
+                        {% when 38 %}
                         {% assign weather_icon_name = "wi-night-cloudy" %}
-                      {% when 39 %}
+                        {% when 39 %}
                         {% assign weather_icon_name = "wi-night-alt-showers" %}
-                      {% when 40 %}
+                        {% when 40 %}
                         {% assign weather_icon_name = "wi-night-alt-rain" %}
-                      {% when 41 %}
+                        {% when 41 %}
                         {% assign weather_icon_name = "wi-night-alt-thunderstorm" %}
-                      {% when 42 %}
+                        {% when 42 %}
                         {% assign weather_icon_name = "wi-night-alt-storm-showers" %}
-                      {% when 43 %}
+                        {% when 43 %}
                         {% assign weather_icon_name = "wi-night-alt-snow" %}
-                      {% when 44 %}
+                        {% when 44 %}
                         {% assign weather_icon_name = "wi-night-alt-snow" %}
-                      {% else %}
+                        {% else %}
                         {% assign weather_icon_name = "wi-na" %}
-                    {% endcase %}
-					<img class="w--[70px] h--[70px]" src="https://trmnl.com/images/plugins/weather/{{ weather_icon_name }}.svg">
-				  </div>
-					<div class="divider--v"></div>
+                        {% endcase %}
+                        <img class="w--[70px] h--[70px]" src="https://trmnl.com/images/plugins/weather/{{ weather_icon_name }}.svg">
+                        <span class="label labe--small">{{WeatherText}}</span>
+                    </div>
+                    <div class="divider--v"></div>
 
 					<span class="value value--xlarge">{{ temp_metric_value }}°</span>
 
 					<div class="divider--v"></div>
-					  <div class="flex flex--row flex--left w--full gap">
-						<div class="flex flex--row gap--xsmall py--1 px--3 rounded--full">
-						  <flux:icon icon="arrow-up" style="max-height: 16px;"/>
-						  <div class="">-14° </div>
-						</div>
-						<div class="flex flex--row gap--xsmall py--1 px--3 rounded--full">
-						  <flux:icon icon="arrow-down" style="max-height: 16px;"/>
-						  <div class="">-20°</div>
-						</div>
-					  </div>
-					<div class="flex flex--col">
+
+                    <div class="flex flex--row flex--left w--full gap">
 						<div class="flex flex--center-y gap--small flex--nowrap">
 							Juntamoji
-							<span class="label label--large">-14°<span>
+							<span class="label label--large">{{ real_feel_metric_value }}°<span>
 						</div>
-						<div class="flex flex--center-y gap--small flex--nowrap">
-							Aukščiausia
-							<span class="label label--large">-5°<span>
-						</div>
-						<div class="flex flex--center-y gap--small flex--nowrap">
-							Žemiausia
-							<span class="label label--large">-7°<span>
-						</div>
-					</div>
-			  </div>
-			  <div class="divider"></div>
-
-			  <div class="grid grid--col-3 px--2 h--12 border--h-1 w--full value--xxsmall">
-				<div class="flex flex--row gap--xsmall text-stroke">
-				  <span class="material-symbols-outlined">cloud</span>
-				  <div class="">80%</div>
-				</div>
-				<div class="flex flex--row gap--xsmall text-stroke">
-				  <span class="material-symbols-outlined">humidity_percentage</span>
-				  <div class="">60%</div>
-				</div>
-				<div class="flex flex--row gap--xsmall text-stroke">
-				  <span class="material-symbols-outlined">accessibility_new</span>
-				  <div class="">-20°</div>
-				</div>
-			  </div>
-			  <div class="grid grid--col-3 px--2 h--12 border--h-1 w--full value--xxsmall">
-				<div class="flex flex--row gap--xsmall text-stroke">
-				  <span class="material-symbols-outlined">ac_unit</span>
-				  <div class="">{-{ snowfall_today }} {-{ snow_label}}</div>
-				</div>
-				<div class="flex flex--row gap--xsmall text-stroke">
-				  <span class="material-symbols-outlined">water_drop</span>
-				  <div class="">20%</div>
-				</div>
-				<div class="flex flex--row gap--xsmall text-stroke">
-				  <span class="material-symbols-outlined">visibility</span>
-				  <div class="">10 m</div>
-				</div>
-				<div class="flex flex--row gap--xsmall text-stroke">
-				  <span class="material-symbols-outlined">air</span>
-				  <div class="">15 m/s</div>
-				</div>
-			  </div>
-			  <div class="grid grid--col-3 px--2 h--12 value--xxsmall">
-				<div class="flex flex--row gap--xsmall text-stroke">
-				  <span class="material-symbols-outlined">nest_sunblock</span>
-				  <div class="">5</div>
-				</div>
-				<div class="flex flex--row gap--xsmall text-stroke">
-				  <span class="material-symbols-outlined">wb_sunny</span>
-				  <div class="">5:42</div>
-				</div>
-				<div class="flex flex--row gap--xsmall text-stroke">
-				  <span class="material-symbols-outlined">moon_stars</span>
-				  <div class="">16:30</div>
-				</div>
-			  </div>
-			</div>
-			</div>
-		</x-trmnl::view>
-	</x-trmnl::mashup>
+                        <div class="flex flex--row gap--xsmall py--1 px--3 rounded--full">
+                            <flux:icon icon="arrow-up" style="max-height: 16px;"/>
+                            <span class="label label-small">-14° </div>
+                        </div>
+                        <div class="flex flex--row gap--xsmall py--1 px--3 rounded--full">
+                            <flux:icon icon="arrow-down" style="max-height: 16px;"/>
+                            <span class="label label-small">-20°</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+		</div>
+	</div>
 </x-trmnl::screen>

@@ -2,6 +2,7 @@ package is.valsk.trmnlhomescreen
 
 import is.valsk.trmnlhomescreen.calendar.CalendarEvent
 import is.valsk.trmnlhomescreen.homeassistant.message.model.responses.Event.EntityState
+import is.valsk.trmnlhomescreen.weather.CurrentConditions
 import zio.{Ref, UIO, ULayer, ZLayer}
 
 trait ScreenStateRepository:
@@ -9,6 +10,7 @@ trait ScreenStateRepository:
   def updateWeatherConditions(conditions: CurrentConditions): UIO[Unit]
   def updateEntityState(entityId: String, state: EntityState): UIO[Unit]
   def updateEntityStates(states: Map[String, EntityState]): UIO[Unit]
+  def addStates(states: Map[String, Any]): UIO[Unit]
   def get: UIO[ScreenState]
 
 object ScreenStateRepository:
@@ -32,6 +34,9 @@ object ScreenStateRepository:
         val current = s.entityStates.getOrElse(Map.empty)
         s.copy(entityStates = Some(current ++ states))
       }
+
+    override def addStates(states: Map[String, Any]): UIO[Unit] =
+      ref.update(s => s.copy(state = s.state ++ states))
 
     def get: UIO[ScreenState] = ref.get
 
