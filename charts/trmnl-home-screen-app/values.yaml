@@ -10,9 +10,9 @@ controllers:
     containers:
       main:
         image:
-          repository: ghcr.io/jvalskis/trmnl-home-screen-app
+          repository: ghcr.io/jvalskis/trmnl-home-screen/trmnl-home-screen
           # Defaults to .Chart.AppVersion
-          tag:
+          tag: ""
           pullPolicy: IfNotPresent
         env:
           TZ: UTC
