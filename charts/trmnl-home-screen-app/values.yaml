@@ -28,13 +28,13 @@ controllers:
           CALDAV_DAYS_AHEAD: "7"
           HOME_ASSISTANT_ENABLED: "false"
           HOME_ASSISTANT_WEBSOCKET_URL: "wss://home-assistant.local/api/websocket"
-          HOME_ASSISTANT_PORT: "8123"
-          HOME_ASSISTANT_USE_SSL: "false"
           HOME_ASSISTANT_ACCESS_TOKEN: YOUR_HA_TOKEN
           # Comma separated list of entities
           HOME_ASSISTANT_SUBSCRIBED_ENTITY_IDS: ""
           HOME_ASSISTANT_FETCH_INTERVAL_MINUTES: "15"
-          HOME_ASSISTANT_TEMPLATE_FILE: "/app/templates/homeassistant.liquid"
+          TRMNL_BASE_URL: "http://trmnl_byos.local:4567"
+          TRMNL_TOKEN: "token"
+          TRMNL_DEVICE_ID: 1
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
