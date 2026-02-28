@@ -11,6 +11,7 @@ controllers:
       main:
         image:
           repository: ghcr.io/jvalskis/trmnl-home-screen/trmnl-home-screen
+          tag: {{.Chart.AppVersion}}
           pullPolicy: IfNotPresent
         env:
           TZ: UTC
@@ -19,10 +20,6 @@ controllers:
           WEATHER_FETCH_INTERVAL_MINUTES: "60"
           WEATHER_TEMPLATE_FILE: "/app/templates/weather.liquid"
           ACCUWEATHER_API_KEY: YOUR_API_KEY
-#            valueFrom:
-#              secretKeyRef:
-#                name: ""
-#                key: ACCUWEATHER_API_KEY
           CALENDAR_ENABLED: "true"
           CALDAV_CALENDAR_URL: "https://nextcloud.example.com/remote.php/dav/calendars/user/personal/"
           CALDAV_AUTH_TYPE: "basic"
@@ -36,10 +33,6 @@ controllers:
           HOME_ASSISTANT_PORT: "8123"
           HOME_ASSISTANT_USE_SSL: "false"
           HOME_ASSISTANT_ACCESS_TOKEN: YOUR_HA_TOKEN
-#            valueFrom:
-#              secretKeyRef:
-#                name: ""
-#                key: HOME_ASSISTANT_ACCESS_TOKEN
           HOME_ASSISTANT_ENTITY_PATTERN: "sensor.*"
           HOME_ASSISTANT_FETCH_INTERVAL_MINUTES: "15"
           HOME_ASSISTANT_TEMPLATE_FILE: "/app/templates/homeassistant.liquid"
