@@ -36,7 +36,8 @@ object TrmnlClient:
           url = url,
           headers = Headers(
             Header.Authorization.Bearer(config.token),
-            Header.ContentType(MediaType.application.json)
+            Header.ContentType(MediaType.application.json),
+            Header.Accept(MediaType.application.json)
           ),
           body = Body.fromString(ScreenRequest(markup).toJson)
         )
