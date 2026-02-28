@@ -19,7 +19,7 @@ object RenderProgram:
       val loop = for
         state <- screenStateRepository.get
         rendered <- screenRenderer.render(state)
-        _ <- Console.printLine(rendered)
+        _ <- ZIO.logDebug(s"Rendered markup:\n$rendered")
         _ <- trmnlClient.pushScreen(rendered)
       yield ()
       loop

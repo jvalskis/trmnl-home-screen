@@ -9,14 +9,26 @@ import zio.http.Client
 
 object Main extends ZIOAppDefault:
 
-  override def run: ZIO[Any, Any, Any] =
-    val weatherProgram = ZIO.serviceWithZIO[WeatherProgram](_.run)
-    val calendarProgram = ZIO.serviceWithZIO[CalendarProgram](_.run)
-    val homeAssistantProgram = ZIO.serviceWithZIO[HomeAssistantProgram](_.run)
-    val renderProgram = ZIO.serviceWithZIO[RenderProgram](_.run)
+  private def resolveLogLevel(level: String): UIO[LogLevel] =
+    ZIO.fromOption(LogLevel.levels.find(_.label == level.toUpperCase))
+      .orElse(ZIO.logWarning(s"Logging level '$level' could not be resolved. Defaulting to INFO").map(_ => LogLevel.Info))
 
-    (weatherProgram <&> calendarProgram <&> homeAssistantProgram <&> renderProgram).provide(
+  override def run: ZIO[Any, Any, Any] =
+    val program = for
+      loggingConfig <- ZIO.service[LoggingConfig]
+      logLevel <- resolveLogLevel(loggingConfig.level)
+      weatherProgram = ZIO.serviceWithZIO[WeatherProgram](_.run)
+      calendarProgram = ZIO.serviceWithZIO[CalendarProgram](_.run)
+      homeAssistantProgram = ZIO.serviceWithZIO[HomeAssistantProgram](_.run)
+      renderProgram = ZIO.serviceWithZIO[RenderProgram](_.run)
+      _ <- ZIO.logLevel(logLevel) {
+        weatherProgram <&> calendarProgram <&> homeAssistantProgram <&> renderProgram
+      }
+    yield ()
+
+    program.provide(
       Client.default,
+      LoggingConfig.layer,
       AccuWeatherClient.configuredLayer,
       CalDavClient.configuredLayer,
       ScreenStateRepository.layer,
