@@ -11,7 +11,7 @@ controllers:
       main:
         image:
           repository: ghcr.io/jvalskis/trmnl-home-screen/trmnl-home-screen
-          tag: {{.Chart.AppVersion}}
+          tag: ""
           pullPolicy: IfNotPresent
         env:
           TZ: UTC
