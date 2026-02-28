@@ -10,7 +10,7 @@ controllers:
     containers:
       main:
         image:
-          repository: ghcr.io/jvalskis/trmnl-home-screen/trmnl-home-screen
+          repository: ghcr.io/jvalskis/trmnl-home-screen
           tag: "{{.Chart.AppVersion}}"
           pullPolicy: IfNotPresent
         env:
