@@ -31,7 +31,7 @@ controllers:
           HOME_ASSISTANT_ACCESS_TOKEN: YOUR_HA_TOKEN
           # Comma separated list of entities
           HOME_ASSISTANT_SUBSCRIBED_ENTITY_IDS: ""
-          HOME_ASSISTANT_FETCH_INTERVAL_MINUTES: "15"
+          HOME_ASSISTANT_MAX_FRAME_SIZE_KB: "1024"
           TRMNL_BASE_URL: "http://trmnl_byos.local:4567"
           TRMNL_TOKEN: "token"
           TRMNL_DEVICE_ID: 1

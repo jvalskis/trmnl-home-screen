@@ -32,11 +32,9 @@ environments:
                         name: trmnl-caldav
                         key: CALDAV_PASSWORD
                   HOME_ASSISTANT_ENABLED: "false"
-                  HOME_ASSISTANT_HOST: "homeassistant.local"
-                  HOME_ASSISTANT_PORT: "8123"
-                  HOME_ASSISTANT_USE_SSL: "false"
-                  HOME_ASSISTANT_ENTITY_PATTERN: "sensor.*"
-                  HOME_ASSISTANT_FETCH_INTERVAL_MINUTES: "15"
+                  HOME_ASSISTANT_WEBSOCKET_URL: "wss://homeassistant.local/api/websocket"
+                  HOME_ASSISTANT_SUBSCRIBED_ENTITY_IDS: ""
+                  HOME_ASSISTANT_MAX_FRAME_SIZE_KB: "1024"
                   HOME_ASSISTANT_ACCESS_TOKEN:
                     valueFrom:
                       secretKeyRef:
@@ -65,8 +63,6 @@ releases:
                   CALDAV_FETCH_INTERVAL_MINUTES: {{ .Values | get "controllers.main.containers.main.env.CALDAV_FETCH_INTERVAL_MINUTES" "30" | quote }}
                   CALDAV_DAYS_AHEAD: {{ .Values | get "controllers.main.containers.main.env.CALDAV_DAYS_AHEAD" "7" | quote }}
                   HOME_ASSISTANT_ENABLED: {{ .Values | get "controllers.main.containers.main.env.HOME_ASSISTANT_ENABLED" "false" | quote }}
-                  HOME_ASSISTANT_HOST: {{ .Values | get "controllers.main.containers.main.env.HOME_ASSISTANT_HOST" "homeassistant.local" | quote }}
-                  HOME_ASSISTANT_PORT: {{ .Values | get "controllers.main.containers.main.env.HOME_ASSISTANT_PORT" "8123" | quote }}
-                  HOME_ASSISTANT_USE_SSL: {{ .Values | get "controllers.main.containers.main.env.HOME_ASSISTANT_USE_SSL" "false" | quote }}
-                  HOME_ASSISTANT_ENTITY_PATTERN: {{ .Values | get "controllers.main.containers.main.env.HOME_ASSISTANT_ENTITY_PATTERN" "sensor.*" | quote }}
-                  HOME_ASSISTANT_FETCH_INTERVAL_MINUTES: {{ .Values | get "controllers.main.containers.main.env.HOME_ASSISTANT_FETCH_INTERVAL_MINUTES" "15" | quote }}
+                  HOME_ASSISTANT_WEBSOCKET_URL: {{ .Values | get "controllers.main.containers.main.env.HOME_ASSISTANT_WEBSOCKET_URL" "" | quote }}
+                  HOME_ASSISTANT_SUBSCRIBED_ENTITY_IDS: {{ .Values | get "controllers.main.containers.main.env.HOME_ASSISTANT_SUBSCRIBED_ENTITY_IDS" "" | quote }}
+                  HOME_ASSISTANT_MAX_FRAME_SIZE_KB: {{ .Values | get "controllers.main.containers.main.env.HOME_ASSISTANT_MAX_FRAME_SIZE_KB" "1024" | quote }}
