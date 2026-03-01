@@ -6,6 +6,10 @@ All data flows directly between your infrastructure and the APIs you choose to e
 
 ## Integrations
 
+### General
+
+Provides general-purpose properties such as the current date. These are always available and require no configuration.
+
 ### Weather (AccuWeather)
 
 Polls AccuWeather for current conditions on a configurable interval. Provides temperature, precipitation status, observation time and others to the template.
@@ -111,6 +115,11 @@ Available template variables:
 
 | Source | Variable | Type | Description |
 |---|---|---|---|
+| General | `today_date` | string | Current date (`yyyy-MM-dd`) |
+| General | `today_day_of_week` | string | Day of the week (e.g. `Monday`) |
+| General | `today_day_of_month` | number | Day of the month (e.g. `1`) |
+| General | `today_month` | string | Month name (e.g. `March`) |
+| General | `today_year` | number | Year (e.g. `2026`) |
 | Weather | `has_weather` | boolean | Whether weather data is available |
 | Weather | `weather_text` | string | Current conditions description |
 | Weather | `temp_metric_value` | number | Temperature in metric |

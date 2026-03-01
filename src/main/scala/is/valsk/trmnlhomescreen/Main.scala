@@ -43,8 +43,9 @@ object Main extends ZIOAppDefault:
     List[PropertiesExtractor],
   ] = ZLayer.scoped {
     for
+      generalExtractor <- GeneralPropertiesExtractor.layer.build.map(_.get[PropertiesExtractor])
       calendarExtractor <- CalendarPropertiesExtractor.configuredLayer.build.map(_.get[PropertiesExtractor])
       weatherExtractor <- WeatherPropertiesExtractor.configuredLayer.build.map(_.get[PropertiesExtractor])
       homeAssistantExtractor <- HomeAssistantPropertiesExtractor.configuredLayer.build.map(_.get[PropertiesExtractor])
-    yield List(calendarExtractor, weatherExtractor, homeAssistantExtractor)
+    yield List(generalExtractor, calendarExtractor, weatherExtractor, homeAssistantExtractor)
   }
