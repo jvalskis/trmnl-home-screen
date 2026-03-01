@@ -9,7 +9,7 @@ object RenderProgram:
 
   private class RenderProgramLive(
       config: ScreenConfig,
-      screenStateRepository: ScreenStateRepository,
+      extractors: List[PropertiesExtractor],
       screenRenderer: ScreenRenderer,
       trmnlClient: TrmnlClient,
   ) extends RenderProgram:
@@ -17,8 +17,9 @@ object RenderProgram:
     def run: Task[Unit] =
       val interval = Duration.fromSeconds(config.renderIntervalSeconds.toLong)
       val loop = for
-        state <- screenStateRepository.get
-        rendered <- screenRenderer.render(state)
+        allProperties <- ZIO.foreach(extractors)(_.extract)
+        properties = allProperties.flatten.toMap
+        rendered <- screenRenderer.render(properties)
         _ <- Console.printLine(rendered)
         _ <- trmnlClient.pushScreen(rendered)
       yield ()
@@ -27,13 +28,14 @@ object RenderProgram:
         .repeat(Schedule.fixed(interval))
         .unit
 
-  val layer: URLayer[ScreenConfig & ScreenStateRepository & ScreenRenderer & TrmnlClient, RenderProgram] = ZLayer {
+  val layer: URLayer[ScreenConfig & List[PropertiesExtractor] & ScreenRenderer & TrmnlClient, RenderProgram] = ZLayer {
     for
       config <- ZIO.service[ScreenConfig]
-      repo <- ZIO.service[ScreenStateRepository]
+      extractors <- ZIO.service[List[PropertiesExtractor]]
       renderer <- ZIO.service[ScreenRenderer]
       trmnl <- ZIO.service[TrmnlClient]
-    yield RenderProgramLive(config, repo, renderer, trmnl)
+    yield RenderProgramLive(config, extractors, renderer, trmnl)
   }
 
-  val configuredLayer: RLayer[ScreenStateRepository & ScreenRenderer & TrmnlClient, RenderProgram] = ScreenConfig.layer >>> layer
+  val configuredLayer: RLayer[List[PropertiesExtractor] & ScreenRenderer & TrmnlClient, RenderProgram] =
+    ScreenConfig.layer >>> layer

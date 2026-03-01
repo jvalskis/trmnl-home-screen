@@ -1,6 +1,6 @@
 <x-trmnl::screen>
 	<div class="mashup mashup--1Lx2R">
-	    {% if has_calendar %}
+	    {% if calendar_enabled %}
         <div class="view view--half_vertical">
             <div class="title_bar">
               <img class="image" alt="" src="https://trmnl.com/images/plugins/lunar_calendar--render.svg">
@@ -168,7 +168,7 @@
                         {% assign weather_icon_name = "wi-na" %}
                         {% endcase %}
                         <img class="w--[70px] h--[70px]" src="https://trmnl.com/images/plugins/weather/{{ weather_icon_name }}.svg">
-                        <span class="label labe--small">{{WeatherText}}</span>
+                        <span class="label labe--small">{{ weather_text }}</span>
                     </div>
                     <div class="divider--v"></div>
 
