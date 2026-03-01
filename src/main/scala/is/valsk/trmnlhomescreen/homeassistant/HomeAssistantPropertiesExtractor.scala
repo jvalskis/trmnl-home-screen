@@ -21,6 +21,7 @@ object HomeAssistantPropertiesExtractor:
             areasByEntity <- ZIO.foreach(entities)((entityId, _) =>
               areaRepository.getAreaForEntity(entityId).map(entityId -> _),
             )
+            _ <- ZIO.logDebug(s"Areas: $areasByEntity") *> ZIO.logDebug(s"Entities: $entities")
           } yield Seq(
             "homeassistant_enabled" -> config.enabled,
             "entities" -> entities.map { (entityId, entity) =>
@@ -29,7 +30,7 @@ object HomeAssistantPropertiesExtractor:
                 "friendly_name" -> entity.attributes.friendlyName.getOrElse(entity.entityId),
                 "state" -> entity.state,
                 "unit" -> entity.attributes.unitOfMeasurement.getOrElse(""),
-                "area" -> areasByEntity(entityId).getOrElse(""),
+                "area" -> areasByEntity.get(entityId).flatten.getOrElse(""),
               ).asJava
             }.asJava,
           ).toMap
