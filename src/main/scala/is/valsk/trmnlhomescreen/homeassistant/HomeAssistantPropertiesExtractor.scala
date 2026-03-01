@@ -17,11 +17,13 @@ object HomeAssistantPropertiesExtractor:
           Seq(
             "homeassistant_enabled" -> config.enabled,
             "entities" -> entities.toSeq.map { (entityId, entity) =>
-              entityId -> Map[String, Any](
-                "entity_id" -> entity.entityId,
-                "friendly_name" -> entity.attributes.friendlyName.getOrElse(entity.entityId),
-                "state" -> entity.state,
-                "unit" -> entity.attributes.unitOfMeasurement.getOrElse(""),
+              Map(
+                entityId -> Map[String, Any](
+                  "entity_id" -> entity.entityId,
+                  "friendly_name" -> entity.attributes.friendlyName.getOrElse(entity.entityId),
+                  "state" -> entity.state,
+                  "unit" -> entity.attributes.unitOfMeasurement.getOrElse(""),
+                ).asJava,
               ).asJava
             }.asJava,
           ).toMap
