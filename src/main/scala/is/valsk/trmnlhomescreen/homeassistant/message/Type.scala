@@ -13,6 +13,9 @@ enum Type(val typeName: String) {
   case Event extends Type("event")
   case SubscribeEvents extends Type("subscribe_events")
   case GetStates extends Type("get_states")
+  case GetAreaRegistry extends Type("config/area_registry/list")
+  case GetEntityRegistry extends Type("config/entity_registry/list")
+  case GetDeviceRegistry extends Type("config/device_registry/list")
 }
 
 object Type {

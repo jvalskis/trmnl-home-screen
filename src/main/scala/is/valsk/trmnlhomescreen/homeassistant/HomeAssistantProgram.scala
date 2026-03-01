@@ -81,8 +81,8 @@ object HomeAssistantProgram {
     } yield List(authenticationHandler, resultHandler)
   }
 
-  val configuredLayer: RLayer[HomeAssistantStateRepository, HomeAssistantProgram] =
-    ZLayer.makeSome[HomeAssistantStateRepository, HomeAssistantProgram](
+  val configuredLayer: RLayer[HomeAssistantStateRepository & HomeAssistantAreaRepository, HomeAssistantProgram] =
+    ZLayer.makeSome[HomeAssistantStateRepository & HomeAssistantAreaRepository, HomeAssistantProgram](
       layer,
       channelHandlerLayer,
       hassResponseMessageHandlerLayer,
@@ -97,7 +97,10 @@ object HomeAssistantProgram {
         for {
           getStates <- GetStatesHandler.layer.build.map(_.get)
           subscribeEvents <- SubscribeEventsHandler.layer.build.map(_.get)
-        } yield Seq(getStates, subscribeEvents)
+          areaRegistry <- AreaRegistryHandler.layer.build.map(_.get)
+          entityRegistry <- EntityRegistryHandler.layer.build.map(_.get)
+          deviceRegistry <- DeviceRegistryHandler.layer.build.map(_.get)
+        } yield Seq(getStates, subscribeEvents, areaRegistry, entityRegistry, deviceRegistry)
       },
       CommandPhaseHandlerLive.layer,
       HassResponseMessageParser.layer,
