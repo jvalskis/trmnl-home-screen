@@ -10,41 +10,33 @@ controllers:
     containers:
       main:
         image:
-          repository: ghcr.io/jvalskis/trmnl-home-screen-app
-          # Defaults to .Chart.AppVersion
-          tag:
+          repository: ghcr.io/jvalskis/trmnl-home-screen
+          tag: "{{.Chart.AppVersion}}"
           pullPolicy: IfNotPresent
         env:
           TZ: UTC
-          WEATHER_ENABLED: "true"
+          WEATHER_ENABLED: "false"
           WEATHER_CITY: "London"
           WEATHER_FETCH_INTERVAL_MINUTES: "60"
-          WEATHER_TEMPLATE_FILE: "/app/templates/weather.liquid"
           ACCUWEATHER_API_KEY: YOUR_API_KEY
-#            valueFrom:
-#              secretKeyRef:
-#                name: ""
-#                key: ACCUWEATHER_API_KEY
-          CALENDAR_ENABLED: "true"
+          CALENDAR_ENABLED: "false"
           CALDAV_CALENDAR_URL: "https://nextcloud.example.com/remote.php/dav/calendars/user/personal/"
           CALDAV_AUTH_TYPE: "basic"
           CALDAV_USERNAME: "user"
           CALDAV_PASSWORD: "app-password"
           CALDAV_FETCH_INTERVAL_MINUTES: "30"
           CALDAV_DAYS_AHEAD: "7"
-          CALENDAR_TEMPLATE_FILE: "/app/templates/calendar.liquid"
           HOME_ASSISTANT_ENABLED: "false"
-          HOME_ASSISTANT_HOST: "homeassistant.local"
-          HOME_ASSISTANT_PORT: "8123"
-          HOME_ASSISTANT_USE_SSL: "false"
+          HOME_ASSISTANT_WEBSOCKET_URL: "wss://home-assistant.local/api/websocket"
           HOME_ASSISTANT_ACCESS_TOKEN: YOUR_HA_TOKEN
-#            valueFrom:
-#              secretKeyRef:
-#                name: ""
-#                key: HOME_ASSISTANT_ACCESS_TOKEN
-          HOME_ASSISTANT_ENTITY_PATTERN: "sensor.*"
+          # Comma separated list of entities
+          HOME_ASSISTANT_SUBSCRIBED_ENTITY_IDS: ""
           HOME_ASSISTANT_FETCH_INTERVAL_MINUTES: "15"
-          HOME_ASSISTANT_TEMPLATE_FILE: "/app/templates/homeassistant.liquid"
+          TRMNL_BASE_URL: "http://trmnl_byos.local:4567"
+          TRMNL_TOKEN: "token"
+          TRMNL_DEVICE_ID: 1
+          # ALL, FATAL, ERROR, WARN, INFO, DEBUG, TRACE, OFF
+          LOG_LEVEL: INFO
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false

@@ -1,7 +1,0 @@
---- Upcoming Events ({{ event_count }}) ---
-{% for event in events %}
-{{ event.summary }}
-  When:  {{ event.start }}{% if event.end != "" %} - {{ event.end }}{% endif %}
-  {% if event.location != "" %}Where: {{ event.location }}{% endif %}
-  {% if event.description != "" %}Notes: {{ event.description }}{% endif %}
-{% endfor %}

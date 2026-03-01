@@ -1,6 +1,6 @@
 package is.valsk.trmnlhomescreen.homeassistant
 
-import is.valsk.trmnlhomescreen.{Program, ScreenStateRepository}
+import is.valsk.trmnlhomescreen.Program
 import is.valsk.trmnlhomescreen.homeassistant.message.MessageIdGenerator.SequentialMessageIdGenerator
 import is.valsk.trmnlhomescreen.homeassistant.message.{HassResponseMessageParser, MessageSender, RequestRepository}
 import is.valsk.trmnlhomescreen.homeassistant.protocol.*
@@ -34,12 +34,11 @@ object HomeAssistantProgram {
           Schedule.recurWhile[Throwable](_ => true)
         val connect = for {
           _ <- ZIO.logInfo(s"Connecting to HASS @ ${config.webSocketUrl}")
-          _ <- client
+          _ <- (client *> ZIO.never)
             .provide(
               Client.default,
               Scope.default,
             )
-          _ <- ZIO.fail(new RuntimeException("Connection closed"))
         } yield ()
 
         connect
@@ -82,8 +81,8 @@ object HomeAssistantProgram {
     } yield List(authenticationHandler, resultHandler)
   }
 
-  val configuredLayer: RLayer[ScreenStateRepository, HomeAssistantProgram] =
-    ZLayer.makeSome[ScreenStateRepository, HomeAssistantProgram](
+  val configuredLayer: RLayer[HomeAssistantStateRepository, HomeAssistantProgram] =
+    ZLayer.makeSome[HomeAssistantStateRepository, HomeAssistantProgram](
       layer,
       channelHandlerLayer,
       hassResponseMessageHandlerLayer,

@@ -1,6 +1,6 @@
 package is.valsk.trmnlhomescreen.homeassistant.protocol.handlers
 
-import is.valsk.trmnlhomescreen.ScreenStateRepository
+import is.valsk.trmnlhomescreen.homeassistant.HomeAssistantStateRepository
 import is.valsk.trmnlhomescreen.homeassistant.HomeAssistantConfig
 import is.valsk.trmnlhomescreen.homeassistant.message.model.responses.Event.EntityState
 import is.valsk.trmnlhomescreen.homeassistant.message.model.responses.Result
@@ -10,10 +10,10 @@ import zio.json.*
 
 object GetStatesHandler {
 
-  val layer: URLayer[RequestRepository & ScreenStateRepository & HomeAssistantConfig, HomeAssistantResultHandler] = {
+  val layer: URLayer[RequestRepository & HomeAssistantStateRepository & HomeAssistantConfig, HomeAssistantResultHandler] = {
     ZLayer {
       for {
-        screenStateRepository <- ZIO.service[ScreenStateRepository]
+        homeAssistantStateRepository <- ZIO.service[HomeAssistantStateRepository]
         requestRepository <- ZIO.service[RequestRepository]
         config <- ZIO.service[HomeAssistantConfig]
         allowedEntityIds = config.subscribedEntityIdList.toSet
@@ -26,7 +26,7 @@ object GetStatesHandler {
               .flatten
               .filter(state => allowedEntityIds.contains(state.entityId)),
           )(state =>
-            screenStateRepository.updateEntityState(state.entityId, state) *>
+            homeAssistantStateRepository.updateEntityState(state.entityId, state) *>
               ZIO.logDebug(s"Updated entity state for ${state.entityId} -> $state"),
           )
         },
@@ -37,7 +37,7 @@ object GetStatesHandler {
 
   }
 
-  val configuredLayer: RLayer[ScreenStateRepository & RequestRepository, HomeAssistantResultHandler] =
+  val configuredLayer: RLayer[HomeAssistantStateRepository & RequestRepository, HomeAssistantResultHandler] =
     HomeAssistantConfig.layer >>> layer
 
 }
