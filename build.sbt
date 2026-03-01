@@ -2,7 +2,9 @@ val zioVersion = "2.1.24"
 val zioHttpVersion = "3.8.1"
 val zioJsonVersion = "0.7.44"
 val zioConfigVersion = "4.0.6"
+val zioLoggingVersion = "2.4.0"
 
+val logbackVersion = "1.5.16"
 val liqpVersion = "0.9.2.3"
 val biweeklyVersion = "0.6.8"
 val scalaXmlVersion = "2.2.0"
@@ -19,6 +21,8 @@ lazy val root = (project in file("."))
       "dev.zio" %% "zio-config" % zioConfigVersion,
       "dev.zio" %% "zio-config-typesafe" % zioConfigVersion,
       "dev.zio" %% "zio-config-magnolia" % zioConfigVersion,
+      "dev.zio" %% "zio-logging-slf4j2" % zioLoggingVersion,
+      "ch.qos.logback" % "logback-classic" % logbackVersion,
       "nl.big-o" % "liqp" % liqpVersion,
       "net.sf.biweekly" % "biweekly" % biweeklyVersion,
       "org.scala-lang.modules" %% "scala-xml" % scalaXmlVersion,

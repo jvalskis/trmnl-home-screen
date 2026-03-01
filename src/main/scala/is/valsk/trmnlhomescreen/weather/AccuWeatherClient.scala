@@ -47,7 +47,7 @@ object AccuWeatherClient:
         url <- ZIO.fromEither(URL.decode(urlStr))
           .mapError(e => RuntimeException(s"Invalid URL: $urlStr"))
         body <- ZIO.scoped(client.request(Request.get(url)).flatMap(_.body.asString))
-        _ <- ZIO.logInfo(body)
+        _ <- ZIO.logDebug(s"Accuweather response: $body")
         conditions <- ZIO.fromEither(body.fromJson[List[CurrentConditions]])
           .mapError(msg => RuntimeException(s"JSON parse error: $msg"))
         condition <- ZIO.fromOption(conditions.headOption)

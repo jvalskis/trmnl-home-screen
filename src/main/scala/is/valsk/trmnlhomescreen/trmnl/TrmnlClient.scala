@@ -29,6 +29,7 @@ object TrmnlClient:
     def pushScreen(markup: String): Task[Unit] =
       val urlStr = s"${config.baseUrl}/api/display/update?device_id=${config.deviceId}"
       for
+        _ <- ZIO.logDebug(s"Pushing screen to TRMNL: $urlStr")
         url <- ZIO.fromEither(URL.decode(urlStr))
           .mapError(e => RuntimeException(s"Invalid URL: $urlStr"))
         request = Request(
