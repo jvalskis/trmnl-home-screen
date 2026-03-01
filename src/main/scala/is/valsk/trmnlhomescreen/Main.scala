@@ -2,7 +2,7 @@ package is.valsk.trmnlhomescreen
 
 import is.valsk.trmnlhomescreen.calendar.{CalDavClient, CalendarProgram, CalendarPropertiesExtractor, CalendarStateRepository}
 import is.valsk.trmnlhomescreen.weather.{AccuWeatherClient, WeatherProgram, WeatherPropertiesExtractor, WeatherStateRepository}
-import is.valsk.trmnlhomescreen.homeassistant.{HomeAssistantProgram, HomeAssistantPropertiesExtractor, HomeAssistantStateRepository}
+import is.valsk.trmnlhomescreen.homeassistant.{HomeAssistantAreaRepository, HomeAssistantProgram, HomeAssistantPropertiesExtractor, HomeAssistantStateRepository}
 import is.valsk.trmnlhomescreen.trmnl.TrmnlClient
 import zio.*
 import zio.http.Client
@@ -27,6 +27,7 @@ object Main extends ZIOAppDefault:
       WeatherStateRepository.layer,
       CalendarStateRepository.layer,
       HomeAssistantStateRepository.layer,
+      HomeAssistantAreaRepository.layer,
       extractorsLayer,
       ScreenRenderer.configuredLayer,
       TrmnlClient.configuredLayer,
@@ -37,7 +38,7 @@ object Main extends ZIOAppDefault:
     )
 
   private val extractorsLayer: ZLayer[
-    CalendarStateRepository & WeatherStateRepository & HomeAssistantStateRepository,
+    CalendarStateRepository & WeatherStateRepository & HomeAssistantStateRepository & HomeAssistantAreaRepository,
     Throwable,
     List[PropertiesExtractor],
   ] = ZLayer.scoped {

@@ -7,14 +7,22 @@ import scala.jdk.CollectionConverters.*
 
 object HomeAssistantPropertiesExtractor:
 
-  val layer: URLayer[HomeAssistantConfig & HomeAssistantStateRepository, PropertiesExtractor] = ZLayer {
-    for {
-      repository <- ZIO.service[HomeAssistantStateRepository]
-      config <- ZIO.service[HomeAssistantConfig]
-    } yield new PropertiesExtractor:
-      def extract: UIO[Map[String, Any]] =
-        repository.get.map { entities =>
-          Seq(
+  val layer
+      : URLayer[HomeAssistantConfig & HomeAssistantStateRepository & HomeAssistantAreaRepository, PropertiesExtractor] =
+    ZLayer {
+      for {
+        repository <- ZIO.service[HomeAssistantStateRepository]
+        areaRepository <- ZIO.service[HomeAssistantAreaRepository]
+        config <- ZIO.service[HomeAssistantConfig]
+      } yield new PropertiesExtractor:
+        def extract: UIO[Map[String, Any]] =
+          for {
+            entities <- repository.get
+            areasByEntity <- ZIO.foreach(entities)((entityId, _) =>
+              areaRepository.getAreaForEntity(entityId).map(entityId -> _),
+            )
+            _ <- ZIO.logDebug(s"Areas: $areasByEntity") *> ZIO.logDebug(s"Entities: $entities")
+          } yield Seq(
             "homeassistant_enabled" -> config.enabled,
             "entities" -> entities.map { (entityId, entity) =>
               entityId -> Map[String, Any](
@@ -22,10 +30,11 @@ object HomeAssistantPropertiesExtractor:
                 "friendly_name" -> entity.attributes.friendlyName.getOrElse(entity.entityId),
                 "state" -> entity.state,
                 "unit" -> entity.attributes.unitOfMeasurement.getOrElse(""),
+                "area" -> areasByEntity.get(entityId).flatten.getOrElse(""),
               ).asJava
             }.asJava,
           ).toMap
-        }
-  }
+    }
 
-  val configuredLayer: RLayer[HomeAssistantStateRepository, PropertiesExtractor] = HomeAssistantConfig.layer >>> layer
+  val configuredLayer: RLayer[HomeAssistantStateRepository & HomeAssistantAreaRepository, PropertiesExtractor] =
+    HomeAssistantConfig.layer >>> layer
