@@ -6,10 +6,6 @@ All data flows directly between your infrastructure and the APIs you choose to e
 
 ## Integrations
 
-### General
-
-Provides general-purpose properties such as the current date. These are always available and require no configuration.
-
 ### Weather (AccuWeather)
 
 Polls AccuWeather for current conditions on a configurable interval. Provides temperature, precipitation status, observation time and others to the template.
