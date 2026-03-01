@@ -35,6 +35,8 @@ controllers:
           TRMNL_BASE_URL: "http://trmnl_byos.local:4567"
           TRMNL_TOKEN: "token"
           TRMNL_DEVICE_ID: 1
+          # ALL, FATAL, ERROR, WARN, INFO, DEBUG, TRACE, OFF
+          LOG_LEVEL: INFO
         securityContext:
           readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
