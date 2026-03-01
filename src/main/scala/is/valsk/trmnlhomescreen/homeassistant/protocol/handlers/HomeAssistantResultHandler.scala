@@ -12,7 +12,7 @@ class HomeAssistantResultHandler(
 ) {
 
   def handle(channel: WebSocketChannel, result: HassResponseMessage & HassIdentifiableMessage): Task[Unit] = {
-    ZIO.logInfo(s"Received message: $result") *>
+    ZIO.logDebug(s"Received message: $result") *>
       requestRepository.get(result.id).flatMap {
         case Some(t) if t == supportedType && handler.isDefinedAt(channel, result, t) =>
           handler(channel, result, t)
