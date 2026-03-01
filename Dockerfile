@@ -24,15 +24,15 @@ WORKDIR /app
 # Copy fat JAR from build stage
 COPY --from=build /build/target/scala-3.3.7/trmnl-home-screen-app.jar /app/app.jar
 
-# Copy template
-COPY screen.liquid /app/templates/screen.liquid
+# Copy config files
+COPY screen.liquid /app/config/screen.liquid
 
 # Set ownership
 RUN chown -R appuser:appgroup /app
 
 USER appuser
 
-ENV SCREEN_TEMPLATE_FILE=/app/templates/screen.liquid
+ENV SCREEN_TEMPLATE_FILE=/app/config/screen.liquid
 ENV TRMNL_BASE_URL=http://localhost
 ENV TRMNL_TOKEN=""
 ENV TRMNL_DEVICE_ID=""

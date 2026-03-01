@@ -3,9 +3,9 @@ services:
     build: .
     env_file: .env
     environment:
-      SCREEN_TEMPLATE_FILE: ${SCREEN_TEMPLATE_FILE:-screen.liquid}
+      SCREEN_TEMPLATE_FILE: ${SCREEN_TEMPLATE_FILE:-/app/config/screen.liquid}
       SCREEN_RENDER_INTERVAL_SECONDS: ${SCREEN_RENDER_INTERVAL_SECONDS:-30}
-      TRMNL_BASE_URL: ${TRMNL_BASE_URL:-http://localhost}
+      TRMNL_BASE_URL: ${TRMNL_BASE_URL:-}
       TRMNL_TOKEN: ${TRMNL_TOKEN:-}
       TRMNL_DEVICE_ID: ${TRMNL_DEVICE_ID:-}
       WEATHER_ENABLED: ${WEATHER_ENABLED:-true}
