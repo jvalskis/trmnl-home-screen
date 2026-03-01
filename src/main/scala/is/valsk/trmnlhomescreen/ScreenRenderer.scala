@@ -13,10 +13,12 @@ object ScreenRenderer:
 
   private final case class LiveScreenRenderer(template: Template) extends ScreenRenderer:
 
-    def render(properties: Map[String, Any]): Task[String] =
-      ZIO.attempt {
-        template.render(properties.asJava)
+    def render(properties: Map[String, Any]): Task[String] = {
+      val renderProperties = properties.asJava
+      ZIO.logDebug(s"Render properties: ${renderProperties.toString}") *> ZIO.attempt {
+        template.render(renderProperties)
       }
+    }
 
   val layer: ZLayer[ScreenConfig, Throwable, ScreenRenderer] =
     ZLayer.fromZIO {

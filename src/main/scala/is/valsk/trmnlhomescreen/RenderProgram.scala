@@ -20,7 +20,6 @@ object RenderProgram:
         allProperties <- ZIO.foreach(extractors)(_.extract)
         properties = allProperties.flatten.toMap
         rendered <- screenRenderer.render(properties)
-        _ <- Console.printLine(properties)
         _ <- Console.printLine(rendered)
         _ <- trmnlClient.pushScreen(rendered)
       yield ()
