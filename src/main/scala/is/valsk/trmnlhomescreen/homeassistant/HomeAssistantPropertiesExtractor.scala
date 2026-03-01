@@ -24,15 +24,6 @@ object HomeAssistantPropertiesExtractor:
                 "unit" -> entity.attributes.unitOfMeasurement.getOrElse(""),
               ).asJava
             }.asJava,
-//            "entities" -> entities.values.toList.sortBy(_.entityId).map { entity =>
-//              entity.entityId ->
-//                Map[String, Any](
-//                  "entity_id" -> entity.entityId,
-//                  "friendly_name" -> entity.attributes.friendlyName.getOrElse(entity.entityId),
-//                  "state" -> entity.state,
-//                  "unit" -> entity.attributes.unitOfMeasurement.getOrElse(""),
-//                ).asJava
-//            }.toMap.asJava
           ).toMap
         }
   }
