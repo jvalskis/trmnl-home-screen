@@ -1,13 +1,13 @@
 package is.valsk.trmnlhomescreen.calendar
 
-import is.valsk.trmnlhomescreen.{Program, ScreenStateRepository}
+import is.valsk.trmnlhomescreen.Program
 import zio.{Duration, RLayer, Schedule, Task, URLayer, ZIO, ZLayer}
 
 trait CalendarProgram extends Program
 
 object CalendarProgram {
 
-  private class CalendarProgramLive(config: CalendarConfig, client: CalDavClient, screenStateRepository: ScreenStateRepository)
+  private class CalendarProgramLive(config: CalendarConfig, client: CalDavClient, calendarStateRepository: CalendarStateRepository)
       extends CalendarProgram {
 
     def run: Task[Unit] =
@@ -24,18 +24,18 @@ object CalendarProgram {
     private def fetchAndStore(client: CalDavClient): Task[Unit] =
       for
         events <- client.fetchEvents()
-        _ <- screenStateRepository.updateCalendarEvents(events)
+        _ <- calendarStateRepository.update(events)
       yield ()
 
   }
 
-  val layer: URLayer[ScreenStateRepository & CalDavClient & CalendarConfig, CalendarProgram] = ZLayer {
+  val layer: URLayer[CalendarStateRepository & CalDavClient & CalendarConfig, CalendarProgram] = ZLayer {
     for {
       config <- ZIO.service[CalendarConfig]
       client <- ZIO.service[CalDavClient]
-      repo <- ZIO.service[ScreenStateRepository]
+      repo <- ZIO.service[CalendarStateRepository]
     } yield CalendarProgramLive(config, client, repo)
   }
 
-  val configuredLayer: RLayer[ScreenStateRepository & CalDavClient, CalendarProgram] = CalendarConfig.layer >>> layer
+  val configuredLayer: RLayer[CalendarStateRepository & CalDavClient, CalendarProgram] = CalendarConfig.layer >>> layer
 }

@@ -1,8 +1,8 @@
 package is.valsk.trmnlhomescreen
 
-import is.valsk.trmnlhomescreen.calendar.{CalDavClient, CalendarProgram}
-import is.valsk.trmnlhomescreen.weather.{AccuWeatherClient, WeatherProgram}
-import is.valsk.trmnlhomescreen.homeassistant.HomeAssistantProgram
+import is.valsk.trmnlhomescreen.calendar.{CalDavClient, CalendarProgram, CalendarPropertiesExtractor, CalendarStateRepository}
+import is.valsk.trmnlhomescreen.weather.{AccuWeatherClient, WeatherProgram, WeatherPropertiesExtractor, WeatherStateRepository}
+import is.valsk.trmnlhomescreen.homeassistant.{HomeAssistantProgram, HomeAssistantPropertiesExtractor, HomeAssistantStateRepository}
 import is.valsk.trmnlhomescreen.trmnl.TrmnlClient
 import zio.*
 import zio.http.Client
@@ -19,7 +19,10 @@ object Main extends ZIOAppDefault:
       Client.default,
       AccuWeatherClient.configuredLayer,
       CalDavClient.configuredLayer,
-      ScreenStateRepository.layer,
+      WeatherStateRepository.layer,
+      CalendarStateRepository.layer,
+      HomeAssistantStateRepository.layer,
+      extractorsLayer,
       ScreenRenderer.configuredLayer,
       TrmnlClient.configuredLayer,
       RenderProgram.configuredLayer,
@@ -27,3 +30,15 @@ object Main extends ZIOAppDefault:
       CalendarProgram.configuredLayer,
       HomeAssistantProgram.configuredLayer,
     )
+
+  private val extractorsLayer: ZLayer[
+    CalendarStateRepository & WeatherStateRepository & HomeAssistantStateRepository,
+    Throwable,
+    List[PropertiesExtractor],
+  ] = ZLayer.scoped {
+    for
+      calendarExtractor <- CalendarPropertiesExtractor.configuredLayer.build.map(_.get[PropertiesExtractor])
+      weatherExtractor <- WeatherPropertiesExtractor.configuredLayer.build.map(_.get[PropertiesExtractor])
+      homeAssistantExtractor <- HomeAssistantPropertiesExtractor.configuredLayer.build.map(_.get[PropertiesExtractor])
+    yield List(calendarExtractor, weatherExtractor, homeAssistantExtractor)
+  }

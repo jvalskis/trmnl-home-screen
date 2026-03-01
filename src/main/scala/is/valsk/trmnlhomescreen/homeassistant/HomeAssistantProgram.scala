@@ -1,6 +1,6 @@
 package is.valsk.trmnlhomescreen.homeassistant
 
-import is.valsk.trmnlhomescreen.{Program, ScreenStateRepository}
+import is.valsk.trmnlhomescreen.Program
 import is.valsk.trmnlhomescreen.homeassistant.message.MessageIdGenerator.SequentialMessageIdGenerator
 import is.valsk.trmnlhomescreen.homeassistant.message.{HassResponseMessageParser, MessageSender, RequestRepository}
 import is.valsk.trmnlhomescreen.homeassistant.protocol.*
@@ -81,8 +81,8 @@ object HomeAssistantProgram {
     } yield List(authenticationHandler, resultHandler)
   }
 
-  val configuredLayer: RLayer[ScreenStateRepository, HomeAssistantProgram] =
-    ZLayer.makeSome[ScreenStateRepository, HomeAssistantProgram](
+  val configuredLayer: RLayer[HomeAssistantStateRepository, HomeAssistantProgram] =
+    ZLayer.makeSome[HomeAssistantStateRepository, HomeAssistantProgram](
       layer,
       channelHandlerLayer,
       hassResponseMessageHandlerLayer,

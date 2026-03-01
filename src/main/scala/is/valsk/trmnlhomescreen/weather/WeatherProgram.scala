@@ -1,13 +1,13 @@
 package is.valsk.trmnlhomescreen.weather
 
-import is.valsk.trmnlhomescreen.{Program, ScreenStateRepository}
+import is.valsk.trmnlhomescreen.Program
 import zio.{Duration, RLayer, Schedule, Task, URLayer, ZIO, ZLayer}
 
 trait WeatherProgram extends Program
 
 object WeatherProgram {
 
-  private class WeatherProgramLive(config: WeatherConfig, client: AccuWeatherClient, screenStateRepository: ScreenStateRepository)
+  private class WeatherProgramLive(config: WeatherConfig, client: AccuWeatherClient, weatherStateRepository: WeatherStateRepository)
       extends WeatherProgram {
 
     def run: Task[Unit] =
@@ -28,18 +28,18 @@ object WeatherProgram {
     private def fetchAndStore(client: AccuWeatherClient, locationKey: String): Task[Unit] =
       for
         conditions <- client.currentConditions(locationKey)
-        _ <- screenStateRepository.updateWeatherConditions(conditions)
+        _ <- weatherStateRepository.update(conditions)
       yield ()
 
   }
 
-  val layer: URLayer[ScreenStateRepository & AccuWeatherClient & WeatherConfig, WeatherProgram] = ZLayer {
+  val layer: URLayer[WeatherStateRepository & AccuWeatherClient & WeatherConfig, WeatherProgram] = ZLayer {
     for {
       config <- ZIO.service[WeatherConfig]
       client <- ZIO.service[AccuWeatherClient]
-      repo <- ZIO.service[ScreenStateRepository]
+      repo <- ZIO.service[WeatherStateRepository]
     } yield WeatherProgramLive(config, client, repo)
   }
 
-  val configuredLayer: RLayer[ScreenStateRepository & AccuWeatherClient, WeatherProgram] = WeatherConfig.layer >>> layer
+  val configuredLayer: RLayer[WeatherStateRepository & AccuWeatherClient, WeatherProgram] = WeatherConfig.layer >>> layer
 }
