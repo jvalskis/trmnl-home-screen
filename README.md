@@ -68,11 +68,17 @@ All configuration is defined in `application.conf`. Defaults and can be overridd
 | `HOME_ASSISTANT_SUBSCRIBED_ENTITY_IDS` | | Comma-separated entity IDs                                                                                                                                 |
 | `HOME_ASSISTANT_MAX_FRAME_SIZE_KB` | `1024` | Max WebSocket frame size. Initial `get_state` call may returns very large payloads (It returns all entities) and this may need to be adjusted accordingly. |
 
+### Logging
+
+| Variable | Default | Description |
+|---|---|---|
+| `LOG_LEVEL` | `INFO` | Log level (`ALL`, `TRACE`, `DEBUG`, `INFO`, `WARN`, `ERROR`, `OFF`) |
+
 ## Running
 
 ### Docker Compose
 
-Create a `.env` file with your secrets, then:
+Copy `.env.example` to `.env` and fill in your values, then:
 
 ```sh
 docker compose up -d
@@ -86,7 +92,7 @@ A Helm chart is available as an OCI package:
 helm install trmnl-home-screen oci://ghcr.io/jvalskis/helm-charts/trmnl-home-screen-app
 ```
 
-See `charts/trmnl-home-screen-app/values.yaml` for configurable values.
+See [`values.yaml`](https://github.com/jvalskis/trmnl-home-screen/blob/master/charts/trmnl-home-screen-app/values.yaml) for configurable values.
 
 ### Building from source
 
