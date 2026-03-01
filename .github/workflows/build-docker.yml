@@ -68,3 +68,12 @@ jobs:
           git add "$CHART_FILE"
           git commit -m "chore: bump chart version to ${NEW_VERSION} and set appVersion to ${VERSION}"
           git push origin HEAD:master
+
+      - name: Run chart-releaser
+        uses: bitdeps/helm-oci-charts-releaser@v0.1.5
+        with:
+          charts_dir: charts
+          oci_registry: ghcr.io/${{ github.repository }}
+          oci_username: ${{ github.actor }}
+          oci_password: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
