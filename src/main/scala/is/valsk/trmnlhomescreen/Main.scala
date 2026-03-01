@@ -6,29 +6,22 @@ import is.valsk.trmnlhomescreen.homeassistant.HomeAssistantProgram
 import is.valsk.trmnlhomescreen.trmnl.TrmnlClient
 import zio.*
 import zio.http.Client
+import zio.logging.backend.SLF4J
 
 object Main extends ZIOAppDefault:
 
-  private def resolveLogLevel(level: String): UIO[LogLevel] =
-    ZIO.fromOption(LogLevel.levels.find(_.label == level.toUpperCase))
-      .orElse(ZIO.logWarning(s"Logging level '$level' could not be resolved. Defaulting to INFO").map(_ => LogLevel.Info))
+  override val bootstrap: ZLayer[ZIOAppArgs, Any, Any] =
+    Runtime.removeDefaultLoggers >>> SLF4J.slf4j
 
   override def run: ZIO[Any, Any, Any] =
-    val program = for
-      loggingConfig <- ZIO.service[LoggingConfig]
-      logLevel <- resolveLogLevel(loggingConfig.level)
-      weatherProgram = ZIO.serviceWithZIO[WeatherProgram](_.run)
-      calendarProgram = ZIO.serviceWithZIO[CalendarProgram](_.run)
-      homeAssistantProgram = ZIO.serviceWithZIO[HomeAssistantProgram](_.run)
-      renderProgram = ZIO.serviceWithZIO[RenderProgram](_.run)
-      _ <- ZIO.logLevel(logLevel) {
-        weatherProgram <&> calendarProgram <&> homeAssistantProgram <&> renderProgram
-      }
-    yield ()
+    val program =
+      ZIO.serviceWithZIO[WeatherProgram](_.run) <&>
+        ZIO.serviceWithZIO[CalendarProgram](_.run) <&>
+        ZIO.serviceWithZIO[HomeAssistantProgram](_.run) <&>
+        ZIO.serviceWithZIO[RenderProgram](_.run)
 
     program.provide(
       Client.default,
-      LoggingConfig.layer,
       AccuWeatherClient.configuredLayer,
       CalDavClient.configuredLayer,
       ScreenStateRepository.layer,
