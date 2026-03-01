@@ -24,10 +24,10 @@ All configuration is defined in `application.conf`. Defaults and can be overridd
 
 ### Screen
 
-| Variable | Default | Description |
-|---|---|---|
-| `SCREEN_TEMPLATE_FILE` | `/app/templates/screen.liquid` | Path to Liquid template |
-| `SCREEN_RENDER_INTERVAL_SECONDS` | `30` | How often to render and push |
+| Variable | Default                     | Description |
+|---|-----------------------------|---|
+| `SCREEN_TEMPLATE_FILE` | `/app/config/screen.liquid` | Path to Liquid template |
+| `SCREEN_RENDER_INTERVAL_SECONDS` | `30`                        | How often to render and push |
 
 ### TRMNL Device
 
