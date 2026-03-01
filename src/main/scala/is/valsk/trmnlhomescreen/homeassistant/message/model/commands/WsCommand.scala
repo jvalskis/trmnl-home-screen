@@ -1,6 +1,6 @@
 package is.valsk.trmnlhomescreen.homeassistant.message.model.commands
 
-import is.valsk.trmnlhomescreen.homeassistant.message.Type.{GetStates, SubscribeEvents}
+import is.valsk.trmnlhomescreen.homeassistant.message.Type.{GetAreaRegistry, GetDeviceRegistry, GetEntityRegistry, GetStates, SubscribeEvents}
 import is.valsk.trmnlhomescreen.homeassistant.message.model.{HassIdentifiableMessage, HassRequestMessage}
 import is.valsk.trmnlhomescreen.homeassistant.message.Type
 import zio.json.{DeriveJsonEncoder, JsonEncoder, jsonField}
@@ -26,4 +26,19 @@ object SubscribeEventsCommand {
 object GetStatesCommand {
 
   def apply(): WsCommand = WsCommand(GetStates.typeName, 0)
+}
+
+object GetAreaRegistryCommand {
+
+  def apply(): WsCommand = WsCommand(GetAreaRegistry.typeName, 0)
+}
+
+object GetEntityRegistryCommand {
+
+  def apply(): WsCommand = WsCommand(GetEntityRegistry.typeName, 0)
+}
+
+object GetDeviceRegistryCommand {
+
+  def apply(): WsCommand = WsCommand(GetDeviceRegistry.typeName, 0)
 }
