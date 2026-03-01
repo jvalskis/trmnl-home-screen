@@ -34,8 +34,8 @@ USER appuser
 
 ENV SCREEN_TEMPLATE_FILE=/app/templates/screen.liquid
 ENV TRMNL_BASE_URL=http://localhost
-ENV TRMNL_API_KEY=""
-ENV TRMNL_MAC_ADDRESS=""
+ENV TRMNL_TOKEN=""
+ENV TRMNL_DEVICE_ID=""
 
 EXPOSE 8080
 

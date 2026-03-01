@@ -8,34 +8,34 @@ All data flows directly between your infrastructure and the APIs you choose to e
 
 ### Weather (AccuWeather)
 
-Polls AccuWeather for current conditions on a configurable interval. Provides temperature (metric/imperial), precipitation status, and observation time to the template.
+Polls AccuWeather for current conditions on a configurable interval. Provides temperature, precipitation status, observation time and others to the template.
 
 ### Calendar (CalDAV)
 
-Connects to any CalDAV-compatible server (Nextcloud, Radicale, Baikal, etc.) to fetch upcoming events. Supports Basic and Bearer authentication. You control which calendar server your data lives on.
+Connects to any CalDAV-compatible server (Nextcloud, Radicale, Baikal, etc.) to fetch upcoming events. Supports Basic and Bearer authentication.
 
 ### Home Assistant
 
-Subscribes to entity state changes over WebSocket with automatic reconnection. Filter which entities appear on screen via a comma-separated ID list. Connects directly to your Home Assistant instance on your local network.
+Subscribes to entity state changes over WebSocket. Filter which entities appear on screen via a comma-separated ID list. Connects directly to your Home Assistant instance on your local network.
 
 ## Configuration
 
-All configuration is driven by environment variables with sensible defaults in `application.conf`.
+All configuration is defined in `application.conf`. Defaults and can be overridden with environment variables.
 
 ### Screen
 
 | Variable | Default | Description |
 |---|---|---|
-| `SCREEN_TEMPLATE_FILE` | `screen.liquid` | Path to Liquid template |
+| `SCREEN_TEMPLATE_FILE` | `/app/templates/screen.liquid` | Path to Liquid template |
 | `SCREEN_RENDER_INTERVAL_SECONDS` | `30` | How often to render and push |
 
 ### TRMNL Device
 
 | Variable | Default | Description |
 |---|---|---|
-| `TRMNL_BASE_URL` | `http://localhost` | BYOS server URL |
-| `TRMNL_API_KEY` | | Device API key |
-| `TRMNL_MAC_ADDRESS` | | Device MAC address |
+| `TRMNL_BASE_URL` | | BYOS server URL |
+| `TRMNL_TOKEN` | | Device API token |
+| `TRMNL_DEVICE_ID` | | Device ID |
 
 ### Weather
 
@@ -50,7 +50,7 @@ All configuration is driven by environment variables with sensible defaults in `
 
 | Variable | Default | Description |
 |---|---|---|
-| `CALENDAR_ENABLED` | `true` | Enable/disable calendar |
+| `CALENDAR_ENABLED` | `false` | Enable/disable calendar |
 | `CALDAV_CALENDAR_URL` | | CalDAV endpoint URL |
 | `CALDAV_AUTH_TYPE` | `basic` | `basic` or `bearer` |
 | `CALDAV_USERNAME` | | CalDAV username |
@@ -78,6 +78,16 @@ Create a `.env` file with your secrets, then:
 docker compose up -d
 ```
 
+### Helm
+
+A Helm chart is available as an OCI package:
+
+```sh
+helm install trmnl-home-screen oci://ghcr.io/jvalskis/helm-charts/trmnl-home-screen-app
+```
+
+See `charts/trmnl-home-screen-app/values.yaml` for configurable values.
+
 ### Building from source
 
 Requires JDK 21+ and sbt:
@@ -89,10 +99,33 @@ java -jar target/scala-3.3.7/trmnl-home-screen-app.jar
 
 ## Templating
 
-The screen layout is defined by a [Liquid](https://shopify.github.io/liquid/) template (`screen.liquid`). The rendered HTML is pushed to the BYOS server, which converts it to an image for the e-ink display.
+The screen layout is defined by a [Liquid](https://shopify.github.io/liquid/) template (`screen.liquid`). The rendered HTML is pushed to the BYOS server, which converts it to an image for the e-ink display. Templates should use the [TRMNL Design System](https://trmnl.com/framework/docs) for layouts optimized for e-ink rendering.
 
 Available template variables:
 
-- **Weather:** `has_weather`, `weather_text`, `temp_metric_value`, `temp_metric_unit`, `temp_imperial_value`, `temp_imperial_unit`, `has_precipitation`, `is_day_time`, `observation_time`
-- **Calendar:** `has_calendar`, `event_count`, `events[]` (each with `summary`, `start`, `end`, `location`, `description`)
-- **Home Assistant:** `has_entities`, `entity_count`, `entities[]` (each with `entity_id`, `friendly_name`, `state`, `unit`)
+| Source | Variable | Type | Description |
+|---|---|---|---|
+| Weather | `has_weather` | boolean | Whether weather data is available |
+| Weather | `weather_text` | string | Current conditions description |
+| Weather | `temp_metric_value` | number | Temperature in metric |
+| Weather | `temp_metric_unit` | string | Metric unit (e.g. `C`) |
+| Weather | `temp_imperial_value` | number | Temperature in imperial |
+| Weather | `temp_imperial_unit` | string | Imperial unit (e.g. `F`) |
+| Weather | `has_precipitation` | boolean | Whether precipitation is occurring |
+| Weather | `is_day_time` | boolean | Whether it is daytime |
+| Weather | `observation_time` | string | Observation timestamp |
+| Calendar | `has_calendar` | boolean | Whether calendar data is available |
+| Calendar | `event_count` | number | Number of upcoming events |
+| Calendar | `events[]` | array | List of events |
+| Calendar | `events[].summary` | string | Event title |
+| Calendar | `events[].start` | string | Start time (`yyyy-MM-dd HH:mm`) |
+| Calendar | `events[].end` | string | End time (`yyyy-MM-dd HH:mm`), empty if none |
+| Calendar | `events[].location` | string | Location, empty if none |
+| Calendar | `events[].description` | string | Description, empty if none |
+| Home Assistant | `has_entities` | boolean | Whether entity data is available |
+| Home Assistant | `entity_count` | number | Number of entities |
+| Home Assistant | `entities[]` | array | List of entities |
+| Home Assistant | `entities[].entity_id` | string | Entity ID |
+| Home Assistant | `entities[].friendly_name` | string | Display name |
+| Home Assistant | `entities[].state` | string | Current state value |
+| Home Assistant | `entities[].unit` | string | Unit of measurement, empty if none |
