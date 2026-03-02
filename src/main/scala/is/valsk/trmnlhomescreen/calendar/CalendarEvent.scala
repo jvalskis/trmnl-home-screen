@@ -1,11 +1,15 @@
 package is.valsk.trmnlhomescreen.calendar
 
+import zio.json.jsonField
+
 import java.time.LocalDateTime
 
 final case class CalendarEvent(
     summary: String,
-    dtStart: LocalDateTime,
-    dtEnd: Option[LocalDateTime],
+    @jsonField("dtStart")
+    startDate: LocalDateTime,
+    @jsonField("dtEnd")
+    endDate: Option[LocalDateTime],
     location: Option[String],
     description: Option[String],
 )
