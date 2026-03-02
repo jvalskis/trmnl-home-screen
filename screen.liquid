@@ -5,23 +5,40 @@
             <div class="title_bar">
               <img class="image" alt="" src="https://trmnl.com/images/plugins/lunar_calendar--render.svg">
               <span class="title">Šiandien</span>
-              <span class="instance">2026-01-20</span>
+              <span class="instance">{{ "now" | date: "%Y-%m-%d" }}</span>
             </div>
 			<div class="layout layout--col layout--top layout--left" data-content-limiter="true">
-			    {% for event in events %}
-				<div class="item">
-				  <div class="meta"></div>
-				  <div class="content">
-					<span class="title title--small">{{ event.summary }}</span>
-					<span class="description" data-clamp="2">{{ event.description }}</span>
-					<div class="flex gap--small">
-					  <span class="label label--small label--underline">{{ event.start }}{% if event.end != "" %} - {{ event.end }}{% endif %}</span>
-					  {% if event.location != "" %}
-					  <span class="label label--small label--underline">Where: {{ event.location }}</span>
-					  {% endif %}
-					</div>
-				  </div>
-				</div>
+			    {% for event_day in events_by_day %}
+                    {% if event_day.events.size > 0 %}
+                        {% if event_day.days_since_today > 0 %}
+                            {% assign day_desc = "" %}
+                            {% case event_day.days_since_today %}
+                              {% when 1 %}
+                                {% assign day_desc = "Rytoj" %}
+                              {% else %}
+                                {% assign day_desc = event_day.day_of_week %}
+                            {% endcase %}
+                            <div class="flex">
+                                <span class="title title--small">{{ day_desc }}</span>
+                                <span class="title title--small">{{ event_day.date | date: "%Y-%m-%d" }}</span>
+                            </div>
+                        {% endif %}
+                        {% for event in event_day.events %}
+                            <div class="item">
+                              <div class="meta"></div>
+                              <div class="content">
+                                <span class="title title--small">{{ event.summary }}</span>
+                                <span class="description" data-clamp="2">{{ event.description }}</span>
+                                <div class="flex gap--small">
+                                  <span class="label label--small label--underline">{{ event.start }}{% if event.end != "" %} - {{ event.end }}{% endif %}</span>
+                                  {% if event.location != "" %}
+                                  <span class="label label--small label--underline">Where: {{ event.location }}</span>
+                                  {% endif %}
+                                </div>
+                              </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
                 {% endfor %}
 
 				<!--div class="flex">
@@ -44,11 +61,11 @@
                     <div class="col--span-3 flex flex--col">
                         <div class="flex flex--center-y flex--right gap--small w--full flex--nowrap">
                             <flux:icon icon="droplet" style="max-height: 16px;"/>
-                            <span class="label label--medium w--full">{{ entities["sensor.svetaine_dregmes_ir_temperaturos_sensorius_temperature"].state }}%</span>
+                            <span class="label label--medium w--full">{{ entities["sensor.svetaine_dregmes_ir_temperaturos_sensorius_humidity"].state }}%</span>
                         </div>
                         <div class="flex flex--center-y flex--right gap--small w--full flex--nowrap">
                             <flux:icon icon="thermometer" style="max-height: 16px;"/>
-                            <span class="label label--medium">{{ entities["sensor.svetaine_dregmes_ir_temperaturos_sensorius_humidity"].state }}°</span>
+                            <span class="label label--medium">{{ entities["sensor.svetaine_dregmes_ir_temperaturos_sensorius_temperature"].state }}°</span>
                         </div>
                     </div>
                     <span class="title title--medium col--span-6">Miegamasis</span>
@@ -56,11 +73,11 @@
                     <div class="col--span-3 flex flex--col">
                         <div class="flex flex--center-y flex--right gap--small w--full flex--nowrap">
                             <flux:icon icon="droplet" style="max-height: 16px;"/>
-                            <span class="label label--medium w--full">{{ entities["sensor.mk_temperaturos_ir_dregmes_sensorius_temperature"].state }}%</span>
+                            <span class="label label--medium w--full">{{ entities["sensor.mk_temperaturos_ir_dregmes_sensorius_humidity"].state }}%</span>
                         </div>
                         <div class="flex flex--center-y flex--right gap--small w--full flex--nowrap">
                             <flux:icon icon="thermometer" style="max-height: 16px;"/>
-                            <span class="label label--medium">{{ entities["sensor.mk_temperaturos_ir_dregmes_sensorius_humidity"].state }}°</span>
+                            <span class="label label--medium">{{ entities["sensor.mk_temperaturos_ir_dregmes_sensorius_temperature"].state }}°</span>
                         </div>
                     </div>
                     <span class="title title--medium col--span-6">Darbo kambarys</span>
@@ -68,11 +85,11 @@
                     <div class="col--span-3 flex flex--col">
                         <div class="flex flex--center-y flex--right gap--small w--full flex--nowrap">
                             <flux:icon icon="droplet" style="max-height: 16px;"/>
-                            <span class="label label--medium w--full">{{ entities["sensor.dk_temperaturos_ir_dregmes_sensorius_temperature"].state }}%</span>
+                            <span class="label label--medium w--full">{{ entities["sensor.dk_temperaturos_ir_dregmes_sensorius_humidity"].state }}%</span>
                         </div>
                         <div class="flex flex--center-y flex--right gap--small w--full flex--nowrap">
                             <flux:icon icon="thermometer" style="max-height: 16px;"/>
-                            <span class="label label--medium">{{ entities["sensor.dk_temperaturos_ir_dregmes_sensorius_humidity"].state }}°</span>
+                            <span class="label label--medium">{{ entities["sensor.dk_temperaturos_ir_dregmes_sensorius_temperature"].state }}°</span>
                         </div>
                     </div>
                 </div>

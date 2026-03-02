@@ -1,5 +1,6 @@
 package is.valsk.trmnlhomescreen
 
+import is.valsk.trmnlhomescreen.PropertiesExtractor.{MapProperty, PropertyEntry}
 import liqp.{Template, TemplateParser}
 import zio.*
 
@@ -7,13 +8,13 @@ import java.nio.file.{Files, Path}
 import scala.jdk.CollectionConverters.*
 
 trait ScreenRenderer:
-  def render(properties: Map[String, Any]): Task[String]
+  def render(properties: MapProperty): Task[String]
 
 object ScreenRenderer:
 
   private final case class LiveScreenRenderer(template: Template) extends ScreenRenderer:
 
-    def render(properties: Map[String, Any]): Task[String] = {
+    def render(properties: MapProperty): Task[String] = {
       val renderProperties = properties.asJava
       ZIO.logDebug(s"Render properties: ${renderProperties.toString}") *> ZIO.attempt {
         template.render(renderProperties)

@@ -31,7 +31,7 @@ object CalDavClient:
       for
         response <- sendReport(filterByTime(now, end))
         events <- parseResponse(response)
-      yield events.sortBy(_.dtStart)
+      yield events.sortBy(_.startDate)
     }
 
     private def sendReport(xmlBody: String): Task[String] =
@@ -83,8 +83,8 @@ object CalDavClient:
     for start <- Option(event.getDateStart).map(_.getValue)
     yield CalendarEvent(
       summary = Option(event.getSummary).map(_.getValue).getOrElse(CalendarEvent.DefaultSummary),
-      dtStart = start.toLocalDateTime,
-      dtEnd = Option(event.getDateEnd).map(_.getValue).map(_.toLocalDateTime),
+      startDate = start.toLocalDateTime,
+      endDate = Option(event.getDateEnd).map(_.getValue).map(_.toLocalDateTime),
       location = Option(event.getLocation).map(_.getValue).filter(_.nonEmpty),
       description = Option(event.getDescription).map(_.getValue).filter(_.nonEmpty),
     )

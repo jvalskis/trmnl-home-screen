@@ -18,7 +18,7 @@ object RenderProgram:
       val interval = Duration.fromSeconds(config.renderIntervalSeconds.toLong)
       val loop = for
         allProperties <- ZIO.foreach(extractors)(_.extract)
-        properties = allProperties.flatten.toMap
+        properties = allProperties.reduce(_ ++ _)
         rendered <- screenRenderer.render(properties)
         _ <- ZIO.logDebug(s"Rendered markup:\n$rendered")
         _ <- trmnlClient.pushScreen(rendered)
