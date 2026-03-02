@@ -20,7 +20,7 @@
                             {% endcase %}
                             <div class="flex">
                                 <span class="title title--small">{{ day_desc }}</span>
-                                <span class="title title--small">{{ event_day.date }}</span>
+                                <span class="title title--small">{{ event_day.date | date: "%Y-%m-%d" }}</span>
                             </div>
                         {% endif %}
                         {% for event in event_day.events %}
