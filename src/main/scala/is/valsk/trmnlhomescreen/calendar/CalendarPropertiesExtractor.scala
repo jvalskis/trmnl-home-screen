@@ -4,8 +4,8 @@ import is.valsk.trmnlhomescreen.PropertiesExtractor
 import is.valsk.trmnlhomescreen.PropertiesExtractor.{MapProperty, PropertyEntry, asScalar}
 import zio.{RLayer, UIO, URLayer, ZIO, ZLayer}
 
-import java.time.{LocalDate, ZoneId}
 import java.time.format.DateTimeFormatter
+import java.time.{LocalDate, ZoneId}
 import scala.jdk.CollectionConverters.*
 
 object CalendarPropertiesExtractor:

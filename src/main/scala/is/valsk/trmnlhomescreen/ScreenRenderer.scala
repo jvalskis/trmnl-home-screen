@@ -1,11 +1,10 @@
 package is.valsk.trmnlhomescreen
 
-import is.valsk.trmnlhomescreen.PropertiesExtractor.{MapProperty, PropertyEntry}
+import is.valsk.trmnlhomescreen.PropertiesExtractor.MapProperty
 import liqp.{Template, TemplateParser}
 import zio.*
 
 import java.nio.file.{Files, Path}
-import scala.jdk.CollectionConverters.*
 
 trait ScreenRenderer:
   def render(properties: MapProperty): Task[String]

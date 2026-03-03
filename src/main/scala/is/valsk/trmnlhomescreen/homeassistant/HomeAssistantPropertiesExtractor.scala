@@ -4,8 +4,6 @@ import is.valsk.trmnlhomescreen.PropertiesExtractor
 import is.valsk.trmnlhomescreen.PropertiesExtractor.{MapProperty, asScalar}
 import zio.{RLayer, UIO, URLayer, ZIO, ZLayer}
 
-import scala.jdk.CollectionConverters.*
-
 object HomeAssistantPropertiesExtractor:
 
   val layer
