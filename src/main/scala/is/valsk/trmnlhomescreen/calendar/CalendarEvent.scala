@@ -2,7 +2,7 @@ package is.valsk.trmnlhomescreen.calendar
 
 import zio.json.jsonField
 
-import java.time.LocalDateTime
+import java.time.{LocalDateTime, ZoneId, ZoneOffset, ZonedDateTime}
 
 final case class CalendarEvent(
     summary: String,

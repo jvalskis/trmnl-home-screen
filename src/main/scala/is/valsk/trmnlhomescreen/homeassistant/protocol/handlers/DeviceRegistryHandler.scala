@@ -22,7 +22,7 @@ object DeviceRegistryHandler:
             .collect { case entry if entry.areaId.isDefined => entry.id -> entry.areaId.get }
             .toMap
           areaRepository.updateDeviceAreas(deviceAreas) *>
-            ZIO.logDebug(s"Updated device registry with ${deviceAreas.size} device-area mappings")
+            ZIO.logInfo(s"Updated device registry with ${deviceAreas.size} device-area mappings")
         },
         supportedType = Type.GetDeviceRegistry,
       )
