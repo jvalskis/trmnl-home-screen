@@ -44,16 +44,6 @@ object CalendarPropertiesExtractor:
       }
   }
 
-  extension (event: CalendarEvent) {
-
-    private def happensOnDay(day: LocalDate) = {
-      (event.startDate.toLocalDate.isEqual(day) || event.startDate.toLocalDate.isBefore(day)) && (event.endDate.exists(
-        _.toLocalDate.isEqual(day),
-      ) || event.endDate.exists(_.toLocalDate.isAfter(day)))
-    }
-
-  }
-
   private def createEventInfo(event: CalendarEvent): PropertyEntry =
     MapProperty(
       "summary" -> event.summary.asScalar,
