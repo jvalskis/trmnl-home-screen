@@ -1,8 +1,8 @@
 apiVersion: v2
-appVersion: 0.6.0
+appVersion: 0.6.2
 description: TRMNL home screen app
 name: trmnl-home-screen
-version: 0.3.3
+version: 0.3.4
 maintainers:
   - name: jvalskis
     url: https://github.com/jvalskis
