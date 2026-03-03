@@ -4,6 +4,7 @@ import is.valsk.trmnlhomescreen.PropertiesExtractor
 import is.valsk.trmnlhomescreen.PropertiesExtractor.{MapProperty, PropertyEntry, asScalar}
 import zio.{RLayer, UIO, URLayer, ZIO, ZLayer}
 
+import java.time.{LocalDate, ZoneId}
 import java.time.format.DateTimeFormatter
 import java.time.*
 
@@ -42,6 +43,25 @@ object CalendarPropertiesExtractor:
 
       }
   }
+
+  extension (event: CalendarEvent) {
+
+    private def happensOnDay(day: LocalDate) = {
+      (event.startDate.toLocalDate.isEqual(day) || event.startDate.toLocalDate.isBefore(day)) && (event.endDate.exists(
+        _.toLocalDate.isEqual(day),
+      ) || event.endDate.exists(_.toLocalDate.isAfter(day)))
+    }
+
+  }
+
+  private def createEventInfo(event: CalendarEvent): PropertyEntry =
+    MapProperty(
+      "summary" -> event.summary.asScalar,
+      "start" -> event.startDate.format(displayFormatter).asScalar,
+      "end" -> event.endDate.fold("")(_.format(displayFormatter)).asScalar,
+      "location" -> event.location.getOrElse("").asScalar,
+      "description" -> event.description.getOrElse("").asScalar,
+    )
 
   val configuredLayer: RLayer[CalendarStateRepository, PropertiesExtractor] = CalendarConfig.layer >>> layer
 
