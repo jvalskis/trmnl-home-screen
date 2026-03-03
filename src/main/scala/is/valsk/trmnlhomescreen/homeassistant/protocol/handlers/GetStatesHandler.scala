@@ -27,7 +27,7 @@ object GetStatesHandler {
               .filter(state => allowedEntityIds.contains(state.entityId)),
           )(state =>
             homeAssistantStateRepository.updateEntityState(state.entityId, state) *>
-              ZIO.logDebug(s"Updated entity state for ${state.entityId} -> $state"),
+              ZIO.logInfo(s"Updated entity state for ${state.entityId} -> $state"),
           )
         },
         supportedType = Type.GetStates,

@@ -22,7 +22,7 @@ object EntityRegistryHandler:
             .map(entry => entry.entityId -> AreaRepoEntry(entry.areaId, entry.deviceId))
             .toMap
           areaRepository.updateEntityRegistryEntries(entries) *>
-            ZIO.logDebug(s"Updated entity registry with ${entries.size} entries")
+            ZIO.logInfo(s"Updated entity registry with ${entries.size} entries")
         },
         supportedType = Type.GetEntityRegistry,
       )
