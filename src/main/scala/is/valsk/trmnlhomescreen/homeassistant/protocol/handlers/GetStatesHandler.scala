@@ -28,7 +28,7 @@ object GetStatesHandler {
           )(state =>
             homeAssistantStateRepository.updateEntityState(state.entityId, state) *>
               ZIO.logInfo(s"Updated entity state for ${state.entityId} -> $state"),
-          )
+          ) *> homeAssistantStateRepository.get.flatMap(result => ZIO.logDebug(s"States: $result"))
         },
         supportedType = Type.GetStates,
       )

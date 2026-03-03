@@ -3,6 +3,8 @@ package is.valsk.trmnlhomescreen.calendar
 import is.valsk.trmnlhomescreen.Configs.makeLayer
 import zio.*
 
+import java.time.ZoneId
+
 final case class CalendarConfig(
     enabled: Boolean,
     calendarUrl: String,
@@ -11,7 +13,10 @@ final case class CalendarConfig(
     password: String,
     fetchIntervalMinutes: Int,
     daysAhead: Int,
-)
+    timeZone: String,
+) {
+  def getZoneId: ZoneId = ZoneId.of(timeZone)
+}
 
 object CalendarConfig:
 
