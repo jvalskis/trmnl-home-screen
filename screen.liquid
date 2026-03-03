@@ -18,9 +18,9 @@
                               {% else %}
                                 {% assign day_desc = event_day.day_of_week %}
                             {% endcase %}
-                            <div class="flex">
-                                <span class="title title--small">{{ day_desc }}</span>
-                                <span class="title title--small">{{ event_day.date | date: "%Y-%m-%d" }}</span>
+                            <div class="flex rounded--small text--black text-stroke--small flex--row w--full p--2 bg--gray-60">
+                                <span class="title title--small text--black stretch">{{ day_desc }}</span>
+                                <span class="title title--small text--black text--right">{{ event_day.date | date: "%Y-%m-%d" }}</span>
                             </div>
                         {% endif %}
                         {% for event in event_day.events %}
@@ -30,25 +30,25 @@
                                 <span class="title title--small">{{ event.summary }}</span>
                                 <span class="description" data-clamp="2">{{ event.description }}</span>
                                 <div class="flex gap--small">
-                                  <span class="label label--small label--underline">{{ event.start }}{% if event.end != "" %} - {{ event.end }}{% endif %}</span>
-                                  {% if event.location != "" %}
-                                  <span class="label label--small label--underline">Where: {{ event.location }}</span>
-                                  {% endif %}
+                                    {% if event.start_time != "" and event.end_time != "" %}
+                                        {% capture time_text %}{{ event.start_time }} - {{ event.end_time }}{% endcapture %}
+                                    {% elsif event.start_time == "" and event.end_time == "" %}
+                                        {% assign time_text = "Visą dieną" %}
+                                    {% elsif event.start_time == "" %}
+                                        {% capture time_text %}iki {{ event.end_time }}{% endcapture %}
+                                    {% else %}
+                                        {% capture time_text %}nuo {{ event.start_time }}{% endcapture %}
+                                    {% endif %}
+                                    <span class="label label--small label--underline">{{ time_text }}</span>
+                                    {% if event.location != "" %}
+                                    <span class="label label--small label--underline">Where: {{ event.location }}</span>
+                                    {% endif %}
                                 </div>
                               </div>
                             </div>
                         {% endfor %}
                     {% endif %}
                 {% endfor %}
-
-				<!--div class="flex">
-					<span class="title title--small">Rytoj</span>
-					<span class="title title--small">2026-01-21</span>
-				</div-->
-				<!--div class="flex">
-					<span class="title title--small">Trečiadienis</span>
-					<span class="title title--small">2026-01-22</span>
-				</div-->
 			</div>
 		</div>
         {% endif %}
