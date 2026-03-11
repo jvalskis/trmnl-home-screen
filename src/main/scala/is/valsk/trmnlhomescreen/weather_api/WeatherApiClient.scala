@@ -28,8 +28,9 @@ object WeatherApiClient:
 
     val CurrentWeatherEndpoint = Endpoint[String, CurrentWeatherResponse](
       Method.GET,
-      query => s"/v1/current.json?q=${URLEncoder.encode(query, "UTF-8")}"
+      query => s"/v1/current.json?q=${URLEncoder.encode(query, "UTF-8")}",
     )
+
   }
 
   private final case class LiveWeatherApiClient(
@@ -43,6 +44,6 @@ object WeatherApiClient:
       } yield response.current
 
     private val middlewares: List[RequestMiddleware] = List(
-      request => request.addQueryParam("key", config.apiKey),
-      _.addHeader(Header.Accept(MediaType.application.json))
+      _.addQueryParam("key", config.apiKey),
+      _.addHeader(Header.Accept(MediaType.application.json)),
     )

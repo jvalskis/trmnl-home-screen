@@ -7,8 +7,11 @@ trait WeatherApiProgram extends Program
 
 object WeatherApiProgram {
 
-  private class WeatherApiProgramLive(config: WeatherApiConfig, client: WeatherApiClient, repository: WeatherApiStateRepository)
-      extends WeatherApiProgram {
+  private class WeatherApiProgramLive(
+      config: WeatherApiConfig,
+      client: WeatherApiClient,
+      repository: WeatherApiStateRepository,
+  ) extends WeatherApiProgram {
 
     def run: Task[Unit] =
       runIfEnabled(config.enabled, "WeatherAPI feature is disabled") {
@@ -37,5 +40,7 @@ object WeatherApiProgram {
     } yield WeatherApiProgramLive(config, client, repo)
   }
 
-  val configuredLayer: RLayer[WeatherApiStateRepository & WeatherApiClient, WeatherApiProgram] = WeatherApiConfig.layer >>> layer
+  val configuredLayer: RLayer[WeatherApiStateRepository & WeatherApiClient, WeatherApiProgram] =
+    WeatherApiConfig.layer >>> layer
+
 }
