@@ -1,8 +1,13 @@
 package is.valsk.trmnlhomescreen.weather
 
+import is.valsk.trmnlhomescreen.util.ApiClient.RequestMiddleware
+import is.valsk.trmnlhomescreen.util.{ApiClient, Endpoint}
+import is.valsk.trmnlhomescreen.weather.AccuWeatherClient.Api.{CurrentConditionsEndpoint, SearchCityEndpoint}
 import zio.*
 import zio.http.*
 import zio.json.*
+
+import java.net.URLEncoder
 
 trait AccuWeatherClient:
   def searchCity(city: String): Task[Location]
@@ -16,40 +21,45 @@ object AccuWeatherClient:
   def currentConditions(locationKey: String): ZIO[AccuWeatherClient, Throwable, CurrentConditions] =
     ZIO.serviceWithZIO[AccuWeatherClient](_.currentConditions(locationKey))
 
-  val layer: ZLayer[Client & WeatherConfig, Nothing, AccuWeatherClient] =
+  val layer: ZLayer[ApiClient & WeatherConfig, Nothing, AccuWeatherClient] =
     ZLayer.fromFunction(LiveAccuWeatherClient.apply)
 
-  val configuredLayer: ZLayer[Client, Config.Error, AccuWeatherClient] = WeatherConfig.layer >>> layer
+  val configuredLayer: ZLayer[ApiClient, Config.Error, AccuWeatherClient] = WeatherConfig.layer >>> layer
+
+  object Api {
+    val BaseUrl: URL = URL.decode("https://dataservice.accuweather.com").toOption.get
+
+    val SearchCityEndpoint = Endpoint[String, List[Location]](
+      Method.GET,
+      city => s"/locations/v1/cities/search?q=${URLEncoder.encode(city, "UTF-8")}"
+    )
+
+    val CurrentConditionsEndpoint = Endpoint[String, List[CurrentConditions]](
+      Method.GET,
+      locationKey => s"/currentconditions/v1/$locationKey?details=true"
+    )
+  }
 
   private final case class LiveAccuWeatherClient(
-      client: Client,
+      client: ApiClient,
       config: WeatherConfig,
   ) extends AccuWeatherClient:
 
-    private val baseUrl = "https://dataservice.accuweather.com"
-
     def searchCity(city: String): Task[Location] =
-      val encoded = java.net.URLEncoder.encode(city, "UTF-8")
-      val urlStr = s"$baseUrl/locations/v1/cities/search?q=$encoded&apikey=${config.apiKey}"
-      for
-        url <- ZIO.fromEither(URL.decode(urlStr))
-          .mapError(e => RuntimeException(s"Invalid URL: $urlStr"))
-        body <- ZIO.scoped(client.request(Request.get(url)).flatMap(_.body.asString))
-        locations <- ZIO.fromEither(body.fromJson[List[Location]])
-          .mapError(msg => RuntimeException(s"JSON parse error: $msg"))
+      for {
+        locations <- client.call(Api.BaseUrl, SearchCityEndpoint, city, middlewares)
         location <- ZIO.fromOption(locations.headOption)
           .orElseFail(RuntimeException(s"No location found for: $city"))
-      yield location
+      } yield location
 
     def currentConditions(locationKey: String): Task[CurrentConditions] =
-      val urlStr = s"$baseUrl/currentconditions/v1/$locationKey?apikey=${config.apiKey}&details=true"
-      for
-        url <- ZIO.fromEither(URL.decode(urlStr))
-          .mapError(e => RuntimeException(s"Invalid URL: $urlStr"))
-        body <- ZIO.scoped(client.request(Request.get(url)).flatMap(_.body.asString))
-        _ <- ZIO.logDebug(s"Accuweather response: $body")
-        conditions <- ZIO.fromEither(body.fromJson[List[CurrentConditions]])
-          .mapError(msg => RuntimeException(s"JSON parse error: $msg"))
+      for {
+        conditions <- client.call(Api.BaseUrl, CurrentConditionsEndpoint, locationKey, middlewares)
         condition <- ZIO.fromOption(conditions.headOption)
           .orElseFail(RuntimeException("No conditions data available"))
-      yield condition
+      } yield condition
+
+    private val middlewares: List[RequestMiddleware] = List(
+      _.addHeader(Header.Authorization.Bearer(config.apiKey)),
+      _.addHeader(Header.Accept(MediaType.application.json))
+    )
