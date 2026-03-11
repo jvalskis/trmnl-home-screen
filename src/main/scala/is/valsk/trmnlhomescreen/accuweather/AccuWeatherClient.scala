@@ -1,8 +1,9 @@
-package is.valsk.trmnlhomescreen.weather
+package is.valsk.trmnlhomescreen.accuweather
 
+import is.valsk.trmnlhomescreen.accuweather.AccuWeatherClient.Api.{CurrentConditionsEndpoint, SearchCityEndpoint}
+import is.valsk.trmnlhomescreen.accuweather.AccuWeatherModel.*
 import is.valsk.trmnlhomescreen.util.ApiClient.RequestMiddleware
 import is.valsk.trmnlhomescreen.util.{ApiClient, Endpoint}
-import is.valsk.trmnlhomescreen.weather.AccuWeatherClient.Api.{CurrentConditionsEndpoint, SearchCityEndpoint}
 import zio.*
 import zio.http.*
 import zio.json.*
@@ -21,10 +22,10 @@ object AccuWeatherClient:
   def currentConditions(locationKey: String): ZIO[AccuWeatherClient, Throwable, CurrentConditions] =
     ZIO.serviceWithZIO[AccuWeatherClient](_.currentConditions(locationKey))
 
-  val layer: ZLayer[ApiClient & WeatherConfig, Nothing, AccuWeatherClient] =
+  val layer: ZLayer[ApiClient & AccuWeatherConfig, Nothing, AccuWeatherClient] =
     ZLayer.fromFunction(LiveAccuWeatherClient.apply)
 
-  val configuredLayer: ZLayer[ApiClient, Config.Error, AccuWeatherClient] = WeatherConfig.layer >>> layer
+  val configuredLayer: ZLayer[ApiClient, Config.Error, AccuWeatherClient] = AccuWeatherConfig.layer >>> layer
 
   object Api {
     val BaseUrl: URL = URL.decode("https://dataservice.accuweather.com").toOption.get
@@ -42,7 +43,7 @@ object AccuWeatherClient:
 
   private final case class LiveAccuWeatherClient(
       client: ApiClient,
-      config: WeatherConfig,
+      config: AccuWeatherConfig,
   ) extends AccuWeatherClient:
 
     def searchCity(city: String): Task[Location] =

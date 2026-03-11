@@ -125,7 +125,7 @@
 			<div class="layout layout--col gap--space-between">
                 <div class="flex flex--center-y gap--small w--full flex--nowrap">
                     <div class="flex flex--row flex--center">
-                        {% case weather_icon %}
+                        {% case accuweather.weather_icon %}
                         {% when 1 %}
                         {% assign weather_icon_name = "wi-day-sunny" %}
                         {% when 2 %}
@@ -210,18 +210,18 @@
                         {% assign weather_icon_name = "wi-na" %}
                         {% endcase %}
                         <img class="w--[70px] h--[70px]" src="https://trmnl.com/images/plugins/weather/{{ weather_icon_name }}.svg">
-                        <span class="label labe--small">{{ weather_text }}</span>
+                        <span class="label labe--small">{{ accuweather.weather_text }}</span>
                     </div>
                     <div class="divider--v"></div>
 
-					<span class="value value--xlarge">{{ temp_metric_value }}°</span>
+					<span class="value value--xlarge">{{ accuweather.temp_metric_value }}°</span>
 
 					<div class="divider--v"></div>
 
                     <div class="flex flex--row flex--left w--full gap">
 						<div class="flex flex--center-y gap--small flex--nowrap">
 							Juntamoji
-							<span class="label label--large">{{ real_feel_metric_value }}°<span>
+							<span class="label label--large">{{ accuweather.real_feel_metric_value }}°<span>
 						</div>
                         <div class="flex flex--row gap--xsmall py--1 px--3 rounded--full">
                             <flux:icon icon="arrow-up" style="max-height: 16px;"/>
