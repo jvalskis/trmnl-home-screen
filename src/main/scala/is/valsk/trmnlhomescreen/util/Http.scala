@@ -1,10 +1,9 @@
 package is.valsk.trmnlhomescreen.util
 
 import is.valsk.trmnlhomescreen.util.ApiClient.{ApiError, RequestMiddleware}
-import is.valsk.trmnlhomescreen.util.ResponseDecoder.given
 import zio.{IO, ZIO, ZLayer}
 import zio.http.{Body, Client, Method, Request, URL}
-import zio.json.{DecoderOps, JsonDecoder}
+import zio.json.{DecoderOps, EncoderOps, JsonDecoder, JsonEncoder}
 
 final case class Endpoint[I, O](
     method: Method,
@@ -15,20 +14,28 @@ trait ResponseDecoder[O]:
   def decode(body: String): Either[String, O]
 
 object ResponseDecoder:
-  given fromJson[O: JsonDecoder]: ResponseDecoder[O] =
-    body => body.fromJson[O]
+  given fromJson[O: JsonDecoder]: ResponseDecoder[O] = body => body.fromJson[O]
 
-  given ResponseDecoder[String] =
-    body => Right(body)
+  given ResponseDecoder[String] = body => Right(body)
+
+trait RequestEncoder[B]:
+  def encode(value: B): Body
+
+object RequestEncoder:
+  given RequestEncoder[Unit] = _ => Body.empty
+
+  given RequestEncoder[String] = value => Body.fromString(value)
+
+  given fromJson[B: JsonEncoder]: RequestEncoder[B] = value => Body.fromString(value.toJson)
 
 trait ApiClient {
 
-  def call[I, O: ResponseDecoder](
+  def call[I, O: ResponseDecoder, B: RequestEncoder](
       baseUrl: URL,
       endpoint: Endpoint[I, O],
       input: I,
       middlewares: List[RequestMiddleware] = Nil,
-      body: Body = Body.empty,
+      body: B = (),
   ): IO[ApiError, O]
 
 }
@@ -48,18 +55,18 @@ object ApiClient {
 
   private class ApiClientLive(client: Client) extends ApiClient {
 
-    override def call[I, O: ResponseDecoder](
+    override def call[I, O: ResponseDecoder, B: RequestEncoder](
         baseUrl: URL,
         endpoint: Endpoint[I, O],
         input: I,
         middlewares: List[RequestMiddleware] = Nil,
-        body: Body = Body.empty,
+        body: B = ((): Unit),
     ): IO[ApiError, O] =
       val finalRequest = applyMiddlewares(
         Request(
           method = endpoint.method,
           url = baseUrl.addPath(endpoint.path(input)),
-          body = body,
+          body = summon[RequestEncoder[B]].encode(body),
         ),
         middlewares,
       )

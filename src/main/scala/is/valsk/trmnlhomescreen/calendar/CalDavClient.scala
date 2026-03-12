@@ -42,7 +42,7 @@ object CalDavClient:
       for {
         response <- client.call(
           baseUrl, ReportEndpoint, (), middlewares,
-          body = Body.fromString(filterByTime(now, end)),
+          body = filterByTime(now, end),
         )
         events <- parseResponse(response)
       } yield events.sortBy(_.startDate)

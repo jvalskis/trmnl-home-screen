@@ -48,7 +48,7 @@ object TrmnlClient:
           UpdateDisplayEndpoint,
           config.deviceId,
           middlewares,
-          body = Body.fromString(ScreenRequest(markup).toJson),
+          body = ScreenRequest(markup),
         )
         _ <- ZIO.logInfo("Successfully pushed screen to TRMNL")
       yield ()
