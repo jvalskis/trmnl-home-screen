@@ -1,5 +1,8 @@
 package is.valsk.trmnlhomescreen.trmnl
 
+import is.valsk.trmnlhomescreen.trmnl.TrmnlClient.Api.UpdateDisplayEndpoint
+import is.valsk.trmnlhomescreen.util.ApiClient.RequestMiddleware
+import is.valsk.trmnlhomescreen.util.{ApiClient, Endpoint}
 import zio.*
 import zio.http.*
 import zio.json.*
@@ -12,43 +15,46 @@ object TrmnlClient:
   def pushScreen(markup: String): ZIO[TrmnlClient, Throwable, Unit] =
     ZIO.serviceWithZIO[TrmnlClient](_.pushScreen(markup))
 
-  val layer: ZLayer[Client & TrmnlConfig, Nothing, TrmnlClient] =
+  val layer: ZLayer[ApiClient & TrmnlConfig, Nothing, TrmnlClient] =
     ZLayer.fromFunction(LiveTrmnlClient.apply)
 
-  val configuredLayer: ZLayer[Client, Config.Error, TrmnlClient] = TrmnlConfig.layer >>> layer
+  val configuredLayer: ZLayer[ApiClient, Config.Error, TrmnlClient] = TrmnlConfig.layer >>> layer
 
   private case class ScreenRequest(markup: String)
+
   private object ScreenRequest:
     given JsonEncoder[ScreenRequest] = DeriveJsonEncoder.gen[ScreenRequest]
 
+  object Api {
+
+    val UpdateDisplayEndpoint = Endpoint[String, String](
+      Method.POST,
+      deviceId => s"/api/display/update?device_id=$deviceId",
+    )
+
+  }
+
   private final case class LiveTrmnlClient(
-      client: Client,
+      client: ApiClient,
       config: TrmnlConfig,
   ) extends TrmnlClient:
 
     def pushScreen(markup: String): Task[Unit] =
-      val urlStr = s"${config.baseUrl}/api/display/update?device_id=${config.deviceId}"
+      val baseUrl = URL.decode(config.baseUrl).toOption.get
       for
-        _ <- ZIO.logDebug(s"Pushing screen to TRMNL: $urlStr")
-        url <- ZIO.fromEither(URL.decode(urlStr))
-          .mapError(e => RuntimeException(s"Invalid URL: $urlStr"))
-        request = Request(
-          method = Method.POST,
-          url = url,
-          headers = Headers(
-            Header.Authorization.Bearer(config.token),
-            Header.ContentType(MediaType.application.json),
-            Header.Accept(MediaType.application.json)
-          ),
-          body = Body.fromString(ScreenRequest(markup).toJson)
+        _ <- ZIO.logDebug(s"Pushing screen to TRMNL: ${config.baseUrl}")
+        _ <- client.call(
+          baseUrl,
+          UpdateDisplayEndpoint,
+          config.deviceId,
+          middlewares,
+          body = Body.fromString(ScreenRequest(markup).toJson),
         )
-
-
-        response <- ZIO.scoped(client.request(request))
-        status = response.status
-        _ <- if status.isSuccess then ZIO.logInfo("Successfully pushed screen to TRMNL")
-             else response.body.asString.flatMap(body =>
-               ZIO.logError(s"Failed to push screen to TRMNL: HTTP $status - $body") *>
-                 ZIO.fail(RuntimeException(s"TRMNL API returned HTTP $status"))
-             )
+        _ <- ZIO.logInfo("Successfully pushed screen to TRMNL")
       yield ()
+
+    private val middlewares: List[RequestMiddleware] = List(
+      _.addHeader(Header.Authorization.Bearer(config.token)),
+      _.addHeader(Header.ContentType(MediaType.application.json)),
+      _.addHeader(Header.Accept(MediaType.application.json)),
+    )
