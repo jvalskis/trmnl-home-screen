@@ -41,14 +41,14 @@ All configuration is defined in `application.conf`. Defaults and can be overridd
 | `TRMNL_TOKEN` | | Device API token |
 | `TRMNL_DEVICE_ID` | | Device ID |
 
-### Weather
+### AccuWeather
 
 | Variable | Default | Description |
 |---|---|---|
-| `WEATHER_ENABLED` | `true` | Enable/disable weather |
+| `ACCUWEATHER_ENABLED` | `true` | Enable/disable AccuWeather |
 | `ACCUWEATHER_API_KEY` | | AccuWeather API key |
-| `WEATHER_CITY` | `London` | City name for lookup |
-| `WEATHER_FETCH_INTERVAL_MINUTES` | `60` | Poll interval |
+| `ACCUWEATHER_CITY` | `London` | City name for lookup |
+| `ACCUWEATHER_FETCH_INTERVAL_MINUTES` | `60` | Poll interval |
 
 ### WeatherAPI
 
@@ -59,11 +59,11 @@ All configuration is defined in `application.conf`. Defaults and can be overridd
 | `WEATHERAPI_CITY` | `London` | City name for lookup |
 | `WEATHERAPI_FETCH_INTERVAL_MINUTES` | `60` | Poll interval |
 
-### Calendar
+### Calendar (CalDAV)
 
 | Variable | Default | Description |
 |---|---|---|
-| `CALENDAR_ENABLED` | `false` | Enable/disable calendar |
+| `CALDAV_ENABLED` | `false` | Enable/disable calendar |
 | `CALDAV_CALENDAR_URL` | | CalDAV endpoint URL |
 | `CALDAV_AUTH_TYPE` | `basic` | `basic` or `bearer` |
 | `CALDAV_USERNAME` | | CalDAV username |

@@ -12,15 +12,15 @@ environments:
                 image:
                   tag: latest
                 env:
-                  WEATHER_ENABLED: "true"
-                  WEATHER_CITY: "London"
-                  WEATHER_FETCH_INTERVAL_MINUTES: "60"
+                  ACCUWEATHER_ENABLED: "true"
+                  ACCUWEATHER_CITY: "London"
+                  ACCUWEATHER_FETCH_INTERVAL_MINUTES: "60"
                   ACCUWEATHER_API_KEY:
                     valueFrom:
                       secretKeyRef:
                         name: trmnl-accuweather
                         key: ACCUWEATHER_API_KEY
-                  CALENDAR_ENABLED: "true"
+                  CALDAV_ENABLED: "true"
                   CALDAV_CALENDAR_URL: "https://nextcloud.example.com/remote.php/dav/calendars/user/personal/"
                   CALDAV_AUTH_TYPE: "basic"
                   CALDAV_USERNAME: "user"
@@ -53,10 +53,10 @@ releases:
                 image:
                   tag: {{ .Values | get "controllers.main.containers.main.image.tag" "" | quote }}
                 env:
-                  WEATHER_ENABLED: {{ .Values | get "controllers.main.containers.main.env.WEATHER_ENABLED" "true" | quote }}
-                  WEATHER_CITY: {{ .Values | get "controllers.main.containers.main.env.WEATHER_CITY" "London" | quote }}
-                  WEATHER_FETCH_INTERVAL_MINUTES: {{ .Values | get "controllers.main.containers.main.env.WEATHER_FETCH_INTERVAL_MINUTES" "60" | quote }}
-                  CALENDAR_ENABLED: {{ .Values | get "controllers.main.containers.main.env.CALENDAR_ENABLED" "true" | quote }}
+                  ACCUWEATHER_ENABLED: {{ .Values | get "controllers.main.containers.main.env.ACCUWEATHER_ENABLED" "true" | quote }}
+                  ACCUWEATHER_CITY: {{ .Values | get "controllers.main.containers.main.env.ACCUWEATHER_CITY" "London" | quote }}
+                  ACCUWEATHER_FETCH_INTERVAL_MINUTES: {{ .Values | get "controllers.main.containers.main.env.ACCUWEATHER_FETCH_INTERVAL_MINUTES" "60" | quote }}
+                  CALDAV_ENABLED: {{ .Values | get "controllers.main.containers.main.env.CALDAV_ENABLED" "true" | quote }}
                   CALDAV_CALENDAR_URL: {{ .Values | get "controllers.main.containers.main.env.CALDAV_CALENDAR_URL" "" | quote }}
                   CALDAV_AUTH_TYPE: {{ .Values | get "controllers.main.containers.main.env.CALDAV_AUTH_TYPE" "basic" | quote }}
                   CALDAV_USERNAME: {{ .Values | get "controllers.main.containers.main.env.CALDAV_USERNAME" "user" | quote }}
