@@ -229,22 +229,26 @@
 
         <div class="view view--quadrant">
             <div class="layout layout--col gap--distribute">
-                <div class="flex flex--row flex--center-y gap--small">
-                    <img class="w--[64px] h--[64px]" src="https://trmnl.com/images/plugins/weather/{{ weather_icon_name }}.svg">
-                    <div class="flex flex--col">
-                        <span class="value value--xxlarge value--tnums">{{ weatherapi.temp_c }}°</span>
-                        <span class="label label--small" data-clamp="1">{{ weatherapi.weather_text }}</span>
+                <div class="flex flex--row flex--center-y gap--medium">
+                    <img class="w--[72px] h--[72px]" src="https://trmnl.com/images/plugins/weather/{{ weather_icon_name }}.svg">
+                    <div class="flex flex--col gap--none">
+                        <span class="value value--xxlarge value--tnums">{{ weatherapi.temp_c }}°C</span>
+                        <span class="label label--medium" data-clamp="1">{{ weatherapi.weather_text }}</span>
                     </div>
                 </div>
                 <div class="divider"></div>
-                <div class="grid grid--cols-2 gap--small">
-                    <div class="flex flex--col gap--none">
+                <div class="grid grid--cols-10 gap--small">
+                    <div class="col--span-3 flex flex--col gap--none">
                         <span class="description">Juntamoji</span>
                         <span class="label label--large value--tnums">{{ weatherapi.feelslike_c }}°</span>
                     </div>
-                    <div class="flex flex--col gap--none">
+                    <div class="divider--v col--span-1"></div>
+                    <div class="col--span-6 flex flex--col gap--none">
                         <span class="description">Vėjas</span>
-                        <span class="label label--large value--tnums">{{ weatherapi.wind_kph }} km/h {{ weatherapi.wind_dir }}</span>
+                        <div class="flex flex--row flex--center-y gap--small">
+                            <span class="label label--large value--tnums">{{ weatherapi.wind_kph }} km/h</span>
+                            <span class="label label--small bg--gray-60 rounded--small p--1 text-stroke text-stroke--medium">{{ weatherapi.wind_dir }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
