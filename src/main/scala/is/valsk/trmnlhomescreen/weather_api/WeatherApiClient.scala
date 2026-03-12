@@ -8,8 +8,6 @@ import zio.*
 import zio.http.*
 import zio.json.*
 
-import java.net.URLEncoder
-
 trait WeatherApiClient:
   def currentWeather(query: String): Task[Current]
 
@@ -28,7 +26,8 @@ object WeatherApiClient:
 
     val CurrentWeatherEndpoint = Endpoint[String, CurrentWeatherResponse](
       Method.GET,
-      query => s"/v1/current.json?q=${URLEncoder.encode(query, "UTF-8")}",
+      _ => "/v1/current.json",
+      query => Map("q" -> query),
     )
 
   }

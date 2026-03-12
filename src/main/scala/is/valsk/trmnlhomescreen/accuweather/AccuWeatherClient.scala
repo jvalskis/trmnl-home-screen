@@ -8,8 +8,6 @@ import zio.*
 import zio.http.*
 import zio.json.*
 
-import java.net.URLEncoder
-
 trait AccuWeatherClient:
   def searchCity(city: String): Task[Location]
   def currentConditions(locationKey: String): Task[CurrentConditions]
@@ -32,12 +30,14 @@ object AccuWeatherClient:
 
     val SearchCityEndpoint = Endpoint[String, List[Location]](
       Method.GET,
-      city => s"/locations/v1/cities/search?q=${URLEncoder.encode(city, "UTF-8")}"
+      _ => "/locations/v1/cities/search",
+      city => Map("q" -> city),
     )
 
     val CurrentConditionsEndpoint = Endpoint[String, List[CurrentConditions]](
       Method.GET,
-      locationKey => s"/currentconditions/v1/$locationKey?details=true"
+      locationKey => s"/currentconditions/v1/$locationKey",
+      _ => Map("details" -> "true"),
     )
   }
 

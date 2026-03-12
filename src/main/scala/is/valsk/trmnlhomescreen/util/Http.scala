@@ -1,13 +1,14 @@
 package is.valsk.trmnlhomescreen.util
 
 import is.valsk.trmnlhomescreen.util.ApiClient.{ApiError, RequestMiddleware}
-import zio.{IO, Task, ZIO, ZLayer}
+import zio.{IO, ZIO, ZLayer}
 import zio.http.{Body, Client, Method, Request, URL}
 import zio.json.{DecoderOps, EncoderOps, JsonDecoder, JsonEncoder}
 
 final case class Endpoint[I, O](
     method: Method,
     path: I => String,
+    queryParams: I => Map[String, String] = (_: I) => Map.empty,
 )
 
 trait ResponseDecoder[O]:
@@ -66,7 +67,10 @@ object ApiClient {
         middlewares: List[RequestMiddleware] = Nil,
         body: B = (),
     ): IO[ApiError, O] =
-      val url = baseUrl.addPath(endpoint.path(input))
+      val params = endpoint.queryParams(input)
+      val url = params.foldLeft(baseUrl.addPath(endpoint.path(input))) {
+        case (u, (k, v)) => u.addQueryParam(k, v)
+      }
       val finalRequest = applyMiddlewares(
         Request(
           method = endpoint.method,

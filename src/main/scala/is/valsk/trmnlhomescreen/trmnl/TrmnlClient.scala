@@ -29,7 +29,8 @@ object TrmnlClient:
 
     val UpdateDisplayEndpoint = Endpoint[String, String](
       Method.POST,
-      deviceId => s"/api/display/update?device_id=$deviceId",
+      _ => "/api/display/update",
+      deviceId => Map("device_id" -> deviceId),
     )
 
   }
