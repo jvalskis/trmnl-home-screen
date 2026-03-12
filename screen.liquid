@@ -121,238 +121,133 @@
             </div>
         </div>
 
+        {% if weatherapi.is_day == 1 %}
+        {% case weatherapi.weather_icon %}
+        {% when 1000 %}{% assign weather_icon_name = "wi-day-sunny" %}
+        {% when 1003 %}{% assign weather_icon_name = "wi-day-cloudy" %}
+        {% when 1006 %}{% assign weather_icon_name = "wi-cloudy" %}
+        {% when 1009 %}{% assign weather_icon_name = "wi-cloudy" %}
+        {% when 1030 %}{% assign weather_icon_name = "wi-fog" %}
+        {% when 1063 %}{% assign weather_icon_name = "wi-day-showers" %}
+        {% when 1066 %}{% assign weather_icon_name = "wi-day-snow" %}
+        {% when 1069 %}{% assign weather_icon_name = "wi-sleet" %}
+        {% when 1072 %}{% assign weather_icon_name = "wi-rain-mix" %}
+        {% when 1087 %}{% assign weather_icon_name = "wi-day-thunderstorm" %}
+        {% when 1114 %}{% assign weather_icon_name = "wi-snow" %}
+        {% when 1117 %}{% assign weather_icon_name = "wi-snow" %}
+        {% when 1135 %}{% assign weather_icon_name = "wi-fog" %}
+        {% when 1147 %}{% assign weather_icon_name = "wi-fog" %}
+        {% when 1150 %}{% assign weather_icon_name = "wi-day-showers" %}
+        {% when 1153 %}{% assign weather_icon_name = "wi-day-showers" %}
+        {% when 1168 %}{% assign weather_icon_name = "wi-rain-mix" %}
+        {% when 1171 %}{% assign weather_icon_name = "wi-rain-mix" %}
+        {% when 1180 %}{% assign weather_icon_name = "wi-day-showers" %}
+        {% when 1183 %}{% assign weather_icon_name = "wi-day-showers" %}
+        {% when 1186 %}{% assign weather_icon_name = "wi-day-rain" %}
+        {% when 1189 %}{% assign weather_icon_name = "wi-day-rain" %}
+        {% when 1192 %}{% assign weather_icon_name = "wi-rain" %}
+        {% when 1195 %}{% assign weather_icon_name = "wi-rain" %}
+        {% when 1198 %}{% assign weather_icon_name = "wi-rain-mix" %}
+        {% when 1201 %}{% assign weather_icon_name = "wi-rain-mix" %}
+        {% when 1204 %}{% assign weather_icon_name = "wi-sleet" %}
+        {% when 1207 %}{% assign weather_icon_name = "wi-sleet" %}
+        {% when 1210 %}{% assign weather_icon_name = "wi-day-snow" %}
+        {% when 1213 %}{% assign weather_icon_name = "wi-day-snow" %}
+        {% when 1216 %}{% assign weather_icon_name = "wi-day-snow" %}
+        {% when 1219 %}{% assign weather_icon_name = "wi-snow" %}
+        {% when 1222 %}{% assign weather_icon_name = "wi-snow" %}
+        {% when 1225 %}{% assign weather_icon_name = "wi-snow" %}
+        {% when 1237 %}{% assign weather_icon_name = "wi-sleet" %}
+        {% when 1240 %}{% assign weather_icon_name = "wi-day-showers" %}
+        {% when 1243 %}{% assign weather_icon_name = "wi-day-rain" %}
+        {% when 1246 %}{% assign weather_icon_name = "wi-rain" %}
+        {% when 1249 %}{% assign weather_icon_name = "wi-sleet" %}
+        {% when 1252 %}{% assign weather_icon_name = "wi-sleet" %}
+        {% when 1255 %}{% assign weather_icon_name = "wi-day-snow" %}
+        {% when 1258 %}{% assign weather_icon_name = "wi-snow" %}
+        {% when 1261 %}{% assign weather_icon_name = "wi-sleet" %}
+        {% when 1264 %}{% assign weather_icon_name = "wi-sleet" %}
+        {% when 1273 %}{% assign weather_icon_name = "wi-day-thunderstorm" %}
+        {% when 1276 %}{% assign weather_icon_name = "wi-thunderstorm" %}
+        {% when 1279 %}{% assign weather_icon_name = "wi-day-storm-showers" %}
+        {% when 1282 %}{% assign weather_icon_name = "wi-thunderstorm" %}
+        {% else %}{% assign weather_icon_name = "wi-na" %}
+        {% endcase %}
+        {% else %}
+        {% case weatherapi.weather_icon %}
+        {% when 1000 %}{% assign weather_icon_name = "wi-night-clear" %}
+        {% when 1003 %}{% assign weather_icon_name = "wi-night-alt-partly-cloudy" %}
+        {% when 1006 %}{% assign weather_icon_name = "wi-night-alt-cloudy" %}
+        {% when 1009 %}{% assign weather_icon_name = "wi-cloudy" %}
+        {% when 1030 %}{% assign weather_icon_name = "wi-night-fog" %}
+        {% when 1063 %}{% assign weather_icon_name = "wi-night-alt-showers" %}
+        {% when 1066 %}{% assign weather_icon_name = "wi-night-alt-snow" %}
+        {% when 1069 %}{% assign weather_icon_name = "wi-sleet" %}
+        {% when 1072 %}{% assign weather_icon_name = "wi-rain-mix" %}
+        {% when 1087 %}{% assign weather_icon_name = "wi-night-alt-thunderstorm" %}
+        {% when 1114 %}{% assign weather_icon_name = "wi-snow" %}
+        {% when 1117 %}{% assign weather_icon_name = "wi-snow" %}
+        {% when 1135 %}{% assign weather_icon_name = "wi-night-fog" %}
+        {% when 1147 %}{% assign weather_icon_name = "wi-night-fog" %}
+        {% when 1150 %}{% assign weather_icon_name = "wi-night-alt-showers" %}
+        {% when 1153 %}{% assign weather_icon_name = "wi-night-alt-showers" %}
+        {% when 1168 %}{% assign weather_icon_name = "wi-rain-mix" %}
+        {% when 1171 %}{% assign weather_icon_name = "wi-rain-mix" %}
+        {% when 1180 %}{% assign weather_icon_name = "wi-night-alt-showers" %}
+        {% when 1183 %}{% assign weather_icon_name = "wi-night-alt-showers" %}
+        {% when 1186 %}{% assign weather_icon_name = "wi-night-alt-rain" %}
+        {% when 1189 %}{% assign weather_icon_name = "wi-night-alt-rain" %}
+        {% when 1192 %}{% assign weather_icon_name = "wi-rain" %}
+        {% when 1195 %}{% assign weather_icon_name = "wi-rain" %}
+        {% when 1198 %}{% assign weather_icon_name = "wi-rain-mix" %}
+        {% when 1201 %}{% assign weather_icon_name = "wi-rain-mix" %}
+        {% when 1204 %}{% assign weather_icon_name = "wi-sleet" %}
+        {% when 1207 %}{% assign weather_icon_name = "wi-sleet" %}
+        {% when 1210 %}{% assign weather_icon_name = "wi-night-alt-snow" %}
+        {% when 1213 %}{% assign weather_icon_name = "wi-night-alt-snow" %}
+        {% when 1216 %}{% assign weather_icon_name = "wi-night-alt-snow" %}
+        {% when 1219 %}{% assign weather_icon_name = "wi-snow" %}
+        {% when 1222 %}{% assign weather_icon_name = "wi-snow" %}
+        {% when 1225 %}{% assign weather_icon_name = "wi-snow" %}
+        {% when 1237 %}{% assign weather_icon_name = "wi-sleet" %}
+        {% when 1240 %}{% assign weather_icon_name = "wi-night-alt-showers" %}
+        {% when 1243 %}{% assign weather_icon_name = "wi-night-alt-rain" %}
+        {% when 1246 %}{% assign weather_icon_name = "wi-rain" %}
+        {% when 1249 %}{% assign weather_icon_name = "wi-sleet" %}
+        {% when 1252 %}{% assign weather_icon_name = "wi-sleet" %}
+        {% when 1255 %}{% assign weather_icon_name = "wi-night-alt-snow" %}
+        {% when 1258 %}{% assign weather_icon_name = "wi-snow" %}
+        {% when 1261 %}{% assign weather_icon_name = "wi-sleet" %}
+        {% when 1264 %}{% assign weather_icon_name = "wi-sleet" %}
+        {% when 1273 %}{% assign weather_icon_name = "wi-night-alt-thunderstorm" %}
+        {% when 1276 %}{% assign weather_icon_name = "wi-thunderstorm" %}
+        {% when 1279 %}{% assign weather_icon_name = "wi-night-alt-storm-showers" %}
+        {% when 1282 %}{% assign weather_icon_name = "wi-thunderstorm" %}
+        {% else %}{% assign weather_icon_name = "wi-na" %}
+        {% endcase %}
+        {% endif %}
+
         <div class="view view--quadrant">
-			<div class="layout layout--col gap--space-between">
-                <div class="flex flex--center-y gap--small w--full flex--nowrap">
-                    <div class="flex flex--row flex--center">
-                        {% if weatherapi.is_day == 1 %}
-                        {% case weatherapi.weather_icon %}
-                        {% when 1000 %}
-                        {% assign weather_icon_name = "wi-day-sunny" %}
-                        {% when 1003 %}
-                        {% assign weather_icon_name = "wi-day-cloudy" %}
-                        {% when 1006 %}
-                        {% assign weather_icon_name = "wi-cloudy" %}
-                        {% when 1009 %}
-                        {% assign weather_icon_name = "wi-cloudy" %}
-                        {% when 1030 %}
-                        {% assign weather_icon_name = "wi-fog" %}
-                        {% when 1063 %}
-                        {% assign weather_icon_name = "wi-day-showers" %}
-                        {% when 1066 %}
-                        {% assign weather_icon_name = "wi-day-snow" %}
-                        {% when 1069 %}
-                        {% assign weather_icon_name = "wi-sleet" %}
-                        {% when 1072 %}
-                        {% assign weather_icon_name = "wi-rain-mix" %}
-                        {% when 1087 %}
-                        {% assign weather_icon_name = "wi-day-thunderstorm" %}
-                        {% when 1114 %}
-                        {% assign weather_icon_name = "wi-snow" %}
-                        {% when 1117 %}
-                        {% assign weather_icon_name = "wi-snow" %}
-                        {% when 1135 %}
-                        {% assign weather_icon_name = "wi-fog" %}
-                        {% when 1147 %}
-                        {% assign weather_icon_name = "wi-fog" %}
-                        {% when 1150 %}
-                        {% assign weather_icon_name = "wi-day-showers" %}
-                        {% when 1153 %}
-                        {% assign weather_icon_name = "wi-day-showers" %}
-                        {% when 1168 %}
-                        {% assign weather_icon_name = "wi-rain-mix" %}
-                        {% when 1171 %}
-                        {% assign weather_icon_name = "wi-rain-mix" %}
-                        {% when 1180 %}
-                        {% assign weather_icon_name = "wi-day-showers" %}
-                        {% when 1183 %}
-                        {% assign weather_icon_name = "wi-day-showers" %}
-                        {% when 1186 %}
-                        {% assign weather_icon_name = "wi-day-rain" %}
-                        {% when 1189 %}
-                        {% assign weather_icon_name = "wi-day-rain" %}
-                        {% when 1192 %}
-                        {% assign weather_icon_name = "wi-rain" %}
-                        {% when 1195 %}
-                        {% assign weather_icon_name = "wi-rain" %}
-                        {% when 1198 %}
-                        {% assign weather_icon_name = "wi-rain-mix" %}
-                        {% when 1201 %}
-                        {% assign weather_icon_name = "wi-rain-mix" %}
-                        {% when 1204 %}
-                        {% assign weather_icon_name = "wi-sleet" %}
-                        {% when 1207 %}
-                        {% assign weather_icon_name = "wi-sleet" %}
-                        {% when 1210 %}
-                        {% assign weather_icon_name = "wi-day-snow" %}
-                        {% when 1213 %}
-                        {% assign weather_icon_name = "wi-day-snow" %}
-                        {% when 1216 %}
-                        {% assign weather_icon_name = "wi-day-snow" %}
-                        {% when 1219 %}
-                        {% assign weather_icon_name = "wi-snow" %}
-                        {% when 1222 %}
-                        {% assign weather_icon_name = "wi-snow" %}
-                        {% when 1225 %}
-                        {% assign weather_icon_name = "wi-snow" %}
-                        {% when 1237 %}
-                        {% assign weather_icon_name = "wi-sleet" %}
-                        {% when 1240 %}
-                        {% assign weather_icon_name = "wi-day-showers" %}
-                        {% when 1243 %}
-                        {% assign weather_icon_name = "wi-day-rain" %}
-                        {% when 1246 %}
-                        {% assign weather_icon_name = "wi-rain" %}
-                        {% when 1249 %}
-                        {% assign weather_icon_name = "wi-sleet" %}
-                        {% when 1252 %}
-                        {% assign weather_icon_name = "wi-sleet" %}
-                        {% when 1255 %}
-                        {% assign weather_icon_name = "wi-day-snow" %}
-                        {% when 1258 %}
-                        {% assign weather_icon_name = "wi-snow" %}
-                        {% when 1261 %}
-                        {% assign weather_icon_name = "wi-sleet" %}
-                        {% when 1264 %}
-                        {% assign weather_icon_name = "wi-sleet" %}
-                        {% when 1273 %}
-                        {% assign weather_icon_name = "wi-day-thunderstorm" %}
-                        {% when 1276 %}
-                        {% assign weather_icon_name = "wi-thunderstorm" %}
-                        {% when 1279 %}
-                        {% assign weather_icon_name = "wi-day-storm-showers" %}
-                        {% when 1282 %}
-                        {% assign weather_icon_name = "wi-thunderstorm" %}
-                        {% else %}
-                        {% assign weather_icon_name = "wi-na" %}
-                        {% endcase %}
-                        {% else %}
-                        {% case weatherapi.weather_icon %}
-                        {% when 1000 %}
-                        {% assign weather_icon_name = "wi-night-clear" %}
-                        {% when 1003 %}
-                        {% assign weather_icon_name = "wi-night-alt-partly-cloudy" %}
-                        {% when 1006 %}
-                        {% assign weather_icon_name = "wi-night-alt-cloudy" %}
-                        {% when 1009 %}
-                        {% assign weather_icon_name = "wi-cloudy" %}
-                        {% when 1030 %}
-                        {% assign weather_icon_name = "wi-night-fog" %}
-                        {% when 1063 %}
-                        {% assign weather_icon_name = "wi-night-alt-showers" %}
-                        {% when 1066 %}
-                        {% assign weather_icon_name = "wi-night-alt-snow" %}
-                        {% when 1069 %}
-                        {% assign weather_icon_name = "wi-sleet" %}
-                        {% when 1072 %}
-                        {% assign weather_icon_name = "wi-rain-mix" %}
-                        {% when 1087 %}
-                        {% assign weather_icon_name = "wi-night-alt-thunderstorm" %}
-                        {% when 1114 %}
-                        {% assign weather_icon_name = "wi-snow" %}
-                        {% when 1117 %}
-                        {% assign weather_icon_name = "wi-snow" %}
-                        {% when 1135 %}
-                        {% assign weather_icon_name = "wi-night-fog" %}
-                        {% when 1147 %}
-                        {% assign weather_icon_name = "wi-night-fog" %}
-                        {% when 1150 %}
-                        {% assign weather_icon_name = "wi-night-alt-showers" %}
-                        {% when 1153 %}
-                        {% assign weather_icon_name = "wi-night-alt-showers" %}
-                        {% when 1168 %}
-                        {% assign weather_icon_name = "wi-rain-mix" %}
-                        {% when 1171 %}
-                        {% assign weather_icon_name = "wi-rain-mix" %}
-                        {% when 1180 %}
-                        {% assign weather_icon_name = "wi-night-alt-showers" %}
-                        {% when 1183 %}
-                        {% assign weather_icon_name = "wi-night-alt-showers" %}
-                        {% when 1186 %}
-                        {% assign weather_icon_name = "wi-night-alt-rain" %}
-                        {% when 1189 %}
-                        {% assign weather_icon_name = "wi-night-alt-rain" %}
-                        {% when 1192 %}
-                        {% assign weather_icon_name = "wi-rain" %}
-                        {% when 1195 %}
-                        {% assign weather_icon_name = "wi-rain" %}
-                        {% when 1198 %}
-                        {% assign weather_icon_name = "wi-rain-mix" %}
-                        {% when 1201 %}
-                        {% assign weather_icon_name = "wi-rain-mix" %}
-                        {% when 1204 %}
-                        {% assign weather_icon_name = "wi-sleet" %}
-                        {% when 1207 %}
-                        {% assign weather_icon_name = "wi-sleet" %}
-                        {% when 1210 %}
-                        {% assign weather_icon_name = "wi-night-alt-snow" %}
-                        {% when 1213 %}
-                        {% assign weather_icon_name = "wi-night-alt-snow" %}
-                        {% when 1216 %}
-                        {% assign weather_icon_name = "wi-night-alt-snow" %}
-                        {% when 1219 %}
-                        {% assign weather_icon_name = "wi-snow" %}
-                        {% when 1222 %}
-                        {% assign weather_icon_name = "wi-snow" %}
-                        {% when 1225 %}
-                        {% assign weather_icon_name = "wi-snow" %}
-                        {% when 1237 %}
-                        {% assign weather_icon_name = "wi-sleet" %}
-                        {% when 1240 %}
-                        {% assign weather_icon_name = "wi-night-alt-showers" %}
-                        {% when 1243 %}
-                        {% assign weather_icon_name = "wi-night-alt-rain" %}
-                        {% when 1246 %}
-                        {% assign weather_icon_name = "wi-rain" %}
-                        {% when 1249 %}
-                        {% assign weather_icon_name = "wi-sleet" %}
-                        {% when 1252 %}
-                        {% assign weather_icon_name = "wi-sleet" %}
-                        {% when 1255 %}
-                        {% assign weather_icon_name = "wi-night-alt-snow" %}
-                        {% when 1258 %}
-                        {% assign weather_icon_name = "wi-snow" %}
-                        {% when 1261 %}
-                        {% assign weather_icon_name = "wi-sleet" %}
-                        {% when 1264 %}
-                        {% assign weather_icon_name = "wi-sleet" %}
-                        {% when 1273 %}
-                        {% assign weather_icon_name = "wi-night-alt-thunderstorm" %}
-                        {% when 1276 %}
-                        {% assign weather_icon_name = "wi-thunderstorm" %}
-                        {% when 1279 %}
-                        {% assign weather_icon_name = "wi-night-alt-storm-showers" %}
-                        {% when 1282 %}
-                        {% assign weather_icon_name = "wi-thunderstorm" %}
-                        {% else %}
-                        {% assign weather_icon_name = "wi-na" %}
-                        {% endcase %}
-                        {% endif %}
-                        <img class="w--[70px] h--[70px]" src="https://trmnl.com/images/plugins/weather/{{ weather_icon_name }}.svg">
-                        <span class="label labe--small">{{ weatherapi.weather_text }}</span>
+            <div class="layout layout--col gap--distribute">
+                <div class="flex flex--row flex--center-y gap--small">
+                    <img class="w--[64px] h--[64px]" src="https://trmnl.com/images/plugins/weather/{{ weather_icon_name }}.svg">
+                    <div class="flex flex--col">
+                        <span class="value value--xxlarge value--tnums">{{ weatherapi.temp_c }}°</span>
+                        <span class="label label--small" data-clamp="1">{{ weatherapi.weather_text }}</span>
                     </div>
-                    <div class="divider--v"></div>
-
-					<span class="value value--xlarge">{{ weatherapi.temp_c }}°</span>
-
-					<div class="divider--v"></div>
-
-                    <div class="flex flex--row flex--left w--full gap">
-						<div class="flex flex--center-y gap--small flex--nowrap">
-							Juntamoji
-							<span class="label label--large">{{ weatherapi.feelslike_c }}°<span>
-						</div>
-                        <div class="flex flex--row gap--xsmall py--1 px--3 rounded--full">
-                            <flux:icon icon="arrow-up" style="max-height: 16px;"/>
-                            <span class="label label-small">-14° </div>
-                        </div>
-                        <div class="flex flex--row gap--xsmall py--1 px--3 rounded--full">
-                            <flux:icon icon="arrow-down" style="max-height: 16px;"/>
-                            <span class="label label-small">-20°</div>
-                        </div>
+                </div>
+                <div class="divider"></div>
+                <div class="grid grid--cols-2 gap--small">
+                    <div class="flex flex--col gap--none">
+                        <span class="description">Juntamoji</span>
+                        <span class="label label--large value--tnums">{{ weatherapi.feelslike_c }}°</span>
+                    </div>
+                    <div class="flex flex--col gap--none">
+                        <span class="description">Vėjas</span>
+                        <span class="label label--large value--tnums">{{ weatherapi.wind_kph }} km/h {{ weatherapi.wind_dir }}</span>
                     </div>
                 </div>
             </div>
-		</div>
+        </div>
 	</div>
 </x-trmnl::screen>
