@@ -232,7 +232,7 @@
                 <div class="flex flex--row flex--center-y gap--medium">
                     <img class="w--[72px] h--[72px]" src="https://trmnl.com/images/plugins/weather/{{ weather_icon_name }}.svg">
                     <div class="flex flex--col gap--none">
-                        <span class="value value--xxlarge value--tnums">{{ weatherapi.temp_c }}°C</span>
+                        <span class="value value--xxlarge value--tnums">{{ weatherapi.temp_c | round }}°C</span>
                         <span class="label label--medium" data-clamp="1">{{ weatherapi.weather_text }}</span>
                     </div>
                 </div>
@@ -240,7 +240,7 @@
                 <div class="grid grid--cols-10 gap--small">
                     <div class="col--span-3 flex flex--col gap--none">
                         <span class="description">Juntamoji</span>
-                        <span class="label label--large value--tnums">{{ weatherapi.feelslike_c }}°</span>
+                        <span class="label label--large value--tnums">{{ weatherapi.feelslike_c | round }}°</span>
                     </div>
                     <div class="divider--v col--span-1"></div>
                     <div class="col--span-6 flex flex--col gap--none">
