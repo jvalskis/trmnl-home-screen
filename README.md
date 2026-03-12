@@ -10,6 +10,10 @@ All data flows directly between your infrastructure and the APIs you choose to e
 
 Polls AccuWeather for current conditions on a configurable interval. Provides temperature, precipitation status, observation time and others to the template.
 
+### Weather (WeatherAPI)
+
+An alternative weather provider using [WeatherAPI](https://www.weatherapi.com/). Provides current temperature, feels-like temperature, wind speed/direction, humidity, UV index, visibility and more. Can run alongside or instead of AccuWeather — each provider is independently toggled.
+
 ### Calendar (CalDAV)
 
 Connects to any CalDAV-compatible server (Nextcloud, Radicale, Baikal, etc.) to fetch upcoming events. Supports Basic and Bearer authentication.
@@ -37,20 +41,29 @@ All configuration is defined in `application.conf`. Defaults and can be overridd
 | `TRMNL_TOKEN` | | Device API token |
 | `TRMNL_DEVICE_ID` | | Device ID |
 
-### Weather
+### AccuWeather
 
 | Variable | Default | Description |
 |---|---|---|
-| `WEATHER_ENABLED` | `true` | Enable/disable weather |
+| `ACCUWEATHER_ENABLED` | `true` | Enable/disable AccuWeather |
 | `ACCUWEATHER_API_KEY` | | AccuWeather API key |
-| `WEATHER_CITY` | `London` | City name for lookup |
-| `WEATHER_FETCH_INTERVAL_MINUTES` | `60` | Poll interval |
+| `ACCUWEATHER_CITY` | `London` | City name for lookup |
+| `ACCUWEATHER_FETCH_INTERVAL_MINUTES` | `60` | Poll interval |
 
-### Calendar
+### WeatherAPI
 
 | Variable | Default | Description |
 |---|---|---|
-| `CALENDAR_ENABLED` | `false` | Enable/disable calendar |
+| `WEATHERAPI_ENABLED` | `false` | Enable/disable WeatherAPI |
+| `WEATHERAPI_API_KEY` | | WeatherAPI API key |
+| `WEATHERAPI_CITY` | `London` | City name for lookup |
+| `WEATHERAPI_FETCH_INTERVAL_MINUTES` | `60` | Poll interval |
+
+### Calendar (CalDAV)
+
+| Variable | Default | Description |
+|---|---|---|
+| `CALDAV_ENABLED` | `false` | Enable/disable calendar |
 | `CALDAV_CALENDAR_URL` | | CalDAV endpoint URL |
 | `CALDAV_AUTH_TYPE` | `basic` | `basic` or `bearer` |
 | `CALDAV_USERNAME` | | CalDAV username |
@@ -111,15 +124,53 @@ Available template variables:
 
 | Source | Variable | Type | Description |
 |---|---|---|---|
-| Weather | `has_weather` | boolean | Whether weather data is available |
-| Weather | `weather_text` | string | Current conditions description |
-| Weather | `temp_metric_value` | number | Temperature in metric |
-| Weather | `temp_metric_unit` | string | Metric unit (e.g. `C`) |
-| Weather | `temp_imperial_value` | number | Temperature in imperial |
-| Weather | `temp_imperial_unit` | string | Imperial unit (e.g. `F`) |
-| Weather | `has_precipitation` | boolean | Whether precipitation is occurring |
-| Weather | `is_day_time` | boolean | Whether it is daytime |
-| Weather | `observation_time` | string | Observation timestamp |
+| AccuWeather | `accuweather.enabled` | boolean | Whether AccuWeather is enabled |
+| AccuWeather | `accuweather.weather_text` | string | Current conditions description |
+| AccuWeather | `accuweather.weather_icon` | number | Weather icon code |
+| AccuWeather | `accuweather.temp_metric_value` | number | Temperature in metric |
+| AccuWeather | `accuweather.temp_metric_unit` | string | Metric unit (e.g. `C`) |
+| AccuWeather | `accuweather.temp_imperial_value` | number | Temperature in imperial |
+| AccuWeather | `accuweather.temp_imperial_unit` | string | Imperial unit (e.g. `F`) |
+| AccuWeather | `accuweather.has_precipitation` | boolean | Whether precipitation is occurring |
+| AccuWeather | `accuweather.is_day_time` | boolean | Whether it is daytime |
+| AccuWeather | `accuweather.observation_time` | string | Observation timestamp |
+| AccuWeather | `accuweather.relative_humidity` | number | Relative humidity percentage |
+| AccuWeather | `accuweather.cloud_cover` | number | Cloud cover percentage |
+| AccuWeather | `accuweather.uv_index` | number | UV index |
+| AccuWeather | `accuweather.uv_index_text` | string | UV index description |
+| AccuWeather | `accuweather.wind_speed_metric_value` | number | Wind speed in metric |
+| AccuWeather | `accuweather.wind_speed_metric_unit` | string | Metric wind unit |
+| AccuWeather | `accuweather.wind_speed_imperial_value` | number | Wind speed in imperial |
+| AccuWeather | `accuweather.wind_speed_imperial_unit` | string | Imperial wind unit |
+| AccuWeather | `accuweather.wind_direction` | string | Wind direction |
+| AccuWeather | `accuweather.wind_direction_degrees` | number | Wind direction in degrees |
+| AccuWeather | `accuweather.visibility_metric_value` | number | Visibility in metric |
+| AccuWeather | `accuweather.visibility_metric_unit` | string | Metric visibility unit |
+| AccuWeather | `accuweather.visibility_imperial_value` | number | Visibility in imperial |
+| AccuWeather | `accuweather.visibility_imperial_unit` | string | Imperial visibility unit |
+| AccuWeather | `accuweather.real_feel_metric_value` | number | Real feel temperature in metric |
+| AccuWeather | `accuweather.real_feel_metric_unit` | string | Metric real feel unit |
+| AccuWeather | `accuweather.real_feel_imperial_value` | number | Real feel temperature in imperial |
+| AccuWeather | `accuweather.real_feel_imperial_unit` | string | Imperial real feel unit |
+| WeatherAPI | `weatherapi.enabled` | boolean | Whether WeatherAPI is enabled |
+| WeatherAPI | `weatherapi.weather_text` | string | Current conditions description |
+| WeatherAPI | `weatherapi.weather_icon` | number | Weather condition code |
+| WeatherAPI | `weatherapi.temp_c` | number | Temperature in Celsius |
+| WeatherAPI | `weatherapi.temp_f` | number | Temperature in Fahrenheit |
+| WeatherAPI | `weatherapi.feelslike_c` | number | Feels-like temperature in Celsius |
+| WeatherAPI | `weatherapi.feelslike_f` | number | Feels-like temperature in Fahrenheit |
+| WeatherAPI | `weatherapi.wind_kph` | number | Wind speed in km/h |
+| WeatherAPI | `weatherapi.wind_mph` | number | Wind speed in mph |
+| WeatherAPI | `weatherapi.wind_dir` | string | Wind direction (e.g. `NW`) |
+| WeatherAPI | `weatherapi.wind_degree` | number | Wind direction in degrees |
+| WeatherAPI | `weatherapi.humidity` | number | Humidity percentage |
+| WeatherAPI | `weatherapi.cloud` | number | Cloud cover percentage |
+| WeatherAPI | `weatherapi.uv` | number | UV index |
+| WeatherAPI | `weatherapi.vis_km` | number | Visibility in km |
+| WeatherAPI | `weatherapi.vis_miles` | number | Visibility in miles |
+| WeatherAPI | `weatherapi.precip_mm` | number | Precipitation in mm |
+| WeatherAPI | `weatherapi.is_day` | number | 1 if daytime, 0 if night |
+| WeatherAPI | `weatherapi.last_updated` | string | Last updated timestamp |
 | Calendar | `has_calendar` | boolean | Whether calendar data is available |
 | Calendar | `event_count` | number | Number of upcoming events |
 | Calendar | `events[]` | array | List of events |

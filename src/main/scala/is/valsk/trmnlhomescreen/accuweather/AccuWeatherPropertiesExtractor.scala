@@ -1,20 +1,21 @@
-package is.valsk.trmnlhomescreen.weather
+package is.valsk.trmnlhomescreen.accuweather
 
+import is.valsk.trmnlhomescreen.accuweather.AccuWeatherModel.*
 import is.valsk.trmnlhomescreen.PropertiesExtractor
 import is.valsk.trmnlhomescreen.PropertiesExtractor.{MapProperty, asScalar}
 import zio.{RLayer, UIO, URLayer, ZIO, ZLayer}
 
-object WeatherPropertiesExtractor:
+object AccuWeatherPropertiesExtractor:
 
-  val layer: URLayer[WeatherStateRepository & WeatherConfig, PropertiesExtractor] = ZLayer {
+  val layer: URLayer[AccuWeatherStateRepository & AccuWeatherConfig, PropertiesExtractor] = ZLayer {
     for {
-      repository <- ZIO.service[WeatherStateRepository]
-      config <- ZIO.service[WeatherConfig]
+      repository <- ZIO.service[AccuWeatherStateRepository]
+      config <- ZIO.service[AccuWeatherConfig]
     } yield new PropertiesExtractor:
       def extract: UIO[MapProperty] =
         for {
           maybeCurrentConditions <- repository.get
-          result = MapProperty(maybeCurrentConditions.toSeq.flatMap { conditions =>
+          inner = MapProperty(maybeCurrentConditions.toSeq.flatMap { conditions =>
             Seq(
               Nil :+ "weather_text" -> conditions.weatherText.asScalar,
               Nil :+ "weather_icon" -> conditions.weatherIcon.asScalar,
@@ -57,7 +58,9 @@ object WeatherPropertiesExtractor:
               },
             )
           }.flatten: _*)
-        } yield result + ("weather_enabled" -> config.enabled.asScalar)
+        } yield MapProperty(
+          "accuweather" -> (inner + ("enabled" -> config.enabled.asScalar)),
+        )
   }
 
-  val configuredLayer: RLayer[WeatherStateRepository, PropertiesExtractor] = WeatherConfig.layer >>> layer
+  val configuredLayer: RLayer[AccuWeatherStateRepository, PropertiesExtractor] = AccuWeatherConfig.layer >>> layer

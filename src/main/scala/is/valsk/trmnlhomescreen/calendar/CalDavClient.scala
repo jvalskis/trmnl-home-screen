@@ -3,9 +3,11 @@ package is.valsk.trmnlhomescreen.calendar
 import biweekly.Biweekly
 import biweekly.component.VEvent
 import biweekly.util.ICalDate
+import is.valsk.trmnlhomescreen.calendar.CalDavClient.Api.ReportEndpoint
+import is.valsk.trmnlhomescreen.util.ApiClient.RequestMiddleware
+import is.valsk.trmnlhomescreen.util.{ApiClient, Endpoint}
 import zio.*
 import zio.http.*
-import zio.http.Status.MultiStatus
 
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDateTime, ZoneOffset, ZonedDateTime}
@@ -17,51 +19,39 @@ trait CalDavClient:
 
 object CalDavClient:
 
-  val layer: ZLayer[Client & CalendarConfig, Nothing, CalDavClient] =
+  val layer: ZLayer[ApiClient & CalendarConfig, Nothing, CalDavClient] =
     ZLayer.fromFunction(LiveCalDavClient.apply)
 
-  val configuredLayer: ZLayer[Client, Config.Error, CalDavClient] = CalendarConfig.layer >>> layer
+  val configuredLayer: ZLayer[ApiClient, Config.Error, CalDavClient] = CalendarConfig.layer >>> layer
 
-  private final case class LiveCalDavClient(client: Client, config: CalendarConfig) extends CalDavClient:
+  object Api {
+    val ReportEndpoint = Endpoint[Unit, String](
+      Method.CUSTOM("REPORT"),
+      _ => "",
+    )
+  }
 
-    def fetchEvents(): Task[List[CalendarEvent]] = {
+  private final case class LiveCalDavClient(client: ApiClient, config: CalendarConfig) extends CalDavClient:
+
+    private val baseUrl: URL = URL.decode(config.calendarUrl).toOption.get
+
+    def fetchEvents(): Task[List[CalendarEvent]] =
       val now = ZonedDateTime.now(ZoneOffset.UTC)
       val end = now.plusDays(config.daysAhead)
 
-      for
-        response <- sendReport(filterByTime(now, end))
+      for {
+        response <- client.call(
+          baseUrl, ReportEndpoint, (), middlewares,
+          body = filterByTime(now, end),
+        )
         events <- parseResponse(response)
-      yield events.sortBy(_.startDate)
-    }
+      } yield events.sortBy(_.startDate)
 
-    private def sendReport(xmlBody: String): Task[String] =
-      val urlStr = config.calendarUrl
-      for
-        url <- ZIO.fromEither(URL.decode(urlStr))
-          .mapError(e => RuntimeException(s"Invalid URL: $urlStr"))
-        response <- ZIO.scoped {
-          for
-            resp <- client.request(createRequest(xmlBody, url))
-            body <- resp.body.asString
-            _ <- ZIO.when(resp.status.code != MultiStatus.code) {
-              ZIO.fail(RuntimeException(s"CalDAV REPORT failed with status ${resp.status.code}: $body"))
-            }
-          yield body
-        }
-      yield response
-
-    private def createRequest(xmlBody: String, url: URL) = {
-      Request(
-        method = Method.CUSTOM("REPORT"),
-        url = url,
-        headers = Headers(
-          Header.ContentType(MediaType.application.xml),
-          resolveAuthHeader(config),
-          Header.Custom("Depth", "1"),
-        ),
-        body = Body.fromString(xmlBody),
-      )
-    }
+    private val middlewares: List[RequestMiddleware] = List(
+      _.addHeader(Header.ContentType(MediaType.application.xml)),
+      _.addHeader(resolveAuthHeader(config)),
+      _.addHeader(Header.Custom("Depth", "1")),
+    )
 
     private def parseResponse(xmlResponse: String): Task[List[CalendarEvent]] =
       ZIO.attempt {
@@ -73,13 +63,12 @@ object CalDavClient:
           .flatMap(createCalendarEvent).toList
       }
 
-  private def resolveAuthHeader(config: CalendarConfig) = {
+  private def resolveAuthHeader(config: CalendarConfig) =
     config.authType.toLowerCase match
       case "bearer" => Header.Authorization.Bearer(config.password)
       case _ => Header.Authorization.Basic(config.username, config.password)
-  }
 
-  private def createCalendarEvent(event: VEvent) = {
+  private def createCalendarEvent(event: VEvent) =
     for start <- Option(event.getDateStart).map(_.getValue)
     yield CalendarEvent(
       summary = Option(event.getSummary).map(_.getValue).getOrElse(CalendarEvent.DefaultSummary),
@@ -88,7 +77,6 @@ object CalDavClient:
       location = Option(event.getLocation).map(_.getValue).filter(_.nonEmpty),
       description = Option(event.getDescription).map(_.getValue).filter(_.nonEmpty),
     )
-  }
 
   private val calDavFormatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss'Z'")
 
