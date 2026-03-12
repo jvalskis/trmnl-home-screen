@@ -1,7 +1,7 @@
 package is.valsk.trmnlhomescreen.util
 
 import is.valsk.trmnlhomescreen.util.ApiClient.{ApiError, RequestMiddleware}
-import zio.{IO, ZIO, ZLayer}
+import zio.{IO, Task, ZIO, ZLayer}
 import zio.http.{Body, Client, Method, Request, URL}
 import zio.json.{DecoderOps, EncoderOps, JsonDecoder, JsonEncoder}
 
@@ -44,11 +44,15 @@ object ApiClient {
   sealed trait ApiError extends Throwable
 
   object ApiError {
-    case class Http(code: Int, body: String) extends ApiError
+    case class Http(code: Int, body: String) extends ApiError:
+      override def getMessage: String = s"HTTP $code: $body"
 
-    case class Network(cause: Throwable) extends ApiError
+    case class Network(cause: Throwable) extends ApiError:
+      override def getMessage: String = s"Network error: ${cause.getMessage}"
+      override def getCause: Throwable = cause
 
-    case class Decode(message: String) extends ApiError
+    case class Decode(message: String) extends ApiError:
+      override def getMessage: String = s"Decode error: $message"
   }
 
   type RequestMiddleware = Request => Request
@@ -60,17 +64,18 @@ object ApiClient {
         endpoint: Endpoint[I, O],
         input: I,
         middlewares: List[RequestMiddleware] = Nil,
-        body: B = ((): Unit),
+        body: B = (),
     ): IO[ApiError, O] =
+      val url = baseUrl.addPath(endpoint.path(input))
       val finalRequest = applyMiddlewares(
         Request(
           method = endpoint.method,
-          url = baseUrl.addPath(endpoint.path(input)),
+          url = url,
           body = summon[RequestEncoder[B]].encode(body),
         ),
         middlewares,
       )
-      for {
+      (for {
         response <- ZIO.scoped(
           client
             .request(finalRequest)
@@ -84,7 +89,9 @@ object ApiClient {
         decoded <- ZIO
           .fromEither(summon[ResponseDecoder[O]].decode(responseBody))
           .mapError(ApiError.Decode(_))
-      } yield decoded
+      } yield decoded).tapError(e =>
+        ZIO.logError(s"Request failed [${endpoint.method} $url]: ${e.getMessage}")
+      )
 
     private def applyMiddlewares(request: Request, middlewares: List[RequestMiddleware] = Nil): Request =
       middlewares.foldLeft(request)((r, mw) => mw(r))
