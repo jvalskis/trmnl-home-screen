@@ -26,8 +26,9 @@ object WeatherApiProgram {
 
     private def fetchAndStore(city: String): Task[Unit] =
       for
-        current <- client.currentWeather(city)
-        _ <- repository.update(current)
+        response <- client.forecast(city, config.forecastDays)
+        _ <- repository.update(response.current)
+        _ <- repository.updateForecast(response.forecast.forecastday)
       yield ()
 
   }

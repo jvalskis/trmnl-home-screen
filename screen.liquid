@@ -35,6 +35,11 @@
                             {% endcase %}
                             <div class="flex bg--gray-60 rounded--small text-stroke text-stroke--medium flex--row w--full p--2">
                                 <span class="title title--small stretch">{{ day_desc }}</span>
+                                {% for fd in weatherapi.forecast %}
+                                    {% if fd.date == event_day.date %}
+                                        <span class="label label--small text--right">{{ fd.high_c | round }}°/{{ fd.low_c | round }}°</span>
+                                    {% endif %}
+                                {% endfor %}
                                 <span class="title title--small text--right">{{ event_day.date | date: "%Y-%m-%d" }}</span>
                             </div>
                         {% endif %}
