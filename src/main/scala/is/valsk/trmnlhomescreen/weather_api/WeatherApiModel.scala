@@ -66,6 +66,7 @@ object WeatherApiModel:
       maxTempF: Double,
       @jsonField("mintemp_f")
       minTempF: Double,
+      condition: Condition,
   )
 
   object DayForecast:

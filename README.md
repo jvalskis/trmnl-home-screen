@@ -156,6 +156,7 @@ Available template variables:
 | WeatherAPI | `weatherapi.enabled` | boolean | Whether WeatherAPI is enabled |
 | WeatherAPI | `weatherapi.weather_text` | string | Current conditions description |
 | WeatherAPI | `weatherapi.weather_icon` | number | Weather condition code |
+| WeatherAPI | `weatherapi.weather_icon_name` | string | Pre-computed weather icon name (day/night aware) |
 | WeatherAPI | `weatherapi.temp_c` | number | Temperature in Celsius |
 | WeatherAPI | `weatherapi.temp_f` | number | Temperature in Fahrenheit |
 | WeatherAPI | `weatherapi.feelslike_c` | number | Feels-like temperature in Celsius |
@@ -173,11 +174,13 @@ Available template variables:
 | WeatherAPI | `weatherapi.is_day` | number | 1 if daytime, 0 if night |
 | WeatherAPI | `weatherapi.last_updated` | string | Last updated timestamp |
 | WeatherAPI | `weatherapi.forecast[]` | array | List of forecast days |
-| WeatherAPI | `weatherapi.forecast[].date` | string | Forecast date |
+| WeatherAPI | `weatherapi.forecast[].date` | date | Forecast date |
 | WeatherAPI | `weatherapi.forecast[].high_c` | number | High temperature in Celsius |
 | WeatherAPI | `weatherapi.forecast[].low_c` | number | Low temperature in Celsius |
 | WeatherAPI | `weatherapi.forecast[].high_f` | number | High temperature in Fahrenheit |
 | WeatherAPI | `weatherapi.forecast[].low_f` | number | Low temperature in Fahrenheit |
+| WeatherAPI | `weatherapi.forecast[].condition_code` | number | Weather condition code |
+| WeatherAPI | `weatherapi.forecast[].icon_name` | string | Pre-computed weather icon name (daytime variant) |
 | Calendar | `has_calendar` | boolean | Whether calendar data is available |
 | Calendar | `event_count` | number | Number of upcoming events |
 | Calendar | `events[]` | array | List of events |
