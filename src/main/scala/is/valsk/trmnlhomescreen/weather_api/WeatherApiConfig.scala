@@ -8,6 +8,7 @@ final case class WeatherApiConfig(
     apiKey: String,
     city: String,
     fetchIntervalMinutes: Int,
+    forecastDays: Int,
 )
 
 object WeatherApiConfig:

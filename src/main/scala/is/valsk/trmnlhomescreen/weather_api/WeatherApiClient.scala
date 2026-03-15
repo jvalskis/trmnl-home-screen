@@ -2,19 +2,19 @@ package is.valsk.trmnlhomescreen.weather_api
 
 import is.valsk.trmnlhomescreen.util.ApiClient.RequestMiddleware
 import is.valsk.trmnlhomescreen.util.{ApiClient, Endpoint}
-import is.valsk.trmnlhomescreen.weather_api.WeatherApiClient.Api.CurrentWeatherEndpoint
+import is.valsk.trmnlhomescreen.weather_api.WeatherApiClient.Api.ForecastEndpoint
 import is.valsk.trmnlhomescreen.weather_api.WeatherApiModel.*
 import zio.*
 import zio.http.*
 import zio.json.*
 
 trait WeatherApiClient:
-  def currentWeather(query: String): Task[Current]
+  def forecast(query: String, days: Int): Task[ForecastResponse]
 
 object WeatherApiClient:
 
-  def currentWeather(query: String): ZIO[WeatherApiClient, Throwable, Current] =
-    ZIO.serviceWithZIO[WeatherApiClient](_.currentWeather(query))
+  def forecast(query: String, days: Int): ZIO[WeatherApiClient, Throwable, ForecastResponse] =
+    ZIO.serviceWithZIO[WeatherApiClient](_.forecast(query, days))
 
   val layer: ZLayer[ApiClient & WeatherApiConfig, Nothing, WeatherApiClient] =
     ZLayer.fromFunction(LiveWeatherApiClient.apply)
@@ -24,10 +24,10 @@ object WeatherApiClient:
   object Api {
     val BaseUrl: URL = URL.decode("https://api.weatherapi.com").toOption.get
 
-    val CurrentWeatherEndpoint = Endpoint[String, CurrentWeatherResponse](
+    val ForecastEndpoint = Endpoint[(String, Int), ForecastResponse](
       Method.GET,
-      _ => "/v1/current.json",
-      query => Map("q" -> query),
+      _ => "/v1/forecast.json",
+      { case (query, days) => Map("q" -> query, "days" -> days.toString) },
     )
 
   }
@@ -37,10 +37,10 @@ object WeatherApiClient:
       config: WeatherApiConfig,
   ) extends WeatherApiClient:
 
-    def currentWeather(query: String): Task[Current] =
+    def forecast(query: String, days: Int): Task[ForecastResponse] =
       for {
-        response <- client.call(Api.BaseUrl, CurrentWeatherEndpoint, query, middlewares)
-      } yield response.current
+        response <- client.call(Api.BaseUrl, ForecastEndpoint, (query, days), middlewares)
+      } yield response
 
     private val middlewares: List[RequestMiddleware] = List(
       _.addQueryParam("key", config.apiKey),

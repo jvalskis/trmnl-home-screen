@@ -12,7 +12,7 @@ Polls AccuWeather for current conditions on a configurable interval. Provides te
 
 ### Weather (WeatherAPI)
 
-An alternative weather provider using [WeatherAPI](https://www.weatherapi.com/). Provides current temperature, feels-like temperature, wind speed/direction, humidity, UV index, visibility and more. Can run alongside or instead of AccuWeather — each provider is independently toggled.
+An alternative weather provider using [WeatherAPI](https://www.weatherapi.com/). Provides current temperature, feels-like temperature, wind speed/direction, humidity, UV index, visibility and a multi-day forecast. Can run alongside or instead of AccuWeather — each provider is independently toggled.
 
 ### Calendar (CalDAV)
 
@@ -58,6 +58,7 @@ All configuration is defined in `application.conf`. Defaults and can be overridd
 | `WEATHERAPI_API_KEY` | | WeatherAPI API key |
 | `WEATHERAPI_CITY` | `London` | City name for lookup |
 | `WEATHERAPI_FETCH_INTERVAL_MINUTES` | `60` | Poll interval |
+| `WEATHERAPI_FORECAST_DAYS` | `7` | Number of forecast days to fetch |
 
 ### Calendar (CalDAV)
 
@@ -171,6 +172,12 @@ Available template variables:
 | WeatherAPI | `weatherapi.precip_mm` | number | Precipitation in mm |
 | WeatherAPI | `weatherapi.is_day` | number | 1 if daytime, 0 if night |
 | WeatherAPI | `weatherapi.last_updated` | string | Last updated timestamp |
+| WeatherAPI | `weatherapi.forecast[]` | array | List of forecast days |
+| WeatherAPI | `weatherapi.forecast[].date` | string | Forecast date |
+| WeatherAPI | `weatherapi.forecast[].high_c` | number | High temperature in Celsius |
+| WeatherAPI | `weatherapi.forecast[].low_c` | number | Low temperature in Celsius |
+| WeatherAPI | `weatherapi.forecast[].high_f` | number | High temperature in Fahrenheit |
+| WeatherAPI | `weatherapi.forecast[].low_f` | number | Low temperature in Fahrenheit |
 | Calendar | `has_calendar` | boolean | Whether calendar data is available |
 | Calendar | `event_count` | number | Number of upcoming events |
 | Calendar | `events[]` | array | List of events |

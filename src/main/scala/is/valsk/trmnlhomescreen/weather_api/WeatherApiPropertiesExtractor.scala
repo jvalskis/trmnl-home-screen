@@ -14,6 +14,7 @@ object WeatherApiPropertiesExtractor:
       def extract: UIO[MapProperty] =
         for {
           maybeCurrent <- repository.get
+          forecastDays <- repository.getForecast
           inner = MapProperty(maybeCurrent.toSeq.flatMap { current =>
             Seq(
               Nil :+ "weather_text" -> current.condition.text.asScalar,
@@ -36,8 +37,17 @@ object WeatherApiPropertiesExtractor:
               Nil :+ "feelslike_f" -> current.feelslikeF.asScalar,
             )
           }.flatten: _*)
+          forecastProperties = forecastDays.map { fd =>
+            MapProperty(
+              "date" -> fd.date.asScalar,
+              "high_c" -> fd.day.maxTempC.asScalar,
+              "low_c" -> fd.day.minTempC.asScalar,
+              "high_f" -> fd.day.maxTempF.asScalar,
+              "low_f" -> fd.day.minTempF.asScalar,
+            )
+          }.asList
         } yield MapProperty(
-          "weatherapi" -> (inner + ("enabled" -> config.enabled.asScalar)),
+          "weatherapi" -> (inner + ("enabled" -> config.enabled.asScalar) + ("forecast" -> forecastProperties)),
         )
   }
 
