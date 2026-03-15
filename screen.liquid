@@ -12,7 +12,14 @@
             <div class="title_bar">
               <img class="image" alt="" src="https://trmnl.com/images/plugins/lunar_calendar--render.svg">
               <span class="title">Šiandien</span>
-              <span class="instance">{{ "now" | date: "%Y-%m-%d" }}</span>
+              {% assign now_date_str = "now" | date: "%Y-%m-%d" %}
+              {% for fd in weatherapi.forecast %}
+                  {% assign forecast_date_str = fd.date | date: "%Y-%m-%d" %}
+                  {% if forecast_date_str == now_date_str %}
+                      <span class="label label--inverted text--right">{{ fd.high_c | round }}°/{{ fd.low_c | round }}°</span>
+                  {% endif %}
+              {% endfor %}
+              <span class="instance">{{ now_date_str }}</span>
             </div>
 			<div class="layout layout--col layout--top layout--left" data-content-limiter="true">
 			    {% for event_day in events_by_day %}
@@ -40,16 +47,16 @@
                                     {% assign day_desc = "Sekmadienis" %}
                                 {% endcase %}
                             {% endcase %}
-                            <div class="flex bg--gray-60 rounded--small text-stroke text-stroke--medium flex--row w--full p--2">
-                                <span class="title title--small stretch">{{ day_desc }}</span>
+                            <div class="flex bg--gray-60 rounded--small flex--row w--full p--2">
+                                <span class="title title--small stretch text-stroke text-stroke--medium">{{ day_desc }}</span>
                                 {% assign event_date_str = event_day.date | date: "%Y-%m-%d" %}
                                 {% for fd in weatherapi.forecast %}
                                     {% assign forecast_date_str = fd.date | date: "%Y-%m-%d" %}
                                     {% if forecast_date_str == event_date_str %}
-                                        <span class="label label--small text--right">{{ fd.high_c | round }}°/{{ fd.low_c | round }}°</span>
+                                        <span class="label label--inverted text--right">{{ fd.high_c | round }}°/{{ fd.low_c | round }}°</span>
                                     {% endif %}
                                 {% endfor %}
-                                <span class="title title--small text--right">{{ event_day.date | date: "%Y-%m-%d" }}</span>
+                                <span class="title title--small text--right text-stroke text-stroke--medium">{{ event_day.date | date: "%m-%d" }}</span>
                             </div>
                         {% endif %}
                         {% for event in event_day.events %}
@@ -260,8 +267,8 @@
                     <div class="col--span-6 flex flex--col gap--none">
                         <span class="description">Vėjas</span>
                         <div class="flex flex--row flex--center-y gap--small">
-                            <span class="label label--large value--tnums">{{ weatherapi.wind_kph }} km/h</span>
-                            <span class="label label--small bg--gray-60 rounded--small p--1 text-stroke text-stroke--medium">{{ weatherapi.wind_dir }}</span>
+                            <span class="label label--large value--tnums">{{ weatherapi.wind_kph | round }} km/h</span>
+                            <span class="label label--inverted rounded--small p--1">{{ weatherapi.wind_dir }}</span>
                         </div>
                     </div>
                 </div>
