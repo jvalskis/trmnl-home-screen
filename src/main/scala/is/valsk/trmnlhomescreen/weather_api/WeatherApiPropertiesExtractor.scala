@@ -17,26 +17,26 @@ object WeatherApiPropertiesExtractor:
         for {
           maybeCurrent <- repository.get
           forecastDays <- repository.getForecast
-          inner = MapProperty(maybeCurrent.toSeq.flatMap { c =>
+          inner = MapProperty(maybeCurrent.toSeq.flatMap { current =>
             Seq(
-              Nil :+ "weather_text" -> c.condition.text.asScalar,
-              Nil :+ "weather_icon" -> c.condition.code.asScalar,
-              Nil :+ "temp_c" -> c.tempC.asScalar,
-              Nil :+ "temp_f" -> c.tempF.asScalar,
-              Nil :+ "precip_mm" -> c.precipMm.asScalar,
-              Nil :+ "is_day" -> c.isDay.asScalar,
-              Nil :+ "last_updated" -> c.lastUpdated.asScalar,
-              Nil :+ "humidity" -> c.humidity.asScalar,
-              Nil :+ "cloud" -> c.cloud.asScalar,
-              Nil :+ "uv" -> c.uv.asScalar,
-              Nil :+ "wind_kph" -> c.windKph.asScalar,
-              Nil :+ "wind_mph" -> c.windMph.asScalar,
-              Nil :+ "wind_dir" -> c.windDir.asScalar,
-              Nil :+ "wind_degree" -> c.windDegree.asScalar,
-              Nil :+ "vis_km" -> c.visKm.asScalar,
-              Nil :+ "vis_miles" -> c.visMiles.asScalar,
-              Nil :+ "feelslike_c" -> c.feelslikeC.asScalar,
-              Nil :+ "feelslike_f" -> c.feelslikeF.asScalar,
+              Nil :+ "weather_text" -> current.condition.text.asScalar,
+              Nil :+ "weather_icon" -> current.condition.code.asScalar,
+              Nil :+ "temp_c" -> current.tempC.asScalar,
+              Nil :+ "temp_f" -> current.tempF.asScalar,
+              Nil :+ "precip_mm" -> current.precipMm.asScalar,
+              Nil :+ "is_day" -> current.isDay.asScalar,
+              Nil :+ "last_updated" -> current.lastUpdated.asScalar,
+              Nil :+ "humidity" -> current.humidity.asScalar,
+              Nil :+ "cloud" -> current.cloud.asScalar,
+              Nil :+ "uv" -> current.uv.asScalar,
+              Nil :+ "wind_kph" -> current.windKph.asScalar,
+              Nil :+ "wind_mph" -> current.windMph.asScalar,
+              Nil :+ "wind_dir" -> current.windDir.asScalar,
+              Nil :+ "wind_degree" -> current.windDegree.asScalar,
+              Nil :+ "vis_km" -> current.visKm.asScalar,
+              Nil :+ "vis_miles" -> current.visMiles.asScalar,
+              Nil :+ "feelslike_c" -> current.feelslikeC.asScalar,
+              Nil :+ "feelslike_f" -> current.feelslikeF.asScalar,
             )
           }.flatten: _*)
           forecastProperties = forecastDays.map { fd =>
