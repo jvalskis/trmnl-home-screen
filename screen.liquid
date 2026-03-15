@@ -165,6 +165,15 @@
                             <span class="label label--inverted rounded--small p--1">{{ weatherapi.wind_dir }}</span>
                         </div>
                     </div>
+                    <div class="col--span-3 flex flex--row flex--center-y gap--small">
+                        <flux:icon icon="sun" style="max-height: 16px;"/>
+                        <span class="label label--medium value--tnums">{{ weatherapi.uv }}</span>
+                    </div>
+                    <div class="divider--v col--span-1"></div>
+                    <div class="col--span-6 flex flex--row flex--center-y gap--small">
+                        <flux:icon icon="cloud-arrow-down" style="max-height: 16px;"/>
+                        <span class="label label--medium value--tnums">{{ weatherapi.precip_mm }} mm</span>
+                    </div>
                 </div>
             </div>
         </div>
