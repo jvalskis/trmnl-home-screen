@@ -4,6 +4,8 @@ import is.valsk.trmnlhomescreen.PropertiesExtractor
 import is.valsk.trmnlhomescreen.PropertiesExtractor.{MapProperty, asScalar}
 import zio.{RLayer, UIO, URLayer, ZIO, ZLayer}
 
+import java.time.LocalDate
+
 object WeatherApiPropertiesExtractor:
 
   val layer: URLayer[WeatherApiStateRepository & WeatherApiConfig, PropertiesExtractor] = ZLayer {
@@ -39,7 +41,7 @@ object WeatherApiPropertiesExtractor:
           }.flatten: _*)
           forecastProperties = forecastDays.map { fd =>
             MapProperty(
-              "date" -> fd.date.asScalar,
+              "date" -> LocalDate.parse(fd.date).asScalar,
               "high_c" -> fd.day.maxTempC.asScalar,
               "low_c" -> fd.day.minTempC.asScalar,
               "high_f" -> fd.day.maxTempF.asScalar,
