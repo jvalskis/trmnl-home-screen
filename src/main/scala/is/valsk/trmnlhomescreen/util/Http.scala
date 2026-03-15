@@ -80,16 +80,18 @@ object ApiClient {
         middlewares,
       )
       (for {
-        response <- ZIO.scoped(
-          client
-            .request(finalRequest)
-            .mapError(ApiError.Network(_)),
+        responseBody <- ZIO.scoped(
+          for {
+            response <- client
+              .request(finalRequest)
+              .mapError(ApiError.Network(_))
+            body <- response.body.asString
+              .mapError(ApiError.Network(_))
+            _ <- ZIO
+              .fail(ApiError.Http(response.status.code, body))
+              .unless(response.status.isSuccess)
+          } yield body
         )
-        responseBody <- response.body.asString
-          .mapError(ApiError.Network(_))
-        _ <- ZIO
-          .fail(ApiError.Http(response.status.code, responseBody))
-          .unless(response.status.isSuccess)
         decoded <- ZIO
           .fromEither(summon[ResponseDecoder[O]].decode(responseBody))
           .mapError(ApiError.Decode(_))
