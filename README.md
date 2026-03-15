@@ -12,7 +12,7 @@ Polls AccuWeather for current conditions on a configurable interval. Provides te
 
 ### Weather (WeatherAPI)
 
-An alternative weather provider using [WeatherAPI](https://www.weatherapi.com/). Provides current temperature, feels-like temperature, wind speed/direction, humidity, UV index, visibility and a multi-day forecast. Can run alongside or instead of AccuWeather — each provider is independently toggled.
+An alternative weather provider using [WeatherAPI](https://www.weatherapi.com/). Provides current temperature, feels-like temperature, wind speed/direction, humidity, UV index, visibility and a multi-day forecast.
 
 ### Calendar (CalDAV)
 

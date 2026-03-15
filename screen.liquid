@@ -24,7 +24,6 @@
             </div>
 			<div class="layout layout--col layout--top layout--left" data-content-limiter="true">
 			    {% for event_day in events_by_day %}
-                    {% if event_day.events.size > 0 %}
                         {% if event_day.days_since_today > 0 %}
                             {% assign day_desc = "" %}
                             {% case event_day.days_since_today %}
@@ -95,7 +94,6 @@
                                 </div>
                             </div>
                         {% endfor %}
-                    {% endif %}
                 {% endfor %}
 			</div>
 		</div>
