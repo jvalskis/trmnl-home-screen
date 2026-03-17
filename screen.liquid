@@ -149,7 +149,7 @@
                         </div>
                     </div>
                     <div class="divider--v col--span-1"></div>
-                    <div class="col--span-3 flex flex--col gap--none">
+                    <div class="col--span-4 flex flex--col gap--none">
                         <span class="description">Krituliai</span>
                         <div class="flex flex--row flex--center-y gap--small">
                             <img class="w--[32px] h--[32px]" src="https://trmnl.com/images/plugins/weather/wi-rain.svg">
@@ -157,11 +157,11 @@
                         </div>
                     </div>
                     <div class="divider--v col--span-1"></div>
-                    <div class="col--span-3 flex flex--col gap--none">
+                    <div class="col--span-2 flex flex--col gap--none">
                         <span class="description">UV</span>
                         <div class="flex flex--row flex--center-y gap--small">
                             <img class="w--[32px] h--[32px]" src="https://trmnl.com/images/plugins/weather/wi-hot.svg">
-                            <span class="label label--large value--tnums">{{ weatherapi.uv }}</span>
+                            <span class="label label--large value--tnums">{{ weatherapi.uv | round }}</span>
                         </div>
                     </div>
                 </div>
