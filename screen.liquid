@@ -6,7 +6,7 @@
 }
 </style>
 <x-trmnl::screen>
-	<div class="mashup mashup--1Lx2R">
+	<div class="mashup mashup--1Lx1R">
 	    {% if calendar_enabled %}
         <div class="view view--half_vertical">
             <div class="title_bar">
@@ -16,7 +16,6 @@
               {% for fd in weatherapi.forecast %}
                   {% assign forecast_date_str = fd.date | date: "%Y-%m-%d" %}
                   {% if forecast_date_str == now_date_str %}
-                      <img style="max-height: 16px; max-width: 16px;" src="https://trmnl.com/images/plugins/weather/{{ fd.icon_name }}.svg">
                       <span class="label label--inverted text--right">{{ fd.high_c | round }}°/{{ fd.low_c | round }}°</span>
                   {% endif %}
               {% endfor %}
@@ -53,7 +52,6 @@
                                 {% for fd in weatherapi.forecast %}
                                     {% assign forecast_date_str = fd.date | date: "%Y-%m-%d" %}
                                     {% if forecast_date_str == event_date_str %}
-                                        <img style="max-height: 16px; max-width: 16px;" src="https://trmnl.com/images/plugins/weather/{{ fd.icon_name }}.svg">
                                         <span class="label label--inverted text--right">{{ fd.high_c | round }}°/{{ fd.low_c | round }}°</span>
                                     {% endif %}
                                 {% endfor %}
@@ -99,80 +97,112 @@
 		</div>
         {% endif %}
 
-        <div class="view view--quadrant">
-            <div class="layout">
-                <div class="grid grid--cols-10">
-                    <span class="title title--medium col--span-6">Svetainė</span>
-                    <div class="divider--v  col--span-1"></div>
-                    <div class="col--span-3 flex flex--col">
-                        <div class="flex flex--center-y flex--right gap--small w--full flex--nowrap">
-                            <flux:icon icon="droplet" style="max-height: 16px;"/>
-                            <span class="label label--medium w--full">{{ entities["sensor.svetaine_dregmes_ir_temperaturos_sensorius_humidity"].state }}%</span>
-                        </div>
-                        <div class="flex flex--center-y flex--right gap--small w--full flex--nowrap">
-                            <flux:icon icon="thermometer" style="max-height: 16px;"/>
-                            <span class="label label--medium">{{ entities["sensor.svetaine_dregmes_ir_temperaturos_sensorius_temperature"].state }}°</span>
-                        </div>
-                    </div>
-                    <span class="title title--medium col--span-6">Miegamasis</span>
-                    <div class="divider--v  col--span-1"></div>
-                    <div class="col--span-3 flex flex--col">
-                        <div class="flex flex--center-y flex--right gap--small w--full flex--nowrap">
-                            <flux:icon icon="droplet" style="max-height: 16px;"/>
-                            <span class="label label--medium w--full">{{ entities["sensor.mk_temperaturos_ir_dregmes_sensorius_humidity"].state }}%</span>
-                        </div>
-                        <div class="flex flex--center-y flex--right gap--small w--full flex--nowrap">
-                            <flux:icon icon="thermometer" style="max-height: 16px;"/>
-                            <span class="label label--medium">{{ entities["sensor.mk_temperaturos_ir_dregmes_sensorius_temperature"].state }}°</span>
-                        </div>
-                    </div>
-                    <span class="title title--medium col--span-6">Darbo kambarys</span>
-                    <div class="divider--v  col--span-1"></div>
-                    <div class="col--span-3 flex flex--col">
-                        <div class="flex flex--center-y flex--right gap--small w--full flex--nowrap">
-                            <flux:icon icon="droplet" style="max-height: 16px;"/>
-                            <span class="label label--medium w--full">{{ entities["sensor.dk_temperaturos_ir_dregmes_sensorius_humidity"].state }}%</span>
-                        </div>
-                        <div class="flex flex--center-y flex--right gap--small w--full flex--nowrap">
-                            <flux:icon icon="thermometer" style="max-height: 16px;"/>
-                            <span class="label label--medium">{{ entities["sensor.dk_temperaturos_ir_dregmes_sensorius_temperature"].state }}°</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="view view--quadrant">
-            <div class="layout layout--col gap--distribute">
+        <div class="view view--half_vertical">
+            <div class="layout layout--col">
                 <div class="flex flex--row flex--center-y gap--medium">
-                    <img class="w--[100px] h--[100px]" src="https://trmnl.com/images/plugins/weather/{{ weatherapi.weather_icon_name }}.svg">
+                    <div class="flex flex--col gap--none">
+                        <img class="w--[100px] h--[100px]" src="https://trmnl.com/images/plugins/weather/{{ weatherapi.weather_icon_name }}.svg">
+                        <span class="label label--medium" data-clamp="1">{{ weatherapi.weather_text }}</span>
+                    </div>
                     <div class="flex flex--col gap--none">
                         <span class="value value--xxlarge value--tnums">{{ weatherapi.temp_c | round }}°</span>
-                        <span class="label label--medium" data-clamp="1">{{ weatherapi.weather_text }}</span>
+                    </div>
+                    <div class="flex flex--col gap--none">
+                        {% assign now_date_str = "now" | date: "%Y-%m-%d" %}
+                        {% for fd in weatherapi.forecast %}
+                            {% assign forecast_date_str = fd.date | date: "%Y-%m-%d" %}
+                            {% if forecast_date_str == now_date_str %}
+                                <div class="flex flex--row flex--center-y gap--medium">
+                                    <span class="value value--medium value--tnums">{{ fd.high_c | round }}°</span>
+                                </div>
+                                <div class="divider--h"></div>
+                                <div class="flex flex--row flex--center-y gap--medium">
+                                    <span class="value value--medium value--tnums">{{ fd.low_c | round }}°</span>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
                     </div>
                 </div>
                 <div class="divider"></div>
-                <div class="grid grid--cols-10 gap--small">
+                <div class="grid grid--cols-11 gap--small">
                     <div class="col--span-3 flex flex--col gap--none">
                         <span class="description">Juntamoji</span>
-                        <span class="label label--large value--tnums">{{ weatherapi.feelslike_c | round }}°</span>
-                    </div>
-                    <div class="divider--v col--span-1"></div>
-                    <div class="col--span-6 flex flex--col gap--none">
-                        <span class="description">Vėjas</span>
                         <div class="flex flex--row flex--center-y gap--small">
-                            <span class="label label--large value--tnums">{{ weatherapi.wind_kph | round }} km/h</span>
-                            <span class="label label--inverted rounded--small p--1">{{ weatherapi.wind_dir }}</span>
+                            <img class="w--[32px] h--[32px]" src="https://trmnl.com/images/plugins/weather/wi-thermometer.svg">
+                            <span class="label label--large value--tnums">{{ weatherapi.feelslike_c | round }}°</span>
                         </div>
                     </div>
-                    <div class="col--span-3 flex flex--row flex--center-y gap--small">
-                        <flux:icon icon="sun" style="max-height: 16px;"/>
-                        <span class="label label--medium value--tnums">{{ weatherapi.uv }}</span>
+                    <div class="divider--v col--span-1"></div>
+                    <div class="col--span-7 flex flex--col gap--none">
+                        <span class="description">Vėjas</span>
+                        <div class="flex flex--row flex--center-y gap--small">
+                            <img class="w--[32px] h--[32px]" src="https://trmnl.com/images/plugins/weather/wi-strong-wind.svg">
+                            <span class="label label--large value--tnums">{{ weatherapi.wind_kph | round }} km/h</span>
+                            <img class="w--[32px] h--[32px]" style="transform: rotate({{ weatherapi.wind_degree }}deg);" src="https://trmnl.com/images/plugins/weather/wi-wind-deg.svg">
+                        </div>
+                    </div>
+                    <div class="col--span-3 flex flex--col gap--none">
+                        <span class="description">Drėgmė</span>
+                        <div class="flex flex--row flex--center-y gap--small">
+                            <img class="w--[32px] h--[32px]" src="https://trmnl.com/images/plugins/weather/wi-humidity.svg">
+                            <span class="label label--large value--tnums">{{ weatherapi.humidity | round }}%</span>
+                        </div>
                     </div>
                     <div class="divider--v col--span-1"></div>
-                    <div class="col--span-6 flex flex--row flex--center-y gap--small">
-                        <flux:icon icon="cloud-arrow-down" style="max-height: 16px;"/>
-                        <span class="label label--medium value--tnums">{{ weatherapi.precip_mm }} mm</span>
+                    <div class="col--span-3 flex flex--col gap--none">
+                        <span class="description">Krituliai</span>
+                        <div class="flex flex--row flex--center-y gap--small">
+                            <img class="w--[32px] h--[32px]" src="https://trmnl.com/images/plugins/weather/wi-rain.svg">
+                            <span class="label label--medium value--tnums">{{ weatherapi.precip_mm }} mm</span>
+                        </div>
+                    </div>
+                    <div class="divider--v col--span-1"></div>
+                    <div class="col--span-3 flex flex--col gap--none">
+                        <span class="description">UV</span>
+                        <div class="flex flex--row flex--center-y gap--small">
+                            <img class="w--[32px] h--[32px]" src="https://trmnl.com/images/plugins/weather/wi-hot.svg">
+                            <span class="label label--large value--tnums">{{ weatherapi.uv }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex--row flex--center-y gap--medium">
+                    <div class="grid grid--cols-10">
+                        <span class="title title--medium col--span-6">Svetainė</span>
+                        <div class="divider--v  col--span-1"></div>
+                        <div class="col--span-3 flex flex--col">
+                            <div class="flex flex--center-y flex--right gap--small w--full flex--nowrap">
+                                <flux:icon icon="droplet" style="max-height: 16px;"/>
+                                <span class="label label--medium w--full">{{ entities["sensor.svetaine_dregmes_ir_temperaturos_sensorius_humidity"].state }}%</span>
+                            </div>
+                            <div class="flex flex--center-y flex--right gap--small w--full flex--nowrap">
+                                <flux:icon icon="thermometer" style="max-height: 16px;"/>
+                                <span class="label label--medium">{{ entities["sensor.svetaine_dregmes_ir_temperaturos_sensorius_temperature"].state }}°</span>
+                            </div>
+                        </div>
+                        <span class="title title--medium col--span-6">Miegamasis</span>
+                        <div class="divider--v  col--span-1"></div>
+                        <div class="col--span-3 flex flex--col">
+                            <div class="flex flex--center-y flex--right gap--small w--full flex--nowrap">
+                                <flux:icon icon="droplet" style="max-height: 16px;"/>
+                                <span class="label label--medium w--full">{{ entities["sensor.mk_temperaturos_ir_dregmes_sensorius_humidity"].state }}%</span>
+                            </div>
+                            <div class="flex flex--center-y flex--right gap--small w--full flex--nowrap">
+                                <flux:icon icon="thermometer" style="max-height: 16px;"/>
+                                <span class="label label--medium">{{ entities["sensor.mk_temperaturos_ir_dregmes_sensorius_temperature"].state }}°</span>
+                            </div>
+                        </div>
+                        <span class="title title--medium col--span-6">Darbo kambarys</span>
+                        <div class="divider--v  col--span-1"></div>
+                        <div class="col--span-3 flex flex--col">
+                            <div class="flex flex--center-y flex--right gap--small w--full flex--nowrap">
+                                <flux:icon icon="droplet" style="max-height: 16px;"/>
+                                <span class="label label--medium w--full">{{ entities["sensor.dk_temperaturos_ir_dregmes_sensorius_humidity"].state }}%</span>
+                            </div>
+                            <div class="flex flex--center-y flex--right gap--small w--full flex--nowrap">
+                                <flux:icon icon="thermometer" style="max-height: 16px;"/>
+                                <span class="label label--medium">{{ entities["sensor.dk_temperaturos_ir_dregmes_sensorius_temperature"].state }}°</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
