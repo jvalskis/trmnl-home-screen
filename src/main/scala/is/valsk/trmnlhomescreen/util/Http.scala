@@ -45,6 +45,7 @@ object ApiClient {
   sealed trait ApiError extends Throwable
 
   object ApiError {
+
     case class Http(code: Int, body: String) extends ApiError:
       override def getMessage: String = s"HTTP $code: $body"
 
@@ -54,6 +55,7 @@ object ApiClient {
 
     case class Decode(message: String) extends ApiError:
       override def getMessage: String = s"Decode error: $message"
+
   }
 
   type RequestMiddleware = Request => Request
@@ -67,9 +69,34 @@ object ApiClient {
         middlewares: List[RequestMiddleware] = Nil,
         body: B = (),
     ): IO[ApiError, O] =
-      val params = endpoint.queryParams(input)
-      val url = params.foldLeft(baseUrl.addPath(endpoint.path(input))) {
-        case (u, (k, v)) => u.addQueryParam(k, v)
+      val request = buildRequest(baseUrl, endpoint, input, middlewares, body)
+      (for {
+        responseBody <- ZIO.scoped(
+          for {
+            response <- client
+              .request(request)
+              .mapError(ApiError.Network(_))
+            body <- response.body.asString
+              .mapError(ApiError.Network(_))
+            _ <- ZIO
+              .fail(ApiError.Http(response.status.code, body))
+              .unless(response.status.isSuccess)
+          } yield body,
+        )
+        decoded <- ZIO
+          .fromEither(summon[ResponseDecoder[O]].decode(responseBody))
+          .mapError(ApiError.Decode(_))
+      } yield decoded).tapError(e => ZIO.logError(s"Request failed [${endpoint.method} ${request.url}]: ${e.getMessage}"))
+
+    private def buildRequest[B: RequestEncoder, O: ResponseDecoder, I](
+        baseUrl: URL,
+        endpoint: Endpoint[I, O],
+        input: I,
+        middlewares: List[RequestMiddleware],
+        body: B,
+    ) = {
+      val url = endpoint.queryParams(input).foldLeft(baseUrl.addPath(endpoint.path(input))) {
+        case (accUrl, (queryKey, queryValue)) => accUrl.addQueryParam(queryKey, queryValue)
       }
       val finalRequest = applyMiddlewares(
         Request(
@@ -79,23 +106,8 @@ object ApiClient {
         ),
         middlewares,
       )
-      (for {
-        response <- ZIO.scoped(
-          client
-            .request(finalRequest)
-            .mapError(ApiError.Network(_)),
-        )
-        responseBody <- response.body.asString
-          .mapError(ApiError.Network(_))
-        _ <- ZIO
-          .fail(ApiError.Http(response.status.code, responseBody))
-          .unless(response.status.isSuccess)
-        decoded <- ZIO
-          .fromEither(summon[ResponseDecoder[O]].decode(responseBody))
-          .mapError(ApiError.Decode(_))
-      } yield decoded).tapError(e =>
-        ZIO.logError(s"Request failed [${endpoint.method} $url]: ${e.getMessage}")
-      )
+      finalRequest
+    }
 
     private def applyMiddlewares(request: Request, middlewares: List[RequestMiddleware] = Nil): Request =
       middlewares.foldLeft(request)((r, mw) => mw(r))

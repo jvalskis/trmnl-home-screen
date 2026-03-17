@@ -49,9 +49,40 @@ object WeatherApiModel:
   object Current:
     given JsonDecoder[Current] = DeriveJsonDecoder.gen[Current]
 
-  final case class CurrentWeatherResponse(
-      current: Current,
+  final case class ForecastDay(
+      date: String,
+      day: DayForecast,
   )
 
-  object CurrentWeatherResponse:
-    given JsonDecoder[CurrentWeatherResponse] = DeriveJsonDecoder.gen[CurrentWeatherResponse]
+  object ForecastDay:
+    given JsonDecoder[ForecastDay] = DeriveJsonDecoder.gen[ForecastDay]
+
+  final case class DayForecast(
+      @jsonField("maxtemp_c")
+      maxTempC: Double,
+      @jsonField("mintemp_c")
+      minTempC: Double,
+      @jsonField("maxtemp_f")
+      maxTempF: Double,
+      @jsonField("mintemp_f")
+      minTempF: Double,
+      condition: Condition,
+  )
+
+  object DayForecast:
+    given JsonDecoder[DayForecast] = DeriveJsonDecoder.gen[DayForecast]
+
+  final case class Forecast(
+      forecastday: List[ForecastDay],
+  )
+
+  object Forecast:
+    given JsonDecoder[Forecast] = DeriveJsonDecoder.gen[Forecast]
+
+  final case class ForecastResponse(
+      current: Current,
+      forecast: Forecast,
+  )
+
+  object ForecastResponse:
+    given JsonDecoder[ForecastResponse] = DeriveJsonDecoder.gen[ForecastResponse]
